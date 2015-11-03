@@ -3,6 +3,7 @@ package org.cakelab.oge.app;
 import java.nio.ByteBuffer;
 
 import org.cakelab.oge.GraphicContext;
+import org.cakelab.oge.shader.GLException;
 import org.joml.Vector2f;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.glfw.*;
@@ -36,20 +37,38 @@ public abstract class ApplicationBase {
 	static ApplicationBase app;
 
 	
-	public ApplicationBase(String windowTitle) {
+	public ApplicationBase(String windowTitle) throws GLException {
+		if (glfwInit() != GL11.GL_TRUE) {
+			throw new GLException("Failed to initialize GLFW\n");
+		}
+
+
 		info.title = windowTitle;
+		info.title = "SoapBox 3D";
+		info.setWindowWidth(800);
+		info.setWindowHeight(600);
+		if (LWJGLUtil.getPlatform()== LWJGLUtil.Platform.MACOSX) {
+			info.majorVersion = 3;
+			info.minorVersion = 2;
+		} else {
+			info.majorVersion = 4;
+			info.minorVersion = 3;
+		}
+		info.samples = 0;
+		info.flags.cursor = true;
+		info.flags.fullscreen = false;
+		info.flags.stereo = false;
+		info.flags.vsync = false;
+		if (DEBUG) {
+			info.flags.debug = true;
+		}
+
 	}
 	
 	public void run() {
 		boolean running = true;
 		app = this;
 
-		if (glfwInit() != GL11.GL_TRUE) {
-			System.err.print("Failed to initialize GLFW\n");
-			return;
-		}
-
-		init();
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, info.majorVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, info.minorVersion);
@@ -237,27 +256,6 @@ public abstract class ApplicationBase {
 		debugMessageHandler.release();
 		glfwTerminate();
 		System.exit(status);
-	}
-
-	protected void init() {
-		if (info.title == null) info.title = "SuperBible6 Example";
-		info.setWindowWidth(800);
-		info.setWindowHeight(600);
-		if (LWJGLUtil.getPlatform()== LWJGLUtil.Platform.MACOSX) {
-			info.majorVersion = 3;
-			info.minorVersion = 2;
-		} else {
-			info.majorVersion = 4;
-			info.minorVersion = 3;
-		}
-		info.samples = 0;
-		info.flags.cursor = true;
-		info.flags.fullscreen = false;
-		info.flags.stereo = false;
-		info.flags.vsync = false;
-		if (DEBUG) {
-			info.flags.debug = true;
-		}
 	}
 
 	protected abstract void startup() throws Throwable;
@@ -457,11 +455,6 @@ public abstract class ApplicationBase {
 
 	}
 
-	public String getMediaPath() {
-		// requires trailing slash!
-		return "res/media/";
-//		return "../sb6code/bin/media/";
-	}
 
 	public void setVSync(boolean enable) {
         info.flags.vsync = enable;

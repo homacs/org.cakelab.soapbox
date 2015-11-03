@@ -19,6 +19,7 @@ import org.cakelab.oge.VisualObject;
 import org.cakelab.oge.app.ApplicationBase;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.utils.BufferedMatrix4f;
+import org.cakelab.soapbox.testscene.TestRoom;
 import org.cakelab.soapbox.testscene.coords.CoordPlaneScene;
 import org.lwjgl.glfw.GLFW;
 
@@ -29,7 +30,7 @@ public class SoapBox extends ApplicationBase {
 	private Player player;
 	private Scene scene;
 
-	public SoapBox() {
+	public SoapBox() throws GLException {
 		super("Soapbox");
 		info.flags.fullscreen = true;
 		info.flags.vsync = false;
@@ -37,17 +38,10 @@ public class SoapBox extends ApplicationBase {
 	}
 	
 	@Override
-	protected void init() {
-		super.init();
-		
-	}
-
-
-	@Override
 	protected void startup() throws GLException, IOException {
 		setVirtualCursor(true);
-//		scene = new TestRoom();
-		scene = new CoordPlaneScene();
+		scene = new TestRoom();
+		
 		// TODO: not for transparent objects
 		glEnable(GL_CULL_FACE);
 		// front face counter clockwise
@@ -92,7 +86,7 @@ public class SoapBox extends ApplicationBase {
 			throws Throwable {
 	    if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_RELEASE)
 	    {
-	    	float move = 10f * ((mods == GLFW.GLFW_MOD_SHIFT) ? 2.0f : 1.0f);
+	    	float move = 10f;
 	    	if (action == GLFW.GLFW_RELEASE) move = -move;
 	        switch (key)
 	        {
@@ -108,9 +102,13 @@ public class SoapBox extends ApplicationBase {
 	            	break;
 	            case 'F': player.addTranslationVelocity(0f, -move, 0f);
 	                break;
-	            case 'Q': player.addRotationVelocity(0f, 0f, move);
+	            case 'Q': player.addRotationVelocity(0f, 0f, move*5);
 	            	break;
-	            case 'E': player.addRotationVelocity(0f, 0f, -move);
+	            case 'E': player.addRotationVelocity(0f, 0f, -move*5);
+	            	break;
+	            case GLFW.GLFW_KEY_LEFT_SHIFT:
+	            case GLFW.GLFW_KEY_RIGHT_SHIFT:
+	            	player.setVelocityMultiplyier(((action == GLFW.GLFW_PRESS) ? 2.0f : 1.0f));
 	            	break;
 	            default:
 	                break;
@@ -121,11 +119,8 @@ public class SoapBox extends ApplicationBase {
 
 	@Override
 	protected synchronized void onMouseMove(double xpos, double ypos, double xmov, double ymov) {
-		double f = 0.05;
-		player.addRotation((float)(ymov * -f), (float)(xmov * -f), 0);
-		// TODO: disabled until fixed
-//		player.addPitchAbsolute((float)(ymov * -f));
-//		player.addYawAbsolute((float)(xmov * -f));
+		double f = 0.03;
+		player.addRotation((float)(ymov * f), (float)(xmov * -f), 0);
 	}
 
 	@Override
@@ -135,8 +130,9 @@ public class SoapBox extends ApplicationBase {
 		projection.setPerspective(50.0f, aspectRatio, 0.1f, 1000.0f);
 	}
 
-	public static void main(String[] args) {
-		SoapBox app = new SoapBox();
+	public static void main(String[] args) throws GLException {
+		SoapBox app;
+		app = new SoapBox();
 		app.run();
 	}
 

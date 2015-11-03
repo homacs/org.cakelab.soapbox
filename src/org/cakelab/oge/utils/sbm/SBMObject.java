@@ -16,6 +16,7 @@ import java.nio.ByteBuffer;
 import org.cakelab.appbase.buffer.ByteArrayList;
 import org.cakelab.oge.GraphicContext;
 import org.cakelab.oge.app.ApplicationBase;
+import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.utils.BufferUtilsHelper;
 
 import static org.cakelab.oge.utils.BufferUtilsHelper.*;
@@ -466,7 +467,7 @@ public class SBMObject {
 	
 	// TEST APPLICATION
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, GLException {
 		// small test
 		if (SB6M_MAGIC != 0x4d364253) {
 			err("SB6M_FOURCC not working correct");

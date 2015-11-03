@@ -1,6 +1,5 @@
 package org.cakelab.oge;
 
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -23,51 +22,36 @@ public class Pose {
 	 */
 	private float z = 0;
 	
-//	/** 
-//	 * counter clockwise rotation [deg] around y
-//	 */
-//	private float yaw = 0;
-//	/** 
-//	 * counter clockwise rotation [deg] around x
-//	 */
-//	private float pitch = 0;
-//	/** 
-//	 * counter clockwise rotation [deg] around z
-//	 */
-//	private float roll = 0;
+	private Quaternionf tempQuat = new Quaternionf();
 
-	private Quaternionf quaternion = new Quaternionf();
-
-	/**
-	 * Axis to apply pitch.
-	 * It's the local X axis.
-	 * Orthogonally to eye and up
-	 */
-	private Vector3f pitchAxis = new Vector3f(1, 0, 0);
 	/**
 	 * Axis to apply Yaw.
 	 * It's the local Y axis.
 	 * Also the Up axis.
 	 */
-	private Vector3f yawAxis = new Vector3f(0, 1, 0);
+	private Vector3f dirUp = new Vector3f();
 	/**
 	 * Axis to apply roll.
 	 * It's the local Z axis.
 	 * Inverse to eye.
 	 */
-	private Vector3f rollAxis = new Vector3f(0, 0, 1);
+	private Vector3f dirForward = new Vector3f();
 
 
-	private Quaternionf tmpQuaternion = new Quaternionf();
-	private Matrix4f tmpMatrix = new Matrix4f();
-
-	
-	public Pose() {	}
+	public Pose() {	
+		resetRotation();
+	}
 	
 	public Pose(float x, float y, float z) {
+		this();
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+
+	public Pose(float x, float y, float z, float pitch, float yaw, float roll) {
+		this(x,y,z);
+		setRotation(pitch, yaw, roll);
 	}
 
 	public float getX() {
@@ -98,91 +82,55 @@ public class Pose {
 	}
 
 	
+
+	public void apply(Quaternionf rotation) {
+		rotation.transform(dirUp);
+		rotation.transform(dirForward);
+	}
 	
-	
+	private Vector3f getPitchAxis() {
+		return new Vector3f(dirForward).cross(dirUp);
+	}
+
 	public void addPitch(float pitch) {
 		modified = true;
-		Quaternionf rotation = tmpQuaternion .identity().rotateAxis(pitch, pitchAxis);
-		rotation.transform(yawAxis);
-		rotation.transform(pitchAxis);
-		rotation.transform(rollAxis);
+		Quaternionf rotation = tempQuat.identity().rotateAxis(pitch, getPitchAxis());
+		apply(rotation);
 	}
-	
-	public void addPitchAbsolute(float pitch) {
-		Quaternionf rotation = this.getRotationQuaternion();
-		Quaternionf inverse = this.getRotationQuaternion().invert();
-//		rotation.rotateX(-pitch).mul(inverse);
-		rotation = inverse.rotateX(-pitch).mul(rotation);
-		rotation.transform(yawAxis);
-		rotation.transform(pitchAxis);
-		rotation.transform(rollAxis);
-	}
-
-	public void addYawAbsolute(float yaw) {
-		Quaternionf rotation = this.getRotationQuaternion();
-		Quaternionf inverse = this.getRotationQuaternion().invert();
-//		rotation.rotateY(yaw).mul(inverse);
-		rotation = inverse.rotateY(yaw).mul(rotation);
-		rotation.transform(yawAxis);
-		rotation.transform(pitchAxis);
-		rotation.transform(rollAxis);
-	}
-
 
 	public void addYaw(float yaw) {
 		modified = true;
-		Quaternionf rotation = tmpQuaternion .identity().rotateAxis(yaw, yawAxis);
-		rotation.transform(yawAxis);
-		rotation.transform(pitchAxis);
-		rotation.transform(rollAxis);
+		Quaternionf rotation = tempQuat.identity().rotateAxis(yaw, dirUp);
+		apply(rotation);
 	}
+	
 	
 	public void addRoll(float roll) {
 		modified = true;
-		Quaternionf rotation = tmpQuaternion .identity().rotateAxis(roll, rollAxis);
-		rotation.transform(yawAxis);
-		rotation.transform(pitchAxis);
-		rotation.transform(rollAxis);
+		Quaternionf rotation = tempQuat.identity().rotateAxis(roll, dirForward);
+		apply(rotation);
 	}
 	
 	public void addRotation(float pitch, float yaw, float roll) {
 		modified = true;
-		Quaternionf rotation = tmpQuaternion.identity()
-				.rotateAxis(yaw, yawAxis)
-				.rotateAxis(pitch, pitchAxis)
-				.rotateAxis(roll, rollAxis)
+		Quaternionf rotation = tempQuat.identity()
+				.rotateAxis(yaw, dirUp)
+				.rotateAxis(pitch, getPitchAxis())
+				.rotateAxis(roll, dirForward)
 				;
-		rotation.transform(yawAxis);
-		rotation.transform(pitchAxis);
-		rotation.transform(rollAxis);
+		apply(rotation);
 	}
 	
-//	public float getYaw() {
-//		return yaw;
-//	}
-//
-//	public void setYaw(float yaw) {
-//		modified = true;
-//		this.yaw = yaw;
-//	}
-
-//	public float getPitch() {
-//		return pitch;
-//	}
-//
-//	public void setPitch(float pitch) {
-//		modified = true;
-//		this.pitch = pitch;
-//	}
-//
-//	public float getRoll() {
-//		return roll;
-//	}
-//
-//	public void setRoll(float roll) {
-//		modified = true;
-//		this.roll = roll;
-//	}
+	public void setRotation(float pitch, float yaw, float roll) {
+		modified = true;
+		resetRotation();
+		addRotation(pitch, yaw, roll);
+	}
+	
+	public void resetRotation() {
+		dirUp.set(0, 1, 0);
+		dirForward.set(0, 0, 1);
+	}
 
 	public boolean isPoseModified() {
 		return modified;
@@ -193,6 +141,6 @@ public class Pose {
 	}
 
 	public Quaternionf getRotationQuaternion() {
-		return quaternion.identity().lookRotate(rollAxis, yawAxis).invert();
+		return tempQuat.identity().lookRotate(dirForward, dirUp).invert();
 	}
 }

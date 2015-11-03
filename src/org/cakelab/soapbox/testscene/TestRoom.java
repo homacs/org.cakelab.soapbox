@@ -13,6 +13,8 @@ import org.cakelab.soapbox.testscene.blenderRaw.BlenderCube;
 import org.cakelab.soapbox.testscene.blenderRaw.BlenderObject;
 import org.cakelab.soapbox.testscene.blenderRaw.BlenderRenderer;
 import org.cakelab.soapbox.testscene.blenderRaw.resources.Resources;
+import org.cakelab.soapbox.testscene.coords.CoordPlane;
+import org.cakelab.soapbox.testscene.coords.CoordPlaneRenderer;
 import org.cakelab.soapbox.testscene.cube.Cube;
 import org.cakelab.soapbox.testscene.cube.CubeRenderer;
 
@@ -23,6 +25,10 @@ public class TestRoom extends Scene {
 		Registry.registerRenderer(Torus.class, new TorusRenderer());
 		BlenderRenderer blenderRenderer = new BlenderRenderer();
 		Registry.registerRenderer(BlenderObject.class, blenderRenderer);
+		Registry.registerRenderer(CoordPlane.class, new CoordPlaneRenderer());
+
+		
+		add(new CoordPlane());
 		
 		for (int i = 0; i < 24; i++) {
 			add(new Cube(i));
@@ -35,5 +41,6 @@ public class TestRoom extends Scene {
 		blenderRenderer.registerMesh(cubeMesh);
 
 		add(new BlenderCube(10f, 0f, 0f, cubeMesh));
+		
 	}
 }

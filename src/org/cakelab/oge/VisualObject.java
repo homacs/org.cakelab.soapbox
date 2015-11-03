@@ -21,8 +21,6 @@ public abstract class VisualObject extends Pose {
 
 	private void applyModifications() {
 		if (isPoseModified()) {
-			// TODO: issue with roll in model view transformation
-			// maybe use lookat matrix instead.
 			Quaternionf qRotate = getRotationQuaternion();
 			worldTransform
 				.identity()
@@ -30,13 +28,6 @@ public abstract class VisualObject extends Pose {
 				.rotate(qRotate)
 			;
 			
-//			worldTransform
-//				.identity()
-//				.translate(getX(), getY(), getZ())
-//				.rotate(getYaw(), 0.0f, 1.0f, 0.0f)
-//				.rotate(getPitch(), 1.0f, 0.0f, 0.0f)
-//				.rotate(getRoll(), 0.0f, 0.0f, 1.0f)
-//			;
 			if (modelTransform != null) {
 				worldTransform.mul(modelTransform);
 			}

@@ -17,9 +17,7 @@ public class Cube extends VisualObject implements DynamicObject {
 
 		float f = (float) i + (float) currentTime * 0.3f;
 		
-		// TODO: disabled until fixed
-//		setYaw((float) currentTime * 45.0f);
-//		setPitch((float) currentTime * 21.0f);
+		setRotation((float) currentTime * 21.0f, (float) currentTime * 45.0f, 0f);
 		
 		setX((float) Math.sin(2.1f * f) * 2.0f);
 		setY((float) Math.cos(1.7f * f) * 2.0f);

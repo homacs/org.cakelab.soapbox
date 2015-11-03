@@ -1,6 +1,7 @@
 package org.cakelab.soapbox;
 
 import org.cakelab.oge.Camera;
+import org.cakelab.oge.HeadCamera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -10,9 +11,10 @@ public class Player {
 	Vector3f translationVelocity = new Vector3f();
 	Vector3f rotationVelocity = new Vector3f();
 	private double lastTime = -1;
+	private float velocityMultiplier = 1.0f;
 	
 	public Player() {
-		camera = new Camera(0f, 0f, +6f, 0f, 0f, 0f);
+		camera = new HeadCamera(0f, 1.75f, +6f, 0f, 0f, 0f);
 	}
 
 	public void moveForward(float amount) {
@@ -40,7 +42,6 @@ public class Player {
 	}
 
 	private void moveAlong(float x, float y, float z) {
-		System.out.println("move: " + x + ", " + y + ", " + z);
 
 		Vector4f direction = new Vector4f(x, y, z, 1);
 		
@@ -48,20 +49,13 @@ public class Player {
 		
 		direction.mul(orientation);
 		
-		System.out.println("dir: " + direction.x + ", " + direction.y + ", " + direction.z);
 		Vector4f pos = new Vector4f(camera.getX(), camera.getY(), camera.getZ(), 1).add(direction);
 		camera.setX(pos.x);
 		camera.setY(pos.y);
 		camera.setZ(pos.z);
 		
-		dumpCamera();
 	}
 
-
-	private void dumpCamera() {
-		System.out.println("cam.pos: " + camera.getX() + ", " + camera.getY() + ", " + camera.getZ());
-//		System.out.println("cam.ori: " + camera.getYaw() + "°, " + camera.getPitch() + "°, " + camera.getRoll() + "°");
-	}
 
 	/**
 	 * +degree: turn left
@@ -70,7 +64,6 @@ public class Player {
 	 */
 	public void addYaw(float degree) {
 		camera.addYaw(degree);
-		dumpCamera();
 	}
 	
 	
@@ -81,13 +74,8 @@ public class Player {
 	 */
 	public void addPitch(float degree) {
 		camera.addPitch(degree);
-		dumpCamera();
 	}
 	
-//	public void setRoll(float degree) {
-//		camera.setRoll(degree);
-//	}
-
 	/**
 	 * +degree: roll counterclockwise
 	 * -degree: roll clockwise
@@ -95,15 +83,9 @@ public class Player {
 	 */
 	public void addRoll(float degree) {
 		camera.addRoll(degree);
-		dumpCamera();
 	}
 	
-//	private float addDegree(float degree, float amount) {
-//		degree += amount;
-//		degree = degree%360;
-//		return degree;
-//	}
-
+	
 	public void addTranslationVelocity(float x, float y, float z) {
 		translationVelocity.add(x, y, z);
 	}
@@ -116,22 +98,20 @@ public class Player {
 		if (lastTime < 0) lastTime = currentTime;
 		float time = (float) (currentTime - lastTime);
 		lastTime  = currentTime;
-		moveAlong(translationVelocity.x*time, translationVelocity.y*time, translationVelocity.z*time);
-		addYaw(rotationVelocity.x);
-		addPitch(rotationVelocity.y);
-		addRoll(rotationVelocity.z);
+		moveAlong(translationVelocity.x * time * velocityMultiplier, 
+				translationVelocity.y * time * velocityMultiplier, 
+				translationVelocity.z * time * velocityMultiplier);
+		addYaw(rotationVelocity.x * time * velocityMultiplier * 3);
+		addPitch(rotationVelocity.y * time * velocityMultiplier * 3);
+		addRoll(rotationVelocity.z * time * velocityMultiplier * 3);
 	}
 
 	public void addRotation(float pitch, float yaw, int roll) {
 		camera.addRotation(pitch, yaw, roll);
 	}
 
-	public void addPitchAbsolute(float pitch) {
-		camera.addPitchAbsolute(pitch);
-	}
-
-	public void addYawAbsolute(float yaw) {
-		camera.addYawAbsolute(yaw);
+	public void setVelocityMultiplyier(float f) {
+		velocityMultiplier = f;
 	}
 
 

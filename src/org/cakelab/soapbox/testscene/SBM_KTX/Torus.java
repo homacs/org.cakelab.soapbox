@@ -31,9 +31,7 @@ public class Torus extends VisualObject implements DynamicObject {
 			nextTime = currentTime + 2;
 		}
 		
-		// TODO: disabled until fixed
-//		setYaw((float)currentTime * 19.3f);
-//		setRoll((float)currentTime * 21.1f);
+		setRotation(0f, (float)currentTime * 19.3f, (float)currentTime * 21.1f);
 	}
 
 }
