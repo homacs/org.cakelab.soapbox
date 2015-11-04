@@ -1,5 +1,6 @@
 package org.cakelab.soapbox.testscene.blenderRaw;
 
+import org.cakelab.oge.texture.Texture;
 import org.cakelab.soapbox.DynamicObject;
 import org.cakelab.soapbox.model.TriangleMesh;
 
@@ -9,12 +10,12 @@ public class BlenderCube extends BlenderObject implements DynamicObject {
 	private float yOff;
 	private float zOff;
 
-	public BlenderCube(TriangleMesh cubeMesh) {
-		super(cubeMesh);
+	public BlenderCube(TriangleMesh cubeMesh, Texture texture) {
+		super(cubeMesh, texture);
 	}
 
-	public BlenderCube(float x, float y, float z, TriangleMesh cubeMesh) {
-		super(cubeMesh);
+	public BlenderCube(float x, float y, float z, TriangleMesh cubeMesh, Texture texture) {
+		super(cubeMesh, texture);
 		xOff = x;
 		yOff = y;
 		zOff = z;

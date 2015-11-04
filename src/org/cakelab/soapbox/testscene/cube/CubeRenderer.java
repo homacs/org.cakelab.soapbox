@@ -29,6 +29,7 @@ import org.lwjgl.system.MemoryUtil;
 public class CubeRenderer extends Renderer {
 	private int vao;
 	private int vertex_buffer;
+	private TriangleMesh mesh;
 
 	public CubeRenderer() throws GLException {
 		String vs_source = "#version 410 core                                                  \n"
@@ -73,7 +74,7 @@ public class CubeRenderer extends Renderer {
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
-		TriangleMesh mesh = new TriangleMesh(Mesh.FrontFaceVertexOrder.Clockwise, 3, new float[] {
+		mesh = new TriangleMesh(Mesh.FrontFaceVertexOrder.Clockwise, 3, new float[] {
 	            -0.25f,  0.25f, -0.25f,
 	            -0.25f, -0.25f, -0.25f,
 	             0.25f, -0.25f, -0.25f,
@@ -143,11 +144,9 @@ public class CubeRenderer extends Renderer {
 		super.prepare(context, currentTime);
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, MemoryUtil.NULL); 
-        glEnableVertexAttribArray(0);
 	}
 
 	public void draw(double currentTime, VisualObject cube) {
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, mesh.getNumVertices());
 	}
 }

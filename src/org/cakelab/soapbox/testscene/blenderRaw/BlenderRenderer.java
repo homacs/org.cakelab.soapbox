@@ -29,7 +29,7 @@ import org.cakelab.soapbox.model.TriangleMesh;
 import org.lwjgl.system.MemoryUtil;
 
 public class BlenderRenderer extends Renderer {
-	
+	// TODO: don't associate the mesh data with the object (waste of memory)
 	public class RenderData {
 
 		public int vao;
@@ -42,7 +42,7 @@ public class BlenderRenderer extends Renderer {
 			if (mesh instanceof TriangleMesh) {
 				drawMethod = GL_TRIANGLES;
 				vectorSize = 3;
-				numVectors = mesh.getNumElements();
+				numVectors = mesh.getNumVertices();
 			}
 		}
 

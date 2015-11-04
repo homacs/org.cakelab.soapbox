@@ -12,11 +12,13 @@ import org.cakelab.soapbox.testscene.SBM_KTX.TorusRenderer;
 import org.cakelab.soapbox.testscene.blenderRaw.BlenderCube;
 import org.cakelab.soapbox.testscene.blenderRaw.BlenderObject;
 import org.cakelab.soapbox.testscene.blenderRaw.BlenderRenderer;
-import org.cakelab.soapbox.testscene.blenderRaw.resources.Resources;
+import org.cakelab.soapbox.testscene.blenderRaw.resources.BlenderResources;
 import org.cakelab.soapbox.testscene.coords.CoordPlane;
 import org.cakelab.soapbox.testscene.coords.CoordPlaneRenderer;
 import org.cakelab.soapbox.testscene.cube.Cube;
 import org.cakelab.soapbox.testscene.cube.CubeRenderer;
+import org.cakelab.soapbox.testscene.hud.HudObject;
+import org.cakelab.soapbox.testscene.hud.HudRenderer;
 
 public class TestRoom extends Scene {
 	public TestRoom() throws GLException, IOException {
@@ -26,9 +28,13 @@ public class TestRoom extends Scene {
 		BlenderRenderer blenderRenderer = new BlenderRenderer();
 		Registry.registerRenderer(BlenderObject.class, blenderRenderer);
 		Registry.registerRenderer(CoordPlane.class, new CoordPlaneRenderer());
+		Registry.registerRenderer(HudObject.class, new HudRenderer());
 
 		
 		add(new CoordPlane());
+
+		add(new HudObject());
+		
 		
 		for (int i = 0; i < 24; i++) {
 			add(new Cube(i));
@@ -36,11 +42,14 @@ public class TestRoom extends Scene {
 
 		add(new Torus(5f, 0f, 0f));
 
-		BlenderRaw rawCubeMesh = new BlenderRaw(BlenderRaw.Format.TRIANGLES, Resources.asInputStream(Resources.CUBE_TRIANGLES));
+		BlenderRaw rawCubeMesh = new BlenderRaw(BlenderRaw.Format.TRIANGLES, BlenderResources.asInputStream(BlenderResources.CUBE_TRIANGLES));
 		TriangleMesh cubeMesh = rawCubeMesh.getTriangleMesh();
 		blenderRenderer.registerMesh(cubeMesh);
 
-		add(new BlenderCube(10f, 0f, 0f, cubeMesh));
+		add(new BlenderCube(10f, 0f, 0f, cubeMesh, null));
+		
+		
+		
 		
 	}
 }

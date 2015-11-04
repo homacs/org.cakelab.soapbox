@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.cakelab.appbase.buffer.ByteArrayList;
+import org.cakelab.oge.texture.Texture;
 import org.cakelab.oge.utils.BufferUtilsHelper;
 
 
@@ -140,20 +141,19 @@ public class KTX {
 		return stride * h.pixelheight;
 	}
 
-	public static int load(String filename) throws IOException {
+	public static Texture load(String filename) throws IOException {
 		return load(filename, 0);
 	}
 
-	public static int load(InputStream in) throws IOException {
+	public static Texture load(InputStream in) throws IOException {
 		return load(in, 0);
 	}
 
 	
-	public static int load(String filename, int tex) throws IOException {
+	public static Texture load(String filename, int tex) throws IOException {
 		return load(new FileInputStream(filename), tex);
 	}
-	public static int load(InputStream fp, int tex) throws IOException {
-		int retval = 0;
+	public static Texture load(InputStream fp, int tex) throws IOException {
 		Header header = new Header();
 		byte[] data;
 		int target = GL_NONE;
@@ -234,7 +234,6 @@ public class KTX {
 			tex = glGenTextures();
 		}
 
-		glBindTexture(target, tex);
 
 		
 		//
@@ -250,6 +249,8 @@ public class KTX {
 		if (header.miplevels == 0) {
 			header.miplevels = 1;
 		}
+		
+		glBindTexture(target, tex);
 
 		switch (target) {
 		case GL_TEXTURE_1D:
@@ -348,9 +349,8 @@ public class KTX {
 			glGenerateMipmap(target);
 		}
 
-		retval = tex;
 
-		return retval;
+		return new Texture(target, tex);
 	}
 
 

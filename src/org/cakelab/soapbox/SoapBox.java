@@ -20,7 +20,7 @@ import org.cakelab.oge.app.ApplicationBase;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.utils.BufferedMatrix4f;
 import org.cakelab.soapbox.testscene.TestRoom;
-import org.cakelab.soapbox.testscene.coords.CoordPlaneScene;
+import org.cakelab.soapbox.testscene.hud.HudScene;
 import org.lwjgl.glfw.GLFW;
 
 public class SoapBox extends ApplicationBase {

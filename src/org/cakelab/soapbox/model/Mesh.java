@@ -3,6 +3,7 @@ package org.cakelab.soapbox.model;
 import java.nio.FloatBuffer;
 
 import org.cakelab.oge.utils.BufferUtilsHelper;
+import org.lwjgl.opengl.GL11;
 
 public class Mesh {
 	
@@ -37,8 +38,8 @@ public class Mesh {
 		}
 	}
 
-	public int getNumElements() {
-		return data.length;
+	public int getNumVertices() {
+		return data.length/vectorSize;
 	}
 
 	public FloatBuffer getFloatBuffer() {
@@ -66,7 +67,7 @@ public class Mesh {
 	protected float[] swapVertices(float[] dataIn) {
 		float[] dataOut = new float[dataIn.length];
 		int num_vertices = dataIn.length / vectorSize;
-		for (int p = 0; p < num_vertices; p += vectorSize) {
+		for (int p = 0; p < num_vertices; p += verticesPerPolygon) {
 			for (int vIn = 0, vOut = verticesPerPolygon-1; vIn < verticesPerPolygon; vIn++, vOut--) {
 				System.arraycopy(
 					dataIn, (p*vectorSize)+(vIn*vectorSize),
@@ -76,6 +77,22 @@ public class Mesh {
 			}
 		}
 		return dataOut;
+	}
+
+	/** Size of a vertex in bytes */
+	public int getStrideSize() {
+		return getElemSize() * vectorSize;
+	}
+
+	/** 
+	 * Size of the data type of elements in bytes. 
+	 */
+	public int getElemSize() {
+		return BufferUtilsHelper.SIZEOF_FLOAT;
+	}
+
+	public int getElemType() {
+		return GL11.GL_FLOAT;
 	}
 
 }
