@@ -35,7 +35,11 @@ public class BlenderRaw {
 		}
 		
 	}
-	
+	/**
+	 * Reads triangles and converts according to the requested {@link Mesh.FrontFaceVertexOrder}.
+	 * @param in
+	 * @throws IOException
+	 */
 	private void readTriangles(InputStream in) throws IOException {
 
 		String text = FileSystem.readText(in, Charset.forName("ASCII"));
@@ -61,7 +65,7 @@ public class BlenderRaw {
 			
 		}
 		
-		mesh = new TriangleMesh(Mesh.FrontFace.CounterClockwise, 3, data);
+		mesh = new TriangleMesh(Mesh.FrontFaceVertexOrder.CounterClockwise, 3, data);
 	}
 
 	public Mesh getMesh() {

@@ -73,7 +73,7 @@ public class CubeRenderer extends Renderer {
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
-		TriangleMesh mesh = new TriangleMesh(Mesh.FrontFace.Clockwise, 3, new float[] {
+		TriangleMesh mesh = new TriangleMesh(Mesh.FrontFaceVertexOrder.Clockwise, 3, new float[] {
 	            -0.25f,  0.25f, -0.25f,
 	            -0.25f, -0.25f, -0.25f,
 	             0.25f, -0.25f, -0.25f,
