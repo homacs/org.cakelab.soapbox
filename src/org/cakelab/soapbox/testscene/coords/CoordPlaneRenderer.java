@@ -43,8 +43,7 @@ public class CoordPlaneRenderer extends Renderer {
 	
 	
 	@Override
-	public void prepare(GraphicContext context, double currentTime) {
-		super.prepare(context, currentTime);
+	public void prepareRenderPass(GraphicContext context, double currentTime) {
 		glBindVertexArray(vao);
 	}
 

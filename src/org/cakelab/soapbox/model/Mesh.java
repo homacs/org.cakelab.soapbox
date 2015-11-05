@@ -10,6 +10,7 @@ public class Mesh {
 	private float[] data;
 	private int vectorSize;
 	private int verticesPerPolygon;
+	private int glDrawingMethod;
 
 	
 	/**
@@ -23,9 +24,10 @@ public class Mesh {
 		Clockwise
 	}
 	
-	public Mesh(FrontFaceVertexOrder frontFace, int verticesPerPolygon, int vectorSize,
+	public Mesh(int glDrawingMethod, FrontFaceVertexOrder frontFace, int vectorSize,
 			float[] dataIn) {
-		this.verticesPerPolygon = verticesPerPolygon;
+		this.setGlDrawingMethod(glDrawingMethod);
+		this.verticesPerPolygon = calcVerticesPerPolygone(glDrawingMethod);
 		assert(vectorSize >= 3);
 		this.vectorSize = vectorSize;
 		switch(frontFace) {
@@ -33,8 +35,17 @@ public class Mesh {
 			data = dataIn;
 			break;
 		case Clockwise:
-			data = swapVertices(dataIn);
+			data = swapVertexOrder(dataIn);
 			break;
+		}
+	}
+
+	private int calcVerticesPerPolygone(int glDrawingMethod) {
+		switch(glDrawingMethod) {
+		case GL11.GL_TRIANGLES:
+			return 3;
+		default:
+			throw new Error("not implemented");
 		}
 	}
 
@@ -64,7 +75,7 @@ public class Mesh {
 	}
 
 
-	protected float[] swapVertices(float[] dataIn) {
+	protected float[] swapVertexOrder(float[] dataIn) {
 		float[] dataOut = new float[dataIn.length];
 		int num_vertices = dataIn.length / vectorSize;
 		for (int p = 0; p < num_vertices; p += verticesPerPolygon) {
@@ -93,6 +104,14 @@ public class Mesh {
 
 	public int getElemType() {
 		return GL11.GL_FLOAT;
+	}
+
+	public int getGlDrawingMethod() {
+		return glDrawingMethod;
+	}
+
+	public void setGlDrawingMethod(int glDrawingMethod) {
+		this.glDrawingMethod = glDrawingMethod;
 	}
 
 }

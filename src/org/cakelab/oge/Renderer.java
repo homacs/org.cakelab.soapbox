@@ -33,16 +33,27 @@ public abstract class Renderer {
 		return u_projectionTransform;
 	}
 
-	
+	/**
+	 * This method is supposed to contain code that needs to be executed
+	 * exactly once per render pass. That means in case there are multiple
+	 * objects to be rendered by a particular renderer, contents of this 
+	 * method is executed once while the {@link #render(GraphicContext, double, VisualObject)}
+	 * is executed for each object.
+	 * 
+	 * This method calls prepareRenderPass exactly once for each render pass.
+	 */
 	public void prepare(GraphicContext context, double currentTime) {
 		if (preparedLast != currentTime) {
 			glUseProgram(shaderProgram.getProgramId());
 			glUniformMatrix4(u_projectionTransform, false, context.getProjectionTransform().getFloatBuffer());
+			prepareRenderPass(context, currentTime);
 			preparedLast = currentTime;
 		}
 	}
 
 	
+	protected abstract void prepareRenderPass(GraphicContext context, double currentTime);
+
 	public void render(GraphicContext context, double currentTime, VisualObject vobj) {
 		Camera camera = context.getActiveCamera();
 		modelViewTransform.identity()

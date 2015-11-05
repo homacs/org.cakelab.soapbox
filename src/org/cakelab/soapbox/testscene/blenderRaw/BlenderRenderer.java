@@ -1,58 +1,19 @@
 package org.cakelab.soapbox.testscene.blenderRaw;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-
-import java.util.HashMap;
 
 import org.cakelab.oge.GraphicContext;
+import org.cakelab.oge.RenderAssets;
 import org.cakelab.oge.Renderer;
 import org.cakelab.oge.VisualObject;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.shader.VertexShader;
-import org.cakelab.soapbox.model.Mesh;
-import org.cakelab.soapbox.model.TriangleMesh;
-import org.lwjgl.system.MemoryUtil;
 
 public class BlenderRenderer extends Renderer {
-	// TODO: don't associate the mesh data with the object (waste of memory)
-	public class RenderData {
-
-		public int vao;
-		public int vertex_buffer;
-		private int numVectors;
-		private int drawMethod;
-		public int vectorSize;
-
-		public RenderData(TriangleMesh mesh) {
-			if (mesh instanceof TriangleMesh) {
-				drawMethod = GL_TRIANGLES;
-				vectorSize = 3;
-				numVectors = mesh.getNumVertices();
-			}
-		}
-
-	}
-
 	private static BlenderRenderer SINGLETON;
 
-	private HashMap<Mesh, RenderData> renderData = new HashMap<Mesh, RenderData>();
-	
-	
 	public static BlenderRenderer getInstance() {
 		return SINGLETON ;
 	}
@@ -102,45 +63,17 @@ public class BlenderRenderer extends Renderer {
 		SINGLETON = this;
 	}
 
-	public void delete() {
-		for (RenderData data : renderData.values()) {
-			glDeleteBuffers(data.vertex_buffer);
-			glDeleteVertexArrays(data.vao);
-		}
-		super.delete();
-	}
-
-	
 	@Override
-	public void prepare(GraphicContext context, double currentTime) {
-		super.prepare(context, currentTime);
-		
+	public void prepareRenderPass(GraphicContext context, double currentTime) {
 	}
 
 	public void draw(double currentTime, VisualObject vobj) {
 		BlenderObject bobj = (BlenderObject) vobj;
-		RenderData data = renderData.get(bobj.getMesh());
-		glBindVertexArray(data.vao);
-		glBindBuffer(GL_ARRAY_BUFFER, data.vertex_buffer);
-		glVertexAttribPointer(0, data.vectorSize, GL_FLOAT, false, 0, MemoryUtil.NULL); 
-        glEnableVertexAttribArray(0);
-		glDrawArrays(data.drawMethod, 0, data.numVectors);
+		RenderAssets assets = bobj.getRenderAssets();
+		assets.bind();
+		glDrawArrays(assets.getDrawingMethod(), 0, assets.getNumVertices());
 	}
 	
-	public void registerMesh(TriangleMesh mesh) {
-		if (!renderData.containsKey(mesh)) {
-			RenderData data = new RenderData(mesh);
-			data.vao = glGenVertexArrays();
-			glBindVertexArray(data.vao);
-			data.vertex_buffer = glGenBuffers();
-			glBindBuffer(GL_ARRAY_BUFFER, data.vertex_buffer);
-			glBufferData(GL_ARRAY_BUFFER, mesh.getFloatBuffer(), GL_STATIC_DRAW);
-
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, MemoryUtil.NULL); 
-	        glEnableVertexAttribArray(0);
-	        renderData.put(mesh, data);
-		}
-	}
 
 
 }

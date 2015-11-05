@@ -1,31 +1,22 @@
 package org.cakelab.soapbox.testscene.blenderRaw;
 
+import org.cakelab.oge.RenderAssets;
 import org.cakelab.oge.VisualObject;
-import org.cakelab.oge.texture.Texture;
-import org.cakelab.soapbox.model.Mesh;
-import org.cakelab.soapbox.model.TriangleMesh;
 
 public abstract class BlenderObject extends VisualObject {
 
-	private TriangleMesh triangleMesh;
-	private Texture texture;
+	private RenderAssets assets;
 
-	public BlenderObject(TriangleMesh triangleMesh, Texture texture) {
-		this.triangleMesh = triangleMesh;
-		this.texture = texture;
+	public BlenderObject(RenderAssets assets) {
+		this.assets = assets;
 	}
 
-	public BlenderObject(TriangleMesh cubeMesh, Texture texture, float x, float y, float z) {
+	public BlenderObject(RenderAssets assets, float x, float y, float z) {
 		super(x,y,z);
-		this.triangleMesh = cubeMesh;
-		this.texture = texture;
+		this.assets = assets;
 	}
 
-	public Mesh getMesh() {
-		return triangleMesh;
-	}
-	
-	public Texture getTexture() {
-		return texture;
+	public RenderAssets getRenderAssets() {
+		return assets;
 	}
 }

@@ -17,21 +17,23 @@ import org.cakelab.soapbox.model.TriangleMesh;
 public class BlenderRaw {
 	public static enum Format {
 		TRIANGLES,
+		/** 
+		 * This is an older format, which is no longer supported by
+		 * blender, opengl. Thus, we don't support it either.
+		 * @deprecated
+		 */
 		QUADS
 	}
 
 	private TriangleMesh mesh;
-	private Format format;
 	
 	public BlenderRaw(Format format, InputStream in) throws IOException {
-		
-		this.format = format;
 		switch(format) {
 		case TRIANGLES:
 			readTriangles(in);
 			break;
 		case QUADS:
-			throw new Error("not implemented");
+			throw new Error("QUADS not supported");
 		}
 		
 	}
@@ -68,16 +70,8 @@ public class BlenderRaw {
 		mesh = new TriangleMesh(Mesh.FrontFaceVertexOrder.CounterClockwise, 3, data);
 	}
 
-	public Mesh getMesh() {
-		return mesh;
-	}
-
 	public TriangleMesh getTriangleMesh() {
-		if (format.equals(Format.TRIANGLES)) {
-			return mesh;
-		} else {
-			throw new Error("not implemented");
-		}
+		return mesh;
 	}
 	
 	

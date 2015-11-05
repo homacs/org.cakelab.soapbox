@@ -3,6 +3,7 @@ package org.cakelab.soapbox.testscene.blenderRaw;
 import java.io.IOException;
 
 import org.cakelab.oge.Registry;
+import org.cakelab.oge.RenderAssets;
 import org.cakelab.oge.Scene;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.texture.ImageIOTexture;
@@ -21,7 +22,7 @@ public class BlenderScene extends Scene {
 
 		BlenderRaw rawCubeMesh = new BlenderRaw(BlenderRaw.Format.TRIANGLES, BlenderResources.asInputStream(BlenderResources.CUBE_TRIANGLES));
 		TriangleMesh cubeMesh = rawCubeMesh.getTriangleMesh();
-		renderer.registerMesh(cubeMesh);
+		RenderAssets cubeAssets = new RenderAssets(cubeMesh);
 		
 		int pixelFormat = GL11.GL_RGBA;
 		boolean flipped = true;
@@ -29,7 +30,7 @@ public class BlenderScene extends Scene {
 		Texture cubeTexture = new ImageIOTexture(BlenderResources.asImage(BlenderResources.CUBE_TEXTURE), 
 				pixelFormat, flipped, forceAlpha, null, GL11.GL_NEAREST, GL11.GL_NEAREST);
 		
-		BlenderObject bobj = new BlenderCube(cubeMesh, cubeTexture);
+		BlenderObject bobj = new BlenderCube(cubeAssets);
 		
 		add(bobj);
 	}

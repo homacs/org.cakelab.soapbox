@@ -76,6 +76,7 @@ public class SoapBox extends ApplicationBase {
 			if (renderer == null) {
 				throw new Error("no renderer registered for " + vobj.getClass().getCanonicalName());
 			}
+			// TODO: sort objects by renderer?
 			renderer.prepare(context, currentTime);
 			renderer.render(context, currentTime, vobj);
 		}

@@ -62,9 +62,7 @@ public class TorusRenderer extends Renderer {
 	
 	
 	@Override
-	public void prepare(GraphicContext context, double currentTime) {
-        
-		super.prepare(context, currentTime);
+	public void prepareRenderPass(GraphicContext context, double currentTime) {
 	}
 
 	@Override
