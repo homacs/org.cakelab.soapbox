@@ -92,7 +92,6 @@ public class Shader {
 		glGetShader(shaderId, GL_COMPILE_STATUS, status);
 
 		if (status.get(0) != GL_TRUE) {
-			glDeleteShader(shaderId);
 			throwCompilerErrors();
 		}
 	}
