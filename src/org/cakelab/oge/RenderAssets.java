@@ -1,10 +1,9 @@
 package org.cakelab.oge;
 
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 
 import org.cakelab.oge.opengl.VertexArrayObject;
-import org.cakelab.soapbox.model.TriangleMesh;
+import org.cakelab.soapbox.model.Mesh;
 
 public class RenderAssets {
 
@@ -12,8 +11,8 @@ public class RenderAssets {
 	private int numVertices;
 	private int drawingMethod;
 
-	public RenderAssets(TriangleMesh mesh) {
-		setDrawingMethod(GL_TRIANGLES);
+	public RenderAssets(Mesh mesh) {
+		setDrawingMethod(mesh.getGlDrawingMethod());
 		setNumVertices(mesh.getNumVertices());
 		vao = new VertexArrayObject(mesh, 0, GL_STATIC_DRAW);
 	}

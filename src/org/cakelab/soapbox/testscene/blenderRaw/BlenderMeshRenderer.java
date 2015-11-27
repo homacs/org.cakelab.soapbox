@@ -11,16 +11,16 @@ import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.shader.VertexShader;
 
-public class BlenderRenderer extends Renderer {
-	private static BlenderRenderer SINGLETON;
+public class BlenderMeshRenderer extends Renderer {
+	private static BlenderMeshRenderer SINGLETON;
 
-	public static BlenderRenderer getInstance() {
+	public static BlenderMeshRenderer getInstance() {
 		return SINGLETON ;
 	}
 
 	
 	
-	public BlenderRenderer() throws GLException {
+	public BlenderMeshRenderer() throws GLException {
 		String vs_source = "#version 410 core                                                  \n"
 				+ "                                                                   \n"
 				+ "in vec4 position;                                                  \n"

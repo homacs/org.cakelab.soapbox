@@ -68,7 +68,7 @@ public class SoapBox extends ApplicationBase {
 			vobj.update(currentTime);
 		}
 		
-		context.setActiveCamera(player.camera);
+		context.setActiveCamera(player.getCamera());
 		context.setProjectionTransform(projection);
 
 		for (VisualObject vobj : scene.getVisualObjects()) {

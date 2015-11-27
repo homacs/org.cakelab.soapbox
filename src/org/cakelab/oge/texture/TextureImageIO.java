@@ -30,7 +30,7 @@ import java.util.Hashtable;
 import org.lwjgl.opengl.GL11;
 
 
-public class ImageIOTexture extends Texture {
+public class TextureImageIO extends Texture {
 	/** The colour model including alpha for the GL image */
     private static final ColorModel glAlphaColorModel = 
     		new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
@@ -73,7 +73,7 @@ public class ImageIOTexture extends Texture {
      * @param minFilter
      * @param magFilter
      */
-	public ImageIOTexture(BufferedImage image, int pixelFormat, boolean flipped, boolean forceAlpha, int[] transparent, int minFilter, int magFilter) {
+	public TextureImageIO(BufferedImage image, int pixelFormat, boolean flipped, boolean forceAlpha, int[] transparent, int minFilter, int magFilter) {
 		imageData = null; 
         WritableRaster raster;
         BufferedImage texImage;

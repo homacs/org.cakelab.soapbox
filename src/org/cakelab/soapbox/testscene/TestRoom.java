@@ -12,7 +12,7 @@ import org.cakelab.soapbox.testscene.SBM_KTX.Torus;
 import org.cakelab.soapbox.testscene.SBM_KTX.TorusRenderer;
 import org.cakelab.soapbox.testscene.blenderRaw.BlenderCube;
 import org.cakelab.soapbox.testscene.blenderRaw.BlenderObject;
-import org.cakelab.soapbox.testscene.blenderRaw.BlenderRenderer;
+import org.cakelab.soapbox.testscene.blenderRaw.BlenderMeshRenderer;
 import org.cakelab.soapbox.testscene.blenderRaw.resources.BlenderResources;
 import org.cakelab.soapbox.testscene.coords.CoordPlane;
 import org.cakelab.soapbox.testscene.coords.CoordPlaneRenderer;
@@ -26,7 +26,7 @@ public class TestRoom extends Scene {
 		
 		Registry.registerRenderer(Cube.class, new CubeRenderer());
 		Registry.registerRenderer(Torus.class, new TorusRenderer());
-		BlenderRenderer blenderRenderer = new BlenderRenderer();
+		BlenderMeshRenderer blenderRenderer = new BlenderMeshRenderer();
 		Registry.registerRenderer(BlenderObject.class, blenderRenderer);
 		Registry.registerRenderer(CoordPlane.class, new CoordPlaneRenderer());
 		Registry.registerRenderer(HudObject.class, new HudRenderer());

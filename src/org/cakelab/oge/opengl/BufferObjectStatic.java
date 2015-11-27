@@ -14,10 +14,12 @@ public class BufferObjectStatic {
 	private int vaoBufferIndex;
 	private int glElemType;
 	private int strideSize;
+	private int elemSize;
 
 	public BufferObjectStatic(VertexArrayObject vao, int vaoBufferIndex, Mesh mesh) {
 		this.vaoBufferIndex = vaoBufferIndex;
 		this.glElemType = mesh.getElemType();
+		elemSize = mesh.getElemSize();
 		strideSize = mesh.getStrideSize();
 		bufferObjectId = glGenBuffers();
 		bind();
@@ -38,6 +40,10 @@ public class BufferObjectStatic {
 
 	public void delete() {
 		glDeleteBuffers(bufferObjectId);
+	}
+
+	public int getElemSize() {
+		return elemSize;
 	}
 
 }

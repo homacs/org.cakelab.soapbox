@@ -7,10 +7,10 @@ import org.lwjgl.opengl.GL11;
 
 public class Mesh {
 	
-	private float[] data;
-	private int vectorSize;
-	private int verticesPerPolygon;
-	private int glDrawingMethod;
+	protected float[] data;
+	protected int vectorSize;
+	protected int verticesPerPolygon;
+	protected int glDrawingMethod;
 
 	
 	/**
@@ -44,6 +44,8 @@ public class Mesh {
 		switch(glDrawingMethod) {
 		case GL11.GL_TRIANGLES:
 			return 3;
+		case GL11.GL_QUADS:
+			return 4;
 		default:
 			throw new Error("not implemented");
 		}
@@ -113,5 +115,17 @@ public class Mesh {
 	public void setGlDrawingMethod(int glDrawingMethod) {
 		this.glDrawingMethod = glDrawingMethod;
 	}
+
+	
+	/**
+	 * Copies the v's vector from this mesh to the given position in target.
+	 * @param v
+	 * @param target
+	 * @param targetPos
+	 */
+	public void copyVector(int v, float[] target, int targetPos) {
+		System.arraycopy(this.data, v*vectorSize, target, targetPos, vectorSize);
+	}
+
 
 }

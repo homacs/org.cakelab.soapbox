@@ -10,12 +10,12 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import java.util.ArrayList;
 
 import org.cakelab.soapbox.model.Mesh;
-import org.lwjgl.system.MemoryUtil;
 
 public class VertexArrayObject {
 
 	private int vaoId;
 	private ArrayList<BufferObjectStatic> bufferObjects = new ArrayList<BufferObjectStatic>();
+	private BufferObjectStatic arrayBuffer;
 
 	public VertexArrayObject() {
 		vaoId = glGenVertexArrays();
@@ -43,23 +43,16 @@ public class VertexArrayObject {
 	 * </ul></p>
 	 *
 	 * @param mesh data to be submitted to the vertex buffer.
-	 * @param glAttribIndex The attribute index to be used for the mesh data.
+	 * @param glAttribIndex_position The attribute index to be used for the mesh data.
 	 * @param glUsageHint
 	 * @param glStaticDraw 
 	 */
-	public VertexArrayObject(Mesh mesh, int glAttribIndex, int glUsageHint) {
+	public VertexArrayObject(Mesh mesh, int glAttribIndex_position, int glUsageHint) {
 		this();
 		bind();
-		BufferObjectStatic bo = new BufferObjectStatic(this, GL_ARRAY_BUFFER, mesh);
-		addBufferObject(bo);
-		defineVertexAttribute(glAttribIndex, bo, 0, 3);
+		arrayBuffer = new BufferObjectStatic(this, GL_ARRAY_BUFFER, mesh);
+		declareVertexAttribute(glAttribIndex_position, 0, 3);
 	}
-
-	
-	private void defineVertexAttribute(int glAttribIndex, BufferObjectStatic bo, int start, int size) {
-		glVertexAttribPointer(glAttribIndex, size, bo.getElemType(), false, bo.getStrideSize(), MemoryUtil.NULL);
-        glEnableVertexAttribArray(glAttribIndex);
-    }
 
 	public void addBufferObject(BufferObjectStatic bufferObject) {
 		bufferObjects.add(bufferObject);
@@ -67,16 +60,16 @@ public class VertexArrayObject {
 
 	public void bind() {
 		glBindVertexArray(vaoId);
-		for (BufferObjectStatic bo : bufferObjects) {
-			bo.bind();
-		}
 	}
 
 	public void delete() {
-		for (BufferObjectStatic bo : bufferObjects) {
-			bo.delete();
-		}
+		arrayBuffer.delete();
 		glDeleteVertexArrays(vaoId);
+	}
+
+	public void declareVertexAttribute(int glAttribIndex, int startIndex, int size) {
+		glVertexAttribPointer(glAttribIndex, size, arrayBuffer.getElemType(), false, arrayBuffer.getStrideSize(), startIndex * arrayBuffer.getElemSize());
+        glEnableVertexAttribArray(glAttribIndex);
 	}
 	
 }

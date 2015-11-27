@@ -7,14 +7,14 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public class Player {
-	Camera camera;
+	private Camera camera;
 	Vector3f translationVelocity = new Vector3f();
 	Vector3f rotationVelocity = new Vector3f();
 	private double lastTime = -1;
 	private float velocityMultiplier = 1.0f;
 	
 	public Player() {
-		camera = new HeadCamera(0f, 1.75f, +6f, 0f, 0f, 0f);
+		setCamera(new HeadCamera(0f, 1.75f, +6f, 0f, 0f, 0f));
 	}
 
 	public void moveForward(float amount) {
@@ -45,14 +45,14 @@ public class Player {
 
 		Vector4f direction = new Vector4f(x, y, z, 1);
 		
-		Matrix4f orientation = new Matrix4f(camera.getOrientationTransform());
+		Matrix4f orientation = new Matrix4f(getCamera().getOrientationTransform());
 		
 		direction.mul(orientation);
 		
-		Vector4f pos = new Vector4f(camera.getX(), camera.getY(), camera.getZ(), 1).add(direction);
-		camera.setX(pos.x);
-		camera.setY(pos.y);
-		camera.setZ(pos.z);
+		Vector4f pos = new Vector4f(getCamera().getX(), getCamera().getY(), getCamera().getZ(), 1).add(direction);
+		getCamera().setX(pos.x);
+		getCamera().setY(pos.y);
+		getCamera().setZ(pos.z);
 		
 	}
 
@@ -63,7 +63,7 @@ public class Player {
 	 * @param degree
 	 */
 	public void addYaw(float degree) {
-		camera.addYaw(degree);
+		getCamera().addYaw(degree);
 	}
 	
 	
@@ -73,7 +73,7 @@ public class Player {
 	 * @param degree
 	 */
 	public void addPitch(float degree) {
-		camera.addPitch(degree);
+		getCamera().addPitch(degree);
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class Player {
 	 * @param degree
 	 */
 	public void addRoll(float degree) {
-		camera.addRoll(degree);
+		getCamera().addRoll(degree);
 	}
 	
 	
@@ -107,11 +107,19 @@ public class Player {
 	}
 
 	public void addRotation(float pitch, float yaw, int roll) {
-		camera.addRotation(pitch, yaw, roll);
+		getCamera().addRotation(pitch, yaw, roll);
 	}
 
 	public void setVelocityMultiplyier(float f) {
 		velocityMultiplier = f;
+	}
+
+	public Camera getCamera() {
+		return camera;
+	}
+
+	public void setCamera(Camera camera) {
+		this.camera = camera;
 	}
 
 
