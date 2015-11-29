@@ -12,7 +12,7 @@ public class QuadMesh extends Mesh {
 	 * @param triangles The vertices of the triangles.
 	 */
 	public QuadMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] quads) {
-		super(GL11.GL_QUADS, frontFace, vectorSize, quads);
+		super(GL11.GL_QUADS, frontFace, vectorSize, quads, quads.length);
 	}
 
 	public TriangleMesh toTriangleMesh() {
@@ -23,25 +23,28 @@ public class QuadMesh extends Mesh {
 		int i = 0;
 		for (int p = 0; p < numpolies; p++) {
 			int firstVector = p * 4;
-			
-			// first triangle
-			copyVector(firstVector +0, triangles, i);
-			i += vectorSize;
-			copyVector(firstVector +1, triangles, i);
-			i += vectorSize;
-			copyVector(firstVector +2, triangles, i);
-			i += vectorSize;
-			
-			// second triangle
-			copyVector(firstVector +2, triangles, i);
-			i += vectorSize;
-			copyVector(firstVector +3, triangles, i);
-			i += vectorSize;
-			copyVector(firstVector +0, triangles, i);
-			i += vectorSize;
+			i = convQuadToTriangles(data, firstVector*vectorSize, triangles, i, vectorSize);
 		}
 		
-		return new TriangleMesh(FrontFaceVertexOrder.CounterClockwise, vectorSize, triangles);
+		return new TriangleMesh(FrontFaceVertexOrder.Clockwise, vectorSize, triangles);
 	}
-
+	
+	public static int convQuadToTriangles(float[] source, int srcPos, float[] target, int targetPos, int vectorSize) {
+		// first triangle
+		System.arraycopy(source, srcPos +0*vectorSize, target, targetPos, vectorSize);
+		targetPos += vectorSize;
+		System.arraycopy(source, srcPos +1*vectorSize, target, targetPos, vectorSize);
+		targetPos += vectorSize;
+		System.arraycopy(source, srcPos +2*vectorSize, target, targetPos, vectorSize);
+		targetPos += vectorSize;
+		
+		// second triangle
+		System.arraycopy(source, srcPos +2*vectorSize, target, targetPos, vectorSize);
+		targetPos += vectorSize;
+		System.arraycopy(source, srcPos +3*vectorSize, target, targetPos, vectorSize);
+		targetPos += vectorSize;
+		System.arraycopy(source, srcPos +0*vectorSize, target, targetPos, vectorSize);
+		targetPos += vectorSize;
+		return targetPos;
+	}
 }

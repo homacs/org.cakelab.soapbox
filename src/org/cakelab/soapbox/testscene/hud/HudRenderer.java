@@ -34,7 +34,7 @@ public class HudRenderer extends Renderer {
 			boolean flipped = true;
 			boolean forceAlpha = false;
 			texture = new TextureImageIO(HudResources.asImage(HudResources.TEST_TEXTURE_UNCOMPRESSED), 
-					pixelFormat, flipped, forceAlpha, null, GL11.GL_NEAREST, GL11.GL_NEAREST);
+					pixelFormat, flipped, forceAlpha, GL11.GL_NEAREST, GL11.GL_NEAREST);
 		} else {
 			texture = new TextureCheckerBoard();
 		}

@@ -11,7 +11,11 @@ public class TriangleMesh extends Mesh {
 	 * @param triangles The vertices of the triangles.
 	 */
 	public TriangleMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] triangles) {
-		super(GL11.GL_TRIANGLES, frontFace, vectorSize, triangles);
+		this(frontFace, vectorSize, triangles, triangles.length);
+	}
+
+	public TriangleMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] triangles, int arrayLen) {
+		super(GL11.GL_TRIANGLES, frontFace, vectorSize, triangles, arrayLen);
 	}
 
 }

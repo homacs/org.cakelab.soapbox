@@ -1,17 +1,13 @@
 package org.cakelab.oge.texture;
 
+import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_RGB8;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL11.glTexSubImage2D;
-import static org.lwjgl.opengl.GL42.glTexStorage2D;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -27,7 +23,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Hashtable;
 
+import org.cakelab.oge.utils.BufferUtilsHelper;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 
 
 public class TextureImageIO extends Texture {
@@ -60,8 +59,6 @@ public class TextureImageIO extends Texture {
     private int texWidth;
     /** The height of the texture that should be created for the image */
     private int texHeight;
-     /** True if we should edge */
-    private boolean edging = true;
 
     /**
      * 
@@ -73,22 +70,21 @@ public class TextureImageIO extends Texture {
      * @param minFilter
      * @param magFilter
      */
-	public TextureImageIO(BufferedImage image, int pixelFormat, boolean flipped, boolean forceAlpha, int[] transparent, int minFilter, int magFilter) {
+	public TextureImageIO(BufferedImage image, int pixelFormat, boolean flipped, boolean forceAlpha, int minFilter, int magFilter) {
 		imageData = null; 
         WritableRaster raster;
         BufferedImage texImage;
         
-        texWidth = 2;
-        texHeight = 2;
+        this.width = image.getWidth();
+        this.height = image.getHeight();
+        
         
         // find the closest power of 2 for the width and height
         // of the produced texture
-
-        while (texWidth < image.getWidth()) texWidth *= 2;
-        while (texHeight < image.getHeight()) texHeight *= 2;
-        
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        texWidth = 2;
+        while (texWidth < width) texWidth *= 2;
+        texHeight = 2;
+        while (texHeight < height) texHeight *= 2;
         
         // create a raster that can be used by OpenGL as a source
         // for a texture
@@ -113,44 +109,30 @@ public class TextureImageIO extends Texture {
 	        g.setColor(new Color(0f,0f,0f,0f));
 	        g.fillRect(0,0,texWidth,texHeight);
         }
+
+		double sx = 1.0;
+		double sy = 1.0;
+		boolean stretch = true;
+		if (stretch) {
+    		sx = ((double)texWidth)/width;
+			sy = ((double)texHeight)/height;
+		}
+		
+        if (flipped) {
+        	sy *= -1.0;
+        }
         
         if (flipped) {
-        	g.scale(1,-1);
+        	g.scale(sx,sy);
         	g.drawImage(image,0,-height,null);
         } else {
         	g.drawImage(image,0,0,null);
         }
         
-        if (edging) {
-	        if (height < texHeight - 1) {
-	        	copyArea(texImage, 0, 0, width, 1, 0, texHeight-1);
-	        	copyArea(texImage, 0, height-1, width, 1, 0, 1);
-	        }
-	        if (width < texWidth - 1) {
-	        	copyArea(texImage, 0,0,1,height,texWidth-1,0);
-	        	copyArea(texImage, width-1,0,1,height,1,0);
-	        }
-        }
         
         // build a byte buffer from the temporary image 
         // that be used by OpenGL to produce a texture.
         byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData(); 
-        
-        if (transparent != null) {
-	        for (int i=0;i<data.length;i+=4) {
-	        	boolean match = true;
-	        	for (int c=0;c<3;c++) {
-	        		int value = data[i+c] < 0 ? 256 + data[i+c] : data[i+c];
-	        		if (value != transparent[c]) {
-	        			match = false;
-	        		}
-	        	}
-	  
-	        	if (match) {
-	         		data[i+3] = 0;
-	           	}
-	        }
-        }
         
         imageData = ByteBuffer.allocateDirect(data.length); 
         imageData.order(ByteOrder.nativeOrder()); 
@@ -161,12 +143,16 @@ public class TextureImageIO extends Texture {
 
 
         int srcPixelFormat = hasAlpha ? GL_RGBA : GL_RGB;
-        int componentCount = hasAlpha ? 4 : 3;
+//        int componentCount = hasAlpha ? 4 : 3;
 	
     	target = GL_TEXTURE_2D;
     	textureObject = glGenTextures();
         bind();
+        float color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+        GL11.glTexParameter(GL_TEXTURE_2D, GL11.GL_TEXTURE_BORDER_COLOR, BufferUtilsHelper.createFloatBuffer(color));
         
+        glTexParameteri(target, GL11.GL_TEXTURE_WRAP_S, GL13.GL_CLAMP_TO_BORDER);
+        glTexParameteri(target, GL11.GL_TEXTURE_WRAP_T, GL13.GL_CLAMP_TO_BORDER);
         
         glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
@@ -175,7 +161,7 @@ public class TextureImageIO extends Texture {
         // produce a texture from the byte buffer
         GL11.glTexImage2D(target, 
                       0, 
-                      GL11.GL_RGB8, 
+                      srcPixelFormat, 
                       texWidth, 
                       texHeight, 
                       0, 
@@ -185,51 +171,9 @@ public class TextureImageIO extends Texture {
 
 	}
 
-	
-	
-	
-	
-
-
-
-
-
 	public int getDepth() {
 		return depth;
 	}
-	
-	/**
-	 * Implement of transform copy area for 1.4
-	 * 
-	 * @param image The image to copy
- 	 * @param x The x position to copy to
-	 * @param y The y position to copy to
-	 * @param width The width of the image
-	 * @param height The height of the image
-	 * @param dx The transform on the x axis
-	 * @param dy The transform on the y axis
-	 */
-	private void copyArea(BufferedImage image, int x, int y, int width, int height, int dx, int dy) {
-		Graphics2D g = (Graphics2D) image.getGraphics();
-		
-		g.drawImage(image.getSubimage(x, y, width, height),x+dx,y+dy,null);
-	}
-
-	/**
-	 * @see org.newdawn.slick.opengl.LoadableImageData#configureEdging(boolean)
-	 */
-	public void configureEdging(boolean edging) {
-		this.edging = edging;
-	}
-
-
-
-
-
-
-
-
-
 
 	public float getWidth() {
 		return width;

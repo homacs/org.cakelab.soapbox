@@ -1,6 +1,7 @@
 package org.cakelab.soapbox.model;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import org.cakelab.oge.utils.BufferUtilsHelper;
 import org.lwjgl.opengl.GL11;
@@ -25,17 +26,17 @@ public class Mesh {
 	}
 	
 	public Mesh(int glDrawingMethod, FrontFaceVertexOrder frontFace, int vectorSize,
-			float[] dataIn) {
+			float[] dataIn, int arrayLen) {
 		this.setGlDrawingMethod(glDrawingMethod);
 		this.verticesPerPolygon = calcVerticesPerPolygone(glDrawingMethod);
 		assert(vectorSize >= 3);
 		this.vectorSize = vectorSize;
 		switch(frontFace) {
 		case CounterClockwise:
-			data = dataIn;
+			data = Arrays.copyOf(dataIn, arrayLen);
 			break;
 		case Clockwise:
-			data = swapVertexOrder(dataIn);
+			data = swapVertexOrder(Arrays.copyOf(dataIn, arrayLen));
 			break;
 		}
 	}
@@ -119,12 +120,13 @@ public class Mesh {
 	
 	/**
 	 * Copies the v's vector from this mesh to the given position in target.
+	 * @param source 
 	 * @param v
 	 * @param target
 	 * @param targetPos
 	 */
-	public void copyVector(int v, float[] target, int targetPos) {
-		System.arraycopy(this.data, v*vectorSize, target, targetPos, vectorSize);
+	public static void copyVector(float[] source, int v, float[] target, int targetPos, int vectorSize) {
+		System.arraycopy(source, v*vectorSize, target, targetPos, vectorSize);
 	}
 
 

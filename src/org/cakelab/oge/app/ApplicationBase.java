@@ -314,20 +314,24 @@ public abstract class ApplicationBase {
 		default:
 			switch(severity) {
 			case GL_DEBUG_SEVERITY_HIGH:
+				// same as:
 				/* GL_DEBUG_SEVERITY_HIGH_ARB */
 				/* GL_DEBUG_SEVERITY_HIGH_AMD */
 				fatal(message);
 				break;
 			case GL_DEBUG_SEVERITY_MEDIUM:
+				// same as:
 				/* GL_DEBUG_SEVERITY_MEDIUM_ARB */
 				/* GL_DEBUG_SEVERITY_MEDIUM_AMD */
 				error(message);
 				break;
 			case GL_DEBUG_SEVERITY_LOW:
+				// same as:
 				/* GL_DEBUG_SEVERITY_LOW_ARB */
 				warn(message);
 				break;
 			case GL_DEBUG_SEVERITY_NOTIFICATION:
+				// same as:
 				/* GL_DEBUG_SEVERITY_MEDIUM_AMD */
 				/* GL_DEBUG_SEVERITY_LOW_AMD */
 				if(DEBUG) info(message);
