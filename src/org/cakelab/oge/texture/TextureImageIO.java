@@ -71,25 +71,33 @@ public class TextureImageIO extends Texture {
      * @param magFilter
      */
 	public TextureImageIO(BufferedImage image, int pixelFormat, boolean flipped, boolean forceAlpha, int minFilter, int magFilter) {
+        // TODO: textures: Not every texture needs to be converted
+		//       This constructor considers a lot of cases where the image is
+		//       not suitable for a OpenGL compatible texture. There should
+		//       be a way to prevent all this.
+		
 		imageData = null; 
         WritableRaster raster;
         BufferedImage texImage;
         
         this.width = image.getWidth();
         this.height = image.getHeight();
+
         
-        
-        // find the closest power of 2 for the width and height
-        // of the produced texture
+        //
+        // Conversion:
+        // 1. Resize image to have dimensions to be power of 2.
+        // 2. Convert between RGBA8 (32bit) and RGB8 (24bit).
+        //
+
+        // calc new width and height
         texWidth = 2;
         while (texWidth < width) texWidth *= 2;
         texHeight = 2;
         while (texHeight < height) texHeight *= 2;
-        
-        // create a raster that can be used by OpenGL as a source
-        // for a texture
-        boolean hasAlpha = image.getColorModel().hasAlpha() || forceAlpha; 
 
+        // configure image codec and buffer
+        boolean hasAlpha = image.getColorModel().hasAlpha() || forceAlpha; 
         if (hasAlpha) {
         	depth = 32;
             raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,4,null);
@@ -100,12 +108,11 @@ public class TextureImageIO extends Texture {
             texImage = new BufferedImage(glColorModel,raster,false,new Hashtable<String, Object>());
         }
         
-        
-        // copy the source image into the produced image
+        // transfer (and convert) source image into new buffer
         Graphics2D g = (Graphics2D) texImage.getGraphics();
-        
-        // only need to blank the image for mac compatibility if we're using alpha
         if (hasAlpha) {
+            // only need to blank the image for mac 
+        	// compatibility if we're using alpha
 	        g.setColor(new Color(0f,0f,0f,0f));
 	        g.fillRect(0,0,texWidth,texHeight);
         }
@@ -121,30 +128,39 @@ public class TextureImageIO extends Texture {
         if (flipped) {
         	sy *= -1.0;
         }
-        
-        if (flipped) {
+
+        if (stretch || flipped) {
+        	// add scale transformation (no conversion yet)
         	g.scale(sx,sy);
+        }
+        
+        // apply conversion
+        if (flipped) {
         	g.drawImage(image,0,-height,null);
         } else {
         	g.drawImage(image,0,0,null);
         }
         
+
+        //
+        // Transfer converted data to OpenGL
+        //
         
-        // build a byte buffer from the temporary image 
-        // that be used by OpenGL to produce a texture.
+        
+        // transfer converted texture image into byte buffer (native)
         byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData(); 
-        
         imageData = ByteBuffer.allocateDirect(data.length); 
         imageData.order(ByteOrder.nativeOrder()); 
-        imageData.put(data, 0, data.length); 
+        imageData.put(data, 0, data.length);
+        // TODO: a reset should do it here, since length is already set as required
         imageData.flip();
+        // TODO: dispose can be earlier I think
         g.dispose();
 
-
-
+        
+        
+        // transfer texture in byte buffer to opengl
         int srcPixelFormat = hasAlpha ? GL_RGBA : GL_RGB;
-//        int componentCount = hasAlpha ? 4 : 3;
-	
     	target = GL_TEXTURE_2D;
     	textureObject = glGenTextures();
         bind();
