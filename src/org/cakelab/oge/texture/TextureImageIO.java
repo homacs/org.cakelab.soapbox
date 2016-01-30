@@ -1,7 +1,6 @@
 package org.cakelab.oge.texture;
 
 import static org.lwjgl.opengl.GL11.GL_RGB;
-import static org.lwjgl.opengl.GL11.GL_RGB8;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
@@ -25,7 +24,6 @@ import java.util.Hashtable;
 
 import org.cakelab.oge.utils.BufferUtilsHelper;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 
 
@@ -64,13 +62,13 @@ public class TextureImageIO extends Texture {
      * 
      * @param image
      * @param pixelFormat
-     * @param flipped       True if we should flip the image on the y-axis while loading
+     * @param flip       True if we should flip the image on the y-axis while loading
      * @param forceAlpha    Forces to create an alpha channel if none available in image.
      * @param transparent   Color to be transparent (default: null -> black)
      * @param minFilter
      * @param magFilter
      */
-	public TextureImageIO(BufferedImage image, int pixelFormat, boolean flipped, boolean forceAlpha, int minFilter, int magFilter) {
+	public TextureImageIO(BufferedImage image, int pixelFormat, boolean flip, boolean forceAlpha, int minFilter, int magFilter) {
         // TODO: textures: Not every texture needs to be converted
 		//       This constructor considers a lot of cases where the image is
 		//       not suitable for a OpenGL compatible texture. There should
@@ -125,17 +123,17 @@ public class TextureImageIO extends Texture {
 			sy = ((double)texHeight)/height;
 		}
 		
-        if (flipped) {
+        if (flip) {
         	sy *= -1.0;
         }
 
-        if (stretch || flipped) {
+        if (stretch || flip) {
         	// add scale transformation (no conversion yet)
         	g.scale(sx,sy);
         }
         
         // apply conversion
-        if (flipped) {
+        if (flip) {
         	g.drawImage(image,0,-height,null);
         } else {
         	g.drawImage(image,0,0,null);
