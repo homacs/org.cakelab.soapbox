@@ -1,10 +1,13 @@
 package org.cakelab.oge.utils;
 
-import static org.lwjgl.opengl.GL30.glClearBuffer;
+import static org.lwjgl.opengl.GL15.nglBufferData;
+import static org.lwjgl.opengl.GL30.*;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * This class mainly provides a cache for native I/O buffers.
@@ -38,15 +41,20 @@ public class GLAPIHelper {
 		vec4f.put(1, g);
 		vec4f.put(2, b);
 		vec4f.put(3, a);
-		glClearBuffer(bits, 0, vec4f);
+		glClearBufferfv(bits, 0, vec4f);
 	}
 
 	public static void glClearBuffer1f(int bits, int drawbuffer, float depth) {
 		final FloatBuffer scalarf = APICache.getScalarF();
 		scalarf.put(0, depth);
 		scalarf.rewind();
-		glClearBuffer(bits, 0, scalarf);
+		glClearBufferfv(bits, 0, scalarf);
 	}
+
+	public static void glBufferData(int target, int size, ByteBuffer address, int usage) {
+		nglBufferData(target, size, MemoryUtil.memAddress(address), usage);
+	}
+
 
 
 }

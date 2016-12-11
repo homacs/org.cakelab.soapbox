@@ -6,7 +6,7 @@ import static org.lwjgl.opengl.GL20.GL_INFO_LOG_LENGTH;
 import static org.lwjgl.opengl.GL20.glCompileShader;
 import static org.lwjgl.opengl.GL20.glCreateShader;
 import static org.lwjgl.opengl.GL20.glDeleteShader;
-import static org.lwjgl.opengl.GL20.glGetShader;
+import static org.lwjgl.opengl.GL20.glGetShaderiv;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 
@@ -89,7 +89,7 @@ public class Shader {
 		
 		// check result
 		IntBuffer status = BufferUtils.createIntBuffer(1);
-		glGetShader(shaderId, GL_COMPILE_STATUS, status);
+		glGetShaderiv(shaderId, GL_COMPILE_STATUS, status);
 
 		if (status.get(0) != GL_TRUE) {
 			throwCompilerErrors();
@@ -114,11 +114,11 @@ public class Shader {
 
 	void throwCompilerErrors() throws GLCompilerException {
 		IntBuffer bufSize = BufferUtils.createIntBuffer(1);
-		glGetShader(shaderId, GL_INFO_LOG_LENGTH, bufSize);
+		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, bufSize);
 		ByteBuffer infoLog = BufferUtils.createByteBuffer(Character.SIZE/8 * bufSize.get(0));
 		glGetShaderInfoLog(shaderId, bufSize, infoLog);
 
-		StringTokenizer tokenizer = new StringTokenizer(MemoryUtil.memDecodeUTF8(infoLog,bufSize.get(0)), "\n");
+		StringTokenizer tokenizer = new StringTokenizer(MemoryUtil.memUTF8(infoLog,bufSize.get(0)), "\n");
 
 		StringBuffer errorMessage = new StringBuffer();
 		while (tokenizer.hasMoreTokens()) {

@@ -6,17 +6,16 @@ import static org.lwjgl.opengl.GL11.glViewport;
 
 import org.cakelab.oge.utils.BufferedMatrix4f;
 import org.cakelab.oge.utils.GLAPIHelper;
-import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.GLCapabilities;
 
+// TODO thread specific
 public class GraphicContext {
-
 	private static final int DEFAULT_FRAME_BUFFER = 0;
 	private Camera camera;
-	GLContext glContext;
 	private BufferedMatrix4f projection;
 
-	public GraphicContext(GLContext glContext) {
-		this.glContext = glContext;
+	
+	public GraphicContext(GLCapabilities capabilities) {
 	}
 	
 	public void setActiveCamera(Camera camera) {

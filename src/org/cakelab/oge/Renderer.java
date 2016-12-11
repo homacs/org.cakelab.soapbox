@@ -1,7 +1,6 @@
 package org.cakelab.oge;
 
-import static org.lwjgl.opengl.GL20.glUniformMatrix4;
-import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL20.*;
 
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.utils.BufferedMatrix4f;
@@ -45,7 +44,7 @@ public abstract class Renderer {
 	public void prepare(GraphicContext context, double currentTime) {
 		if (preparedLast != currentTime) {
 			glUseProgram(shaderProgram.getProgramId());
-			glUniformMatrix4(u_projectionTransform, false, context.getProjectionTransform().getFloatBuffer());
+			glUniformMatrix4fv(u_projectionTransform, false, context.getProjectionTransform().getFloatBuffer());
 			prepareRenderPass(context, currentTime);
 			preparedLast = currentTime;
 		}
@@ -61,7 +60,7 @@ public abstract class Renderer {
 			.mul(vobj.getWorldTransform())
 		;
 		
-		glUniformMatrix4(u_ModelViewTransform, false, modelViewTransform.getFloatBuffer());
+		glUniformMatrix4fv(u_ModelViewTransform, false, modelViewTransform.getFloatBuffer());
 		draw(currentTime, vobj);
 	}
 

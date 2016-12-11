@@ -14,8 +14,6 @@ public class Program {
 
 	public static final int INVALID_PROGRAM_ID = -1;
 	private String programName;
-	private VertexShader vertexShader;
-	private FragmentShader fragmentShader;
 	private int programId;
 
 	
@@ -25,12 +23,10 @@ public class Program {
 	}
 
 	
-	public Program(String name, VertexShader vertexShader,
-			FragmentShader fragmentShader) throws GLLinkerException 
+	public Program(String name, Shader ... shaders) throws GLLinkerException 
 	{
 		this(name);
-		this.vertexShader = vertexShader;
-		this.fragmentShader = fragmentShader;
+		for (Shader shader : shaders) attach(shader);
 		link();
 	}
 	
@@ -43,26 +39,23 @@ public class Program {
 	
 	public void link() throws GLLinkerException {
 		
-		attach(vertexShader);
-		attach(fragmentShader);
 		glLinkProgram(getProgramId());
 		glValidateProgram(getProgramId());
 		
-		IntBuffer status= BufferUtils.createIntBuffer(1);
-		glGetProgram(getProgramId(), GL_LINK_STATUS, status);
-		if (status.get() != GL_TRUE) {
+		int status = glGetProgrami(getProgramId(), GL_LINK_STATUS);
+		if (status != GL_TRUE) {
 
 			IntBuffer bufSize = BufferUtils.createIntBuffer(1);
-			glGetProgram(getProgramId(), GL_INFO_LOG_LENGTH, bufSize);
+			glGetProgramiv(getProgramId(), GL_INFO_LOG_LENGTH, bufSize);
 			ByteBuffer infoLog = BufferUtils.createByteBuffer(Character.SIZE/8 * (bufSize.get(0) + 1));
 			glGetProgramInfoLog(getProgramId(), bufSize, infoLog);
-			String error = new String("Linker error in program " + programName + ":\n" + MemoryUtil.memDecodeUTF8(infoLog, bufSize.get(0)));
+			String error = new String("Linker error in program " + programName + ":\n" + MemoryUtil.memUTF8(infoLog, bufSize.get(0)));
 			throw new GLLinkerException(error);
 		}
 
 	}
 	
-	private void attach(Shader shader) {
+	public void attach(Shader shader) {
 		if (shader != null) glAttachShader(getProgramId(), shader.shaderId);
 	}
 

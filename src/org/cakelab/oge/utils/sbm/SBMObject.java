@@ -19,9 +19,10 @@ import org.cakelab.oge.app.ApplicationBase;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.utils.BufferUtilsHelper;
 
+import static org.cakelab.oge.utils.GLAPIHelper.*;
 import static org.cakelab.oge.utils.BufferUtilsHelper.*;
 
-import org.lwjgl.LWJGLUtil;
+import org.lwjgl.system.Platform;
 
 
 public class SBMObject {
@@ -257,7 +258,7 @@ public class SBMObject {
 			int base_instance) {
 		glBindVertexArray(vao);
 
-		if (LWJGLUtil.getPlatform() == LWJGLUtil.Platform.MACOSX) {
+		if (Platform.get() == Platform.MACOSX) {
 
 			if (index_buffer != 0) {
 				glDrawElementsInstanced(GL_TRIANGLES, num_indices, index_type,

@@ -163,7 +163,7 @@ public class TextureImageIO extends Texture {
     	textureObject = glGenTextures();
         bind();
         float color[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-        GL11.glTexParameter(GL_TEXTURE_2D, GL11.GL_TEXTURE_BORDER_COLOR, BufferUtilsHelper.createFloatBuffer(color));
+        GL11.glTexParameterfv(GL_TEXTURE_2D, GL11.GL_TEXTURE_BORDER_COLOR, BufferUtilsHelper.createFloatBuffer(color));
         
         glTexParameteri(target, GL11.GL_TEXTURE_WRAP_S, GL13.GL_CLAMP_TO_BORDER);
         glTexParameteri(target, GL11.GL_TEXTURE_WRAP_T, GL13.GL_CLAMP_TO_BORDER);

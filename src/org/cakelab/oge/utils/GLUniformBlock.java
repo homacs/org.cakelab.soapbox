@@ -76,12 +76,12 @@ public class GLUniformBlock {
 		matrixRowMajor = BufferUtils.createIntBuffer(num_members);
 
 		glGetUniformIndices(program, fqnNames, uniformIndices);
-		glGetActiveUniforms(program, uniformIndices, GL_UNIFORM_TYPE, uniformTypes);
-		glGetActiveUniforms(program, uniformIndices, GL_UNIFORM_SIZE, uniformSizes);
-		glGetActiveUniforms(program, uniformIndices, GL_UNIFORM_OFFSET, uniformOffsets);
-		glGetActiveUniforms(program, uniformIndices, GL_UNIFORM_ARRAY_STRIDE, arrayStrides);
-		glGetActiveUniforms(program, uniformIndices, GL_UNIFORM_MATRIX_STRIDE, matrixStrides);
-		glGetActiveUniforms(program, uniformIndices, GL_UNIFORM_IS_ROW_MAJOR, matrixRowMajor);
+		glGetActiveUniformsiv(program, uniformIndices, GL_UNIFORM_TYPE, uniformTypes);
+		glGetActiveUniformsiv(program, uniformIndices, GL_UNIFORM_SIZE, uniformSizes);
+		glGetActiveUniformsiv(program, uniformIndices, GL_UNIFORM_OFFSET, uniformOffsets);
+		glGetActiveUniformsiv(program, uniformIndices, GL_UNIFORM_ARRAY_STRIDE, arrayStrides);
+		glGetActiveUniformsiv(program, uniformIndices, GL_UNIFORM_MATRIX_STRIDE, matrixStrides);
+		glGetActiveUniformsiv(program, uniformIndices, GL_UNIFORM_IS_ROW_MAJOR, matrixRowMajor);
 		
 		// TODO: determine the size of the buffer based on its layout and alignment information (not done in the book)
 		int buffer_size = 4096;

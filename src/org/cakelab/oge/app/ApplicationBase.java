@@ -1,13 +1,13 @@
 package org.cakelab.oge.app;
 
-import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 
 import org.cakelab.oge.GraphicContext;
 import org.cakelab.oge.shader.GLException;
 import org.joml.Vector2f;
-import org.lwjgl.LWJGLUtil;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
+import org.lwjgl.system.Platform;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_API_ERROR_AMD;
@@ -38,7 +38,7 @@ public abstract class ApplicationBase {
 
 	
 	public ApplicationBase(String windowTitle) throws GLException {
-		if (glfwInit() != GL11.GL_TRUE) {
+		if (!glfwInit()) {
 			throw new GLException("Failed to initialize GLFW\n");
 		}
 
@@ -47,7 +47,7 @@ public abstract class ApplicationBase {
 		info.title = "SoapBox 3D";
 		info.setWindowWidth(800);
 		info.setWindowHeight(600);
-		if (LWJGLUtil.getPlatform()== LWJGLUtil.Platform.MACOSX) {
+		if (Platform.get()== Platform.MACOSX) {
 			info.majorVersion = 3;
 			info.minorVersion = 2;
 		} else {
@@ -88,13 +88,13 @@ public abstract class ApplicationBase {
 
 		if (info.flags.fullscreen) {
 			long monitor = glfwGetPrimaryMonitor();
-			GLFWvidmode mode = new GLFWvidmode(glfwGetVideoMode(monitor));
+			GLFWVidMode mode = glfwGetVideoMode(monitor);
 
-			info.setWindowWidth(mode.getWidth());
-			info.setWindowHeight(mode.getHeight());
-			glfwWindowHint(GLFW_RED_BITS, mode.getRedBits());
-			glfwWindowHint(GLFW_GREEN_BITS, mode.getGreenBits());
-			glfwWindowHint(GLFW_BLUE_BITS, mode.getBlueBits());
+			info.setWindowWidth(mode.width());
+			info.setWindowHeight(mode.height());
+			glfwWindowHint(GLFW_RED_BITS, mode.redBits());
+			glfwWindowHint(GLFW_GREEN_BITS, mode.greenBits());
+			glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
 
 			window = glfwCreateWindow(info.getWindowWidth(), info.getWindowHeight(),
 					info.title, monitor, 0);
@@ -186,8 +186,8 @@ public abstract class ApplicationBase {
         // creates the ContextCapabilities instance and makes the OpenGL
         // bindings available for use.
 		
-        GLContext glContext = GLContext.createFromCurrent();
-        GraphicContext context = new GraphicContext(glContext);
+        GLCapabilities capabilities = GL.createCapabilities();
+        GraphicContext context = new GraphicContext(capabilities);
 		
 		// loading of extensions is done automatically by the lwjgl library,
 		// thus, we dont need w3g.
@@ -200,7 +200,7 @@ public abstract class ApplicationBase {
 		// Creates a debug message callback for the context
 		// which supports OpenGL43, GL_KHR_debug, GL_ARB_debug_output
 		// and GL_AMD_debug_output if supported by the drivers.
-		debugMessageHandler = new DebugMessageHandler(GL.getCurrent(), this);
+		debugMessageHandler = new DebugMessageHandler(GL.getCapabilities(), this);
 		
 		exitStatus = 0;
 		try {
@@ -225,7 +225,7 @@ public abstract class ApplicationBase {
 	
 				if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
 					running = false;
-				} else if (glfwWindowShouldClose(window) == GL_TRUE) {
+				} else if (glfwWindowShouldClose(window)) {
 					running = false;
 				}
 			}
@@ -242,7 +242,7 @@ public abstract class ApplicationBase {
 
 	protected void requestExit(int status) {
 		exitStatus = status;
-		glfwSetWindowShouldClose(window, GL_TRUE);
+		glfwSetWindowShouldClose(window, true);
 	}
 	
 	public void setVirtualCursor(boolean enabled) {
@@ -343,10 +343,11 @@ public abstract class ApplicationBase {
 	}
 
 	static Cursor getMousePosition() {
-		final ByteBuffer x = ByteBuffer.allocate(4);
-		final ByteBuffer y = ByteBuffer.allocate(4);
+		// TODO keep cursor object!
+		final DoubleBuffer x = DoubleBuffer.allocate(1);
+		final DoubleBuffer y = DoubleBuffer.allocate(1);
 		glfwGetCursorPos(window, x, y);
-		return new Cursor(x.getDouble(), y.getDouble());
+		return new Cursor(x.get(), y.get());
 
 	}
 
