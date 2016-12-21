@@ -8,10 +8,10 @@ import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 
 import java.nio.ByteBuffer;
 
-import org.cakelab.oge.texture.Texture;
+import org.cakelab.oge.texture.GPUTexture;
 import org.lwjgl.BufferUtils;
 
-public class TextureCheckerBoard extends Texture {
+public class TextureCheckerBoard extends GPUTexture {
 
 	/*
 	 * Instantiate 2 alternate textures. The first is just a black 

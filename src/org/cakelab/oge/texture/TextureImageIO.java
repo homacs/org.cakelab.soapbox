@@ -27,7 +27,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 
-public class TextureImageIO extends Texture {
+public class TextureImageIO extends GPUTexture {
 	/** The colour model including alpha for the GL image */
     private static final ColorModel glAlphaColorModel = 
     		new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),

@@ -67,7 +67,7 @@ public class BlenderRaw {
 			
 		}
 		
-		mesh = new TriangleMesh(Mesh.FrontFaceVertexOrder.CounterClockwise, 3, data);
+		mesh = new TriangleMesh(Mesh.FrontFaceVertexOrder.CounterClockwise, 3, data, -1, -1);
 	}
 
 	public TriangleMesh getTriangleMesh() {

@@ -11,21 +11,24 @@ import static org.lwjgl.opengl.GL42.glTexStorage2D;
 
 import java.nio.ByteBuffer;
 
+import org.cakelab.oge.RenderData;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
 
-public class Texture {
+public class GPUTexture {
 
 	protected int textureObject = -1;
 	protected int target = -1;
 	private int width;
 	private int height;
+	
+	private RenderData renderData;
 
 	
-	protected Texture() {}
+	protected GPUTexture() {}
 	
 	/**
 	 *
@@ -40,7 +43,7 @@ public class Texture {
 	 * @param magFilter      GL_TEXTURE_MAG_FILTER {@link GL_NEAREST}, {@link GL_LINEAR}
 	 * @param data			 the actual texture data
 	 */
-	public Texture(int target, int levels, int internalFormat, 
+	public GPUTexture(int target, int levels, int internalFormat, 
 			int pixelFormat, int dataType, 
 			int width, int height, 
 			int minFilter, int magFilter, 
@@ -73,7 +76,7 @@ public class Texture {
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
 	}
 	
-	public Texture(int target, int textureName) {
+	public GPUTexture(int target, int textureName) {
 		this.target = target;
 		this.textureObject = textureName;
 	}
@@ -93,5 +96,12 @@ public class Texture {
 	public float getHeight() {
 		return height;
 	}
-
+	
+	public void setRenderData(RenderData renderData) {
+		this.renderData = renderData;
+	}
+	public RenderData getRenderData() {
+		return renderData;
+	}
+	
 }

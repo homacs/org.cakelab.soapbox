@@ -10,12 +10,13 @@ public class TriangleMesh extends Mesh {
 	 * @param vectorSize num components of a vector (of course min. 3 for 3d)
 	 * @param triangles The vertices of the triangles.
 	 */
-	public TriangleMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] triangles) {
-		this(frontFace, vectorSize, triangles, triangles.length);
+	public TriangleMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] triangles, int uvOffset, int normalsOffset) {
+		this(frontFace, vectorSize, triangles, uvOffset, normalsOffset, triangles.length);
 	}
 
-	public TriangleMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] triangles, int arrayLen) {
-		super(GL11.GL_TRIANGLES, frontFace, vectorSize, triangles, arrayLen);
+	public TriangleMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] triangles, int uvOffset, int normalsOffset, int arrayLen) {
+		super(GL11.GL_TRIANGLES, frontFace, vectorSize, triangles, uvOffset, normalsOffset, arrayLen);
 	}
+
 
 }

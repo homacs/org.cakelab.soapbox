@@ -11,7 +11,7 @@ import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.GLLinkerException;
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.shader.VertexShader;
-import org.cakelab.oge.texture.Texture;
+import org.cakelab.oge.texture.GPUTexture;
 import org.cakelab.oge.utils.ktx.KTX;
 import org.cakelab.oge.utils.sbm.SBMObject;
 import org.cakelab.soapbox.testscene.SBM_KTX.resources.Resources;
@@ -21,7 +21,7 @@ import org.cakelab.soapbox.testscene.SBM_KTX.resources.Resources;
 public class TorusRenderer extends Renderer {
 
 	/** texture objects */
-	private Texture[] textures = new Texture[2];
+	private GPUTexture[] textures = new GPUTexture[2];
 	
     /** vertices of the torus */
     SBMObject     sbmObject = new SBMObject();
@@ -47,7 +47,7 @@ public class TorusRenderer extends Renderer {
 		
 	}
 	
-	private void loadShaders() throws GLCompilerException, IOException, GLLinkerException {
+	private void loadShaders() throws GLException, IOException {
 		VertexShader vs = new VertexShader(Resources.VERTEX_SHADER, Resources.asInputStream(Resources.VERTEX_SHADER));
 		FragmentShader fs = new FragmentShader(Resources.FRAGMENT_SHADER, Resources.asInputStream(Resources.FRAGMENT_SHADER));
 
@@ -66,7 +66,7 @@ public class TorusRenderer extends Renderer {
 	}
 
 	@Override
-	protected void draw(double currentTime, VisualObject vobj) {
+	public void draw(double currentTime, VisualObject vobj) {
 		Torus torus = (Torus) vobj;
 	    // activate the texture we want to use for the torus
 		textures[torus.tex_index].bind();
@@ -81,6 +81,11 @@ public class TorusRenderer extends Renderer {
         sbmObject.free();
 
 		super.delete();
+	}
+
+	@Override
+	public boolean needsNormals() {
+		return false;
 	}
 
 	

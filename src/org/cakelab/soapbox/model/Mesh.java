@@ -3,6 +3,7 @@ package org.cakelab.soapbox.model;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
+import org.cakelab.oge.MeshRenderData;
 import org.cakelab.oge.utils.BufferUtilsHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -10,8 +11,11 @@ public class Mesh {
 	
 	protected float[] data;
 	protected int vectorSize;
+	protected int uvOffset;
+	protected int normalsOffset;
 	protected int verticesPerPolygon;
 	protected int glDrawingMethod;
+	private MeshRenderData renderData;
 
 	
 	/**
@@ -26,11 +30,14 @@ public class Mesh {
 	}
 	
 	public Mesh(int glDrawingMethod, FrontFaceVertexOrder frontFace, int vectorSize,
-			float[] dataIn, int arrayLen) {
+			float[] dataIn, int uvOffset, int normalsOffset, int arrayLen) {
 		this.setGlDrawingMethod(glDrawingMethod);
 		this.verticesPerPolygon = calcVerticesPerPolygone(glDrawingMethod);
 		assert(vectorSize >= 3);
 		this.vectorSize = vectorSize;
+		this.uvOffset = uvOffset <= 0 ? -1 : uvOffset;
+		this.normalsOffset = normalsOffset <= 0 ? -1 : normalsOffset;
+		
 		switch(frontFace) {
 		case CounterClockwise:
 			data = Arrays.copyOf(dataIn, arrayLen);
@@ -40,6 +47,29 @@ public class Mesh {
 			break;
 		}
 	}
+
+	/** whether the mesh contains normal vectors */
+	public boolean hasNormals() {
+		return normalsOffset > 0;
+	}
+
+	/** Offset of normal vector coordinates in a vertex vector. A value less or 
+	 * equal to zero means the mesh contains no normal vectors. */
+	public int getNormalsOffset() {
+		return normalsOffset;
+	}
+	
+	/** whether the mesh contains UV coordinates */
+	public boolean hasUVCoordinates() {
+		return uvOffset > 0;
+	}
+
+	/** Offset of UV coordinates in a vertex vector. A value less or 
+	 * equal to zero means the mesh contains no uv coordinates. */
+	public int getUVOffset() {
+		return uvOffset;
+	}
+	
 
 	private int calcVerticesPerPolygone(int glDrawingMethod) {
 		switch(glDrawingMethod) {
@@ -62,18 +92,21 @@ public class Mesh {
 
 
 	public void dump() {
+		int count = 0;
+		int polygons = 0;
 		for (int i = 0; i < data.length; i+=vectorSize) {
+			if (count % this.verticesPerPolygon == 0) System.out.printf("### Polygon %02d ###\n", polygons++);
+			System.out.printf("\t%02d: ", count++);
 			dumpVertex(data, i);
-			if (0 == i%vectorSize) {
-				System.out.println();
-			}
+			System.out.println();
 		}
 	}
 
 	private void dumpVertex(float[] data, int offset) {
-		System.out.printf("%f", data[offset++]);
-		for (; offset < vectorSize; offset++) {
-			System.out.printf(",%f", data[offset++]);
+		String format = "%.2f";
+		System.out.printf(format, data[offset++]);
+		for (; offset % vectorSize != 0; offset++) {
+			System.out.printf(", " + format, data[offset]);
 		}
 	}
 
@@ -127,6 +160,14 @@ public class Mesh {
 	 */
 	public static void copyVector(float[] source, int v, float[] target, int targetPos, int vectorSize) {
 		System.arraycopy(source, v*vectorSize, target, targetPos, vectorSize);
+	}
+
+	public void setRenderData(MeshRenderData renderData) {
+		this.renderData = renderData;
+	}
+
+	public MeshRenderData getRenderData() {
+		return renderData;
 	}
 
 

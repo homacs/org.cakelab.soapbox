@@ -11,8 +11,8 @@ public class QuadMesh extends Mesh {
 	 * @param vectorSize num components of a vector of a vertex (min. 3 for 3d)
 	 * @param triangles The vertices of the triangles.
 	 */
-	public QuadMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] quads) {
-		super(GL11.GL_QUADS, frontFace, vectorSize, quads, quads.length);
+	public QuadMesh(FrontFaceVertexOrder frontFace, int vectorSize, float[] quads, int uvOffset, int normalsOffset) {
+		super(GL11.GL_QUADS, frontFace, vectorSize, quads, uvOffset, normalsOffset, quads.length);
 	}
 
 	public TriangleMesh toTriangleMesh() {
@@ -26,7 +26,7 @@ public class QuadMesh extends Mesh {
 			i = convQuadToTriangles(data, firstVector*vectorSize, triangles, i, vectorSize);
 		}
 		
-		return new TriangleMesh(FrontFaceVertexOrder.Clockwise, vectorSize, triangles);
+		return new TriangleMesh(FrontFaceVertexOrder.Clockwise, vectorSize, triangles, uvOffset, normalsOffset);
 	}
 	
 	public static int convQuadToTriangles(float[] source, int srcPos, float[] target, int targetPos, int vectorSize) {

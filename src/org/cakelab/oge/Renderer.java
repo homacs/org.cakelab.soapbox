@@ -2,22 +2,23 @@ package org.cakelab.oge;
 
 import static org.lwjgl.opengl.GL20.*;
 
+import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.utils.BufferedMatrix4f;
 
 public abstract class Renderer {
 	protected Program shaderProgram;
 
-	private BufferedMatrix4f modelViewTransform = new BufferedMatrix4f();
-	private int u_ModelViewTransform;
-	private int u_projectionTransform;
+	private BufferedMatrix4f mv_matrix = new BufferedMatrix4f();
+	private int uniform_mv_matrix;
+	private int uniform_proj_matrix;
 
 	private double preparedLast;
 	
-	public void setShaderProgram(Program program) {
+	public void setShaderProgram(Program program) throws GLException {
 		shaderProgram = program;
-		u_ModelViewTransform = shaderProgram.getUniformLocation("mv_matrix");
-		u_projectionTransform = shaderProgram.getUniformLocation("proj_matrix");
+		uniform_mv_matrix = shaderProgram.getUniformLocation("mv_matrix");
+		uniform_proj_matrix = shaderProgram.getUniformLocation("proj_matrix");
 	}
 
 	public void delete() {
@@ -29,7 +30,7 @@ public abstract class Renderer {
 	}
 
 	public int getProjectionMatrixUniform() {
-		return u_projectionTransform;
+		return uniform_proj_matrix;
 	}
 
 	/**
@@ -44,26 +45,28 @@ public abstract class Renderer {
 	public void prepare(GraphicContext context, double currentTime) {
 		if (preparedLast != currentTime) {
 			glUseProgram(shaderProgram.getProgramId());
-			glUniformMatrix4fv(u_projectionTransform, false, context.getProjectionTransform().getFloatBuffer());
+			glUniformMatrix4fv(uniform_proj_matrix, false, context.getProjectionTransform().getFloatBuffer());
 			prepareRenderPass(context, currentTime);
 			preparedLast = currentTime;
 		}
 	}
 
 	
-	protected abstract void prepareRenderPass(GraphicContext context, double currentTime);
+	public abstract void prepareRenderPass(GraphicContext context, double currentTime);
 
 	public void render(GraphicContext context, double currentTime, VisualObject vobj) {
 		Camera camera = context.getActiveCamera();
-		modelViewTransform.identity()
+		mv_matrix.identity()
 			.mul(camera.getViewTransform())
 			.mul(vobj.getWorldTransform())
 		;
 		
-		glUniformMatrix4fv(u_ModelViewTransform, false, modelViewTransform.getFloatBuffer());
+		glUniformMatrix4fv(uniform_mv_matrix, false, mv_matrix.getFloatBuffer());
 		draw(currentTime, vobj);
 	}
 
-	protected abstract void draw(double currentTime, VisualObject vobj);
+	public abstract void draw(double currentTime, VisualObject vobj);
+
+	public abstract boolean needsNormals();
 
 }

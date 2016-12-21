@@ -34,7 +34,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.cakelab.appbase.buffer.ByteArrayList;
-import org.cakelab.oge.texture.Texture;
+import org.cakelab.oge.texture.GPUTexture;
 import org.cakelab.oge.utils.BufferUtilsHelper;
 
 
@@ -141,19 +141,19 @@ public class KTX {
 		return stride * h.pixelheight;
 	}
 
-	public static Texture load(String filename) throws IOException {
+	public static GPUTexture load(String filename) throws IOException {
 		return load(filename, 0);
 	}
 
-	public static Texture load(InputStream in) throws IOException {
+	public static GPUTexture load(InputStream in) throws IOException {
 		return load(in, 0);
 	}
-
 	
-	public static Texture load(String filename, int tex) throws IOException {
+	public static GPUTexture load(String filename, int tex) throws IOException {
 		return load(new FileInputStream(filename), tex);
 	}
-	public static Texture load(InputStream fp, int tex) throws IOException {
+	
+	public static GPUTexture load(InputStream fp, int tex) throws IOException {
 		Header header = new Header();
 		byte[] data;
 		int target = GL_NONE;
@@ -350,7 +350,7 @@ public class KTX {
 		}
 
 
-		return new Texture(target, tex);
+		return new GPUTexture(target, tex);
 	}
 
 

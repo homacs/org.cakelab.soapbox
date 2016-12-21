@@ -4,15 +4,19 @@ import static org.lwjgl.opengl.GL11.GL_COLOR;
 import static org.lwjgl.opengl.GL11.GL_DEPTH;
 import static org.lwjgl.opengl.GL11.glViewport;
 
+import java.util.ArrayList;
+
 import org.cakelab.oge.utils.BufferedMatrix4f;
 import org.cakelab.oge.utils.GLAPIHelper;
 import org.lwjgl.opengl.GLCapabilities;
 
+// TODO refactor graphic context -> remove renderer specific tasks and data
 // TODO thread specific
 public class GraphicContext {
 	private static final int DEFAULT_FRAME_BUFFER = 0;
 	private Camera camera;
 	private BufferedMatrix4f projection;
+	private ArrayList<Lamp> lamps;
 
 	
 	public GraphicContext(GLCapabilities capabilities) {
@@ -46,5 +50,12 @@ public class GraphicContext {
 		return this.projection;
 	}
 
+	public void setActiveLamps(ArrayList<Lamp> lamps) {
+		this.lamps = lamps;
+	}
+
+	public ArrayList<Lamp> getActiveLamps() {
+		return lamps;
+	}
 
 }

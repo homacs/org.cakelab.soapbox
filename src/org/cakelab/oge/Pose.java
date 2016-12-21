@@ -22,8 +22,6 @@ public class Pose {
 	 */
 	private float z = 0;
 	
-	private Quaternionf tempQuat = new Quaternionf();
-
 	/**
 	 * Axis to apply Yaw.
 	 * It's the local Y axis.
@@ -37,6 +35,7 @@ public class Pose {
 	 */
 	private Vector3f dirForward = new Vector3f();
 
+	private Quaternionf tempQuat = new Quaternionf();
 
 	public Pose() {	
 		resetRotation();
@@ -54,13 +53,22 @@ public class Pose {
 		setRotation(pitch, yaw, roll);
 	}
 
+	public void set(Pose pose) {
+		this.x = pose.x;
+		this.y = pose.y;
+		this.z = pose.z;
+		this.dirUp.set(pose.dirUp);
+		this.dirForward.set(pose.dirForward);
+		this.modified = true;
+	}
+	
 	public float getX() {
 		return x;
 	}
 
 	public void setX(float x) {
-		modified = true;
 		this.x = x;
+		modified = true;
 	}
 
 	public float getY() {
@@ -68,8 +76,8 @@ public class Pose {
 	}
 
 	public void setY(float y) {
-		modified = true;
 		this.y = y;
+		modified = true;
 	}
 
 	public float getZ() {
@@ -77,8 +85,8 @@ public class Pose {
 	}
 
 	public void setZ(float z) {
-		modified = true;
 		this.z = z;
+		modified = true;
 	}
 
 	
@@ -93,43 +101,44 @@ public class Pose {
 	}
 
 	public void addPitch(float pitch) {
-		modified = true;
 		Quaternionf rotation = tempQuat.identity().rotateAxis(pitch, getPitchAxis());
 		apply(rotation);
+		modified = true;
 	}
 
 	public void addYaw(float yaw) {
-		modified = true;
 		Quaternionf rotation = tempQuat.identity().rotateAxis(yaw, dirUp);
 		apply(rotation);
+		modified = true;
 	}
 	
 	
 	public void addRoll(float roll) {
-		modified = true;
 		Quaternionf rotation = tempQuat.identity().rotateAxis(roll, dirForward);
 		apply(rotation);
+		modified = true;
 	}
 	
 	public void addRotation(float pitch, float yaw, float roll) {
-		modified = true;
 		Quaternionf rotation = tempQuat.identity()
 				.rotateAxis(yaw, dirUp)
 				.rotateAxis(pitch, getPitchAxis())
 				.rotateAxis(roll, dirForward)
 				;
 		apply(rotation);
+		modified = true;
 	}
 	
 	public void setRotation(float pitch, float yaw, float roll) {
-		modified = true;
 		resetRotation();
 		addRotation(pitch, yaw, roll);
+		modified = true;
 	}
 	
 	public void resetRotation() {
 		dirUp.set(0, 1, 0);
 		dirForward.set(0, 0, 1);
+		modified = true;
 	}
 
 	public boolean isPoseModified() {

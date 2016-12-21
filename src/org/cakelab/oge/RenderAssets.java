@@ -6,39 +6,40 @@ import org.cakelab.oge.opengl.VertexArrayObject;
 import org.cakelab.soapbox.model.Mesh;
 
 public class RenderAssets {
-
-	public VertexArrayObject vao;
-	private int numVertices;
-	private int drawingMethod;
+	// TODO reconsider render assets and render data
+	private Mesh mesh;
 
 	public RenderAssets(Mesh mesh) {
-		setDrawingMethod(mesh.getGlDrawingMethod());
-		setNumVertices(mesh.getNumVertices());
-		vao = new VertexArrayObject(mesh, 0, GL_STATIC_DRAW);
+		this(mesh, true);
 	}
 
+	public RenderAssets(Mesh mesh, boolean doGlSetup) {
+		this.mesh = mesh;
+		if (doGlSetup) {
+			OGEMeshRenderData renderData = new OGEMeshRenderData(new VertexArrayObject(mesh, 0, GL_STATIC_DRAW));
+			mesh.setRenderData(renderData);
+		}
+	}
+	
+	
 	public void bind() {
-		vao.bind();
+		mesh.getRenderData().bind();
 	}
 
 	public int getDrawingMethod() {
-		return drawingMethod;
-	}
-
-	public void setDrawingMethod(int drawingMethod) {
-		this.drawingMethod = drawingMethod;
+		return mesh.getGlDrawingMethod();
 	}
 
 	public int getNumVertices() {
-		return numVertices;
-	}
-
-	public void setNumVertices(int numVertices) {
-		this.numVertices = numVertices;
+		return mesh.getNumVertices();
 	}
 
 	public void delete() {
-		vao.delete();
+		mesh.getRenderData().delete();
+	}
+
+	public Mesh getMesh() {
+		return mesh;
 	}
 
 	

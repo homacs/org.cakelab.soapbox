@@ -73,6 +73,13 @@ public class BlenderMeshRenderer extends Renderer {
 		assets.bind();
 		glDrawArrays(assets.getDrawingMethod(), 0, assets.getNumVertices());
 	}
+
+
+
+	@Override
+	public boolean needsNormals() {
+		return false;
+	}
 	
 
 

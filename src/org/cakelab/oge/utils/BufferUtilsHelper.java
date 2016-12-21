@@ -110,5 +110,22 @@ public class BufferUtilsHelper {
 	}
 
 
+	public static void copy(FloatBuffer src, float[][] trg) {
+		for (int i = 0; i < trg.length; i++) {
+			src.get(trg[i]);
+		}
+	}
+
+
+	public static FloatBuffer createFloatBuffer(float[][] matrix) {
+		FloatBuffer buffer = FloatBuffer.allocate(matrix.length * matrix[0].length);
+		for (int i = 0; i < matrix.length; i++) {
+			buffer.put(matrix[i]);
+		}
+		buffer.rewind();
+		return buffer;
+	}
+
+
 
 }

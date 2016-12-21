@@ -4,9 +4,10 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 public abstract class VisualObject extends Pose {
-
+	// TODO transformation matrices are renderer specific!
 	Matrix4f worldTransform = new Matrix4f();
 	private Matrix4f modelTransform;
+	private RenderData renderData;
 
 	public VisualObject() {}
 	
@@ -15,11 +16,11 @@ public abstract class VisualObject extends Pose {
 	}
 
 	protected Matrix4f getWorldTransform() {
-		applyModifications();
+		applyMatrixModifications();
 		return worldTransform;
 	}
 
-	private void applyModifications() {
+	private void applyMatrixModifications() {
 		if (isPoseModified()) {
 			Quaternionf qRotate = getRotationQuaternion();
 			worldTransform
@@ -51,5 +52,19 @@ public abstract class VisualObject extends Pose {
 			float roll) {
 		modelTransform = new Matrix4f().rotate(new Quaternionf().rotate(pitch, yaw, roll)).translate(x,y,z);
 	}
-	
+
+	/**
+	 * Retrieve render engine specific data.
+	 */
+	public RenderData getRenderData() {
+		return renderData;
+	}
+
+	/**
+	 * Set render engine specific data.
+	 */
+	public void setRenderData(RenderData renderData) {
+		this.renderData = renderData ;
+	}
+
 }

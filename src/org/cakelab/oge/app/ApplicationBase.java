@@ -1,40 +1,20 @@
 package org.cakelab.oge.app;
 
-import java.nio.DoubleBuffer;
 
 import org.cakelab.oge.GraphicContext;
 import org.cakelab.oge.shader.GLException;
-import org.joml.Vector2f;
 import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
 import org.lwjgl.system.Platform;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_API_ERROR_AMD;
-import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_DEPRECATION_AMD;
-import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD;
-import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_WINDOW_SYSTEM_AMD;
 import static org.lwjgl.opengl.GL11.*; // for constants like GL_TRUE
-import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 
 
 
-public abstract class ApplicationBase {
+public abstract class ApplicationBase extends AbstractAplicationBase {
 	
-	public static final boolean DEBUG = true;
-
-	protected Info info = new Info();
-	private DebugMessageHandler debugMessageHandler;
-	private int exitStatus;
-	private GLFWWindowSizeCallback windowSizeCB;
-	private GLFWKeyCallback keyCB;
-	private GLFWMouseButtonCallback mouseButtonCB;
-	private GLFWCursorPosCallback cursorPosCB;
-	private GLFWScrollCallback scrollCB;
-	private static long window;
-	static ApplicationBase app;
 
 	
 	public ApplicationBase(String windowTitle) throws GLException {
@@ -44,7 +24,6 @@ public abstract class ApplicationBase {
 
 
 		info.title = windowTitle;
-		info.title = "SoapBox 3D";
 		info.setWindowWidth(800);
 		info.setWindowHeight(600);
 		if (Platform.get()== Platform.MACOSX) {
@@ -65,10 +44,10 @@ public abstract class ApplicationBase {
 
 	}
 	
-	public void run() {
-		boolean running = true;
-		app = this;
-
+	
+	
+	@Override
+	public void createWindow() {
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, info.majorVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, info.minorVersion);
@@ -85,9 +64,9 @@ public abstract class ApplicationBase {
 		glfwWindowHint(GLFW_ALPHA_BITS, 0);
 		glfwWindowHint(GLFW_DEPTH_BITS, 32);
 		glfwWindowHint(GLFW_STENCIL_BITS, 0);
-
+		long monitor = 0;
 		if (info.flags.fullscreen) {
-			long monitor = glfwGetPrimaryMonitor();
+			monitor = glfwGetPrimaryMonitor();
 			GLFWVidMode mode = glfwGetVideoMode(monitor);
 
 			info.setWindowWidth(mode.width());
@@ -95,118 +74,36 @@ public abstract class ApplicationBase {
 			glfwWindowHint(GLFW_RED_BITS, mode.redBits());
 			glfwWindowHint(GLFW_GREEN_BITS, mode.greenBits());
 			glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
-
-			window = glfwCreateWindow(info.getWindowWidth(), info.getWindowHeight(),
-					info.title, monitor, 0);
-			setVSync(info.flags.vsync);
 		} else {
 			glfwWindowHint(GLFW_RED_BITS, 8);
 			glfwWindowHint(GLFW_GREEN_BITS, 8);
 			glfwWindowHint(GLFW_BLUE_BITS, 8);
-
-			window = glfwCreateWindow(info.getWindowWidth(), info.getWindowHeight(),
-					info.title, 0, 0);
 		}
 
+		window = glfwCreateWindow(info.getWindowWidth(), info.getWindowHeight(),
+				info.title, monitor, 0);
+
+		if (info.flags.fullscreen) setVSync(info.flags.vsync);
+		
 		if (window == NULL) {
-			System.err.print("Failed to open window\n");
 			glfwTerminate();
-			return;
+			throw new RuntimeException("Failed to open window\n");
 		}
+	}
 
-		windowSizeCB = new GLFWWindowSizeCallback() {
-			@Override
-			public void invoke(long window, int width, int height) {
-				ApplicationBase.this.onResize(width, height);
-			}
-		};
-		glfwSetWindowSizeCallback(window, windowSizeCB);
-		
-		keyCB = new GLFWKeyCallback() {
-			@Override
-			public void invoke(long window, int key, int scancode, int action,
-					int mods) {
-				try {
-					ApplicationBase.this.onKey(key, scancode, action, mods);
-				} catch (Throwable e) {
-					e.printStackTrace();
-					requestExit(-1);
-				}
-			}
-		};
-		glfwSetKeyCallback(window, keyCB);
-		mouseButtonCB = new GLFWMouseButtonCallback() {
-			@Override
-			public void invoke(long window, int button, int action, int mods) {
-				ApplicationBase.this.onMouseButton(button, action);
-			}
 
-		};
-		glfwSetMouseButtonCallback(window, mouseButtonCB);
-		
-		cursorPosCB = new GLFWCursorPosCallback() {
-			double xpos_last;
-			double ypos_last;
-			boolean init = true;
-			@Override
-			public void invoke(long window, double xpos, double ypos) {
-				// TODO: consider large values in xpos and ypos and reset mouse cursor
-				if(init) {
-					xpos_last = xpos;
-					ypos_last = ypos;
-					init = false;
-				}
-				ApplicationBase.this.onMouseMove(xpos, ypos, xpos-xpos_last, ypos-ypos_last);
-				xpos_last = xpos;
-				ypos_last = ypos;
-			}
-		};
-		glfwSetCursorPosCallback(window, cursorPosCB);
 
-		scrollCB = new GLFWScrollCallback() {
-			@Override
-			public void invoke(long window, double xoffset, double yoffset) {
-				ApplicationBase.this.onMouseWheel(yoffset);
-			}
+	public void run() throws GLException {
 
-		};
-		glfwSetScrollCallback(window, scrollCB);
-		if (info.flags.cursor)
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		else
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-		info.flags.stereo = (glfwGetWindowAttrib(window, GLFW_STEREO) == 1);
-
-		glfwMakeContextCurrent(window);
-
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the ContextCapabilities instance and makes the OpenGL
-        // bindings available for use.
-		
-        GLCapabilities capabilities = GL.createCapabilities();
-        GraphicContext context = new GraphicContext(capabilities);
-		
-		// loading of extensions is done automatically by the lwjgl library,
-		// thus, we dont need w3g.
-
-		if (DEBUG) {
-			info("VENDOR: " + glGetString(GL_VENDOR));
-			info("VERSION: " + glGetString(GL_VERSION));
-			info("RENDERER: " + glGetString(GL_RENDERER));
-		}
-		// Creates a debug message callback for the context
-		// which supports OpenGL43, GL_KHR_debug, GL_ARB_debug_output
-		// and GL_AMD_debug_output if supported by the drivers.
-		debugMessageHandler = new DebugMessageHandler(GL.getCapabilities(), this);
-		
 		exitStatus = 0;
 		try {
 		
+
+			init();
+			
 			startup();
 	
+			boolean running = true;
 			while (running) {
 
 				context.setViewport(0, 0, info.getWindowWidth(), info.getWindowHeight());
@@ -240,24 +137,6 @@ public abstract class ApplicationBase {
 		exit(exitStatus);
 	}
 
-	protected void requestExit(int status) {
-		exitStatus = status;
-		glfwSetWindowShouldClose(window, true);
-	}
-	
-	public void setVirtualCursor(boolean enabled) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
-
-
-	
-	/** Immediate program exit */
-	protected void exit (int status) {
-		debugMessageHandler.release();
-		glfwTerminate();
-		System.exit(status);
-	}
-
 	protected abstract void startup() throws Throwable;
 
 	/** called from main loop to render the next frame */
@@ -265,206 +144,6 @@ public abstract class ApplicationBase {
 	
 	protected abstract void shutdown() throws Throwable;
 
-	protected void onResize(int w, int h) {
-		info.setWindowWidth(w);
-		info.setWindowHeight(h);
-	}
-
-	/**
-	 * Will be called when a key is pressed, repeated or released.
-	 *
-	 * @param window   the window that received the event
-	 * @param key      the keyboard key that was pressed or released
-	 * @param scancode the system-specific scancode of the key
-	 * @param action   the key action. One of:<br>{@link GLFW#GLFW_PRESS}, {@link GLFW#GLFW_RELEASE}, {@link GLFW#GLFW_REPEAT}
-	 * @param mods     bitfield describing which modifiers keys were held down. One of: 
-	 * <br>{@link GLFW#GLFW_MOD_SHIFT}, {@link GLFW#GLFW_MOD_CONTROL}, {@link GLFW#GLFW_MOD_ALT}, {@link GLFW#GLFW_MOD_SUPER}
-	 */
-	protected void onKey(int key, int scancode, int action, int mods) throws Throwable {
-
-	}
-
-	protected void onMouseButton(int button, int action) {
-
-	}
-
-	protected void onMouseMove(double xpos, double ypos, double xmov, double ymov) {
-
-	}
-
-	protected void onMouseWheel(double yoffset) {
-
-	}
-
-	void onDebugMessage(int source, int typeOrCategory, int id, int severity,
-			int length, String message) {
-		switch (typeOrCategory) {
-		case GL_DEBUG_TYPE_ERROR:
-		case GL_DEBUG_CATEGORY_API_ERROR_AMD:
-			fatal(message);
-			break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-		case GL_DEBUG_TYPE_PORTABILITY:
-		case GL_DEBUG_CATEGORY_WINDOW_SYSTEM_AMD:
-		case GL_DEBUG_CATEGORY_DEPRECATION_AMD:
-		case GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD:
-			error(message);
-			break;
-		default:
-			switch(severity) {
-			case GL_DEBUG_SEVERITY_HIGH:
-				// same as:
-				/* GL_DEBUG_SEVERITY_HIGH_ARB */
-				/* GL_DEBUG_SEVERITY_HIGH_AMD */
-				fatal(message);
-				break;
-			case GL_DEBUG_SEVERITY_MEDIUM:
-				// same as:
-				/* GL_DEBUG_SEVERITY_MEDIUM_ARB */
-				/* GL_DEBUG_SEVERITY_MEDIUM_AMD */
-				error(message);
-				break;
-			case GL_DEBUG_SEVERITY_LOW:
-				// same as:
-				/* GL_DEBUG_SEVERITY_LOW_ARB */
-				warn(message);
-				break;
-			case GL_DEBUG_SEVERITY_NOTIFICATION:
-				// same as:
-				/* GL_DEBUG_SEVERITY_MEDIUM_AMD */
-				/* GL_DEBUG_SEVERITY_LOW_AMD */
-				if(DEBUG) info(message);
-				break;
-			default:
-				warn(message);
-			}
-		}
-	}
-
-	static Cursor getMousePosition() {
-		// TODO keep cursor object!
-		final DoubleBuffer x = DoubleBuffer.allocate(1);
-		final DoubleBuffer y = DoubleBuffer.allocate(1);
-		glfwGetCursorPos(window, x, y);
-		return new Cursor(x.get(), y.get());
-
-	}
-
-	void setVsync(boolean enable) {
-		info.flags.vsync = enable;
-		glfwSwapInterval(info.flags.vsync ? 1 : 0);
-	}
-
-	/**
-	 * Print error message and exit abnormal
-	 * @param errmsg
-	 */
-	protected void fatal(String errmsg) {
-		throw new Error("FATAL: " + errmsg);
-	}
-
-	/** 
-	 * Logs an error message on stderr.
-	 * @param errmsg
-	 */
-	protected void error(String errmsg) {
-		System.err.println("ERROR: " + errmsg);
-	}
-
-	/**
-	 * Logs warnmsg on stdout
-	 * @param warnmsg
-	 */
-	protected void warn(String warnmsg) {
-		System.out.println("WARN: " + warnmsg);
-	}
-
-	/**
-	 * Logs infomsg on stdout.
-	 * @param infomsg
-	 */
-	protected void info(String infomsg) {
-		System.out.println("INFO: " + infomsg);
-	}
-	
-
-	public static class Info {
-		public String title;
-		public int windowWidth;
-		public int windowHeight;
-		public int majorVersion;
-		public int minorVersion;
-		public int samples;
-
-		public static class Flags {
-			public boolean fullscreen;
-			public boolean vsync;
-			public boolean cursor;
-			public boolean stereo;
-			public boolean debug;
-		}
-
-		public Flags flags = new Flags();
-		private Vector2f center = new Vector2f();
-
-		public int getWindowWidth() {
-			return windowWidth;
-		}
-
-		public void setWindowWidth(int windowWidth) {
-			this.windowWidth = windowWidth;
-			this.center.x = (float) ((((float)windowWidth) +0.5)/2);
-		}
-
-		public int getWindowHeight() {
-			return windowHeight;
-		}
-
-		public void setWindowHeight(int windowHeight) {
-			this.windowHeight = windowHeight;
-			this.center.y = (float) ((((float)windowHeight) +0.5)/2);
-		}
-
-		public Vector2f getCenter() {
-			return center;
-		}
-
-	}
-
-	public static class Cursor {
-
-		private double x;
-		private double y;
-
-		public Cursor(double x, double y) {
-			this.x = x;
-			this.y = y;
-		}
-
-		public double getX() {
-			return x;
-		}
-
-		public void setX(double x) {
-			this.x = x;
-		}
-
-		public double getY() {
-			return y;
-		}
-
-		public void setY(double y) {
-			this.y = y;
-		}
-
-	}
-
-
-	public void setVSync(boolean enable) {
-        info.flags.vsync = enable;
-        glfwSwapInterval(info.flags.vsync?1:0);
-	}
 
 
 

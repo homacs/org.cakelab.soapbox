@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glFrontFace;
 
-import java.io.IOException;
 
 import org.cakelab.oge.GraphicContext;
 import org.cakelab.oge.Registry;
@@ -37,7 +36,7 @@ public class SoapBox extends ApplicationBase {
 	}
 	
 	@Override
-	protected void startup() throws GLException, IOException {
+	protected void startup() throws Throwable {
 		setVirtualCursor(true);
 		scene = new TestRoom();
 		
@@ -124,7 +123,7 @@ public class SoapBox extends ApplicationBase {
 	}
 
 	@Override
-	protected synchronized void onResize(int w, int h) {
+	protected synchronized void onResize(int w, int h) throws Throwable {
 		super.onResize(w, h);
 		aspectRatio = (float) w / (float) h;
 		projection.setPerspective(50.0f, aspectRatio, 0.1f, 1000.0f);

@@ -7,8 +7,14 @@ import org.joml.Vector3f;
 public class HeadCamera extends Camera {
 
 	
+	private Quaternionf qRotate = new Quaternionf();
+	private Vector3f eye = new Vector3f(0, 0, 1);
+	private Vector3f up = new Vector3f(0, 1, 0);
+	
 	private Matrix4f viewTransform = new Matrix4f();
 	private Matrix4f orientationTransform = new Matrix4f();
+	
+	
 	private float yaw;
 	private float pitch;
 	private float roll;
@@ -31,7 +37,7 @@ public class HeadCamera extends Camera {
 	
 	private void applyModifications() {
 		if (isPoseModified()) {
-			Quaternionf qRotate = getRotationQuaternion();
+			qRotate = getRotationQuaternion();
 			
 			orientationTransform.identity()
 				.rotate(qRotate);
@@ -77,26 +83,29 @@ public class HeadCamera extends Camera {
 
 	@Override
 	public Quaternionf getRotationQuaternion() {
-		// roll axis (Z)
-		Vector3f eye = new Vector3f(0, 0, 1);
-		// yaw axis (Y)
-		Vector3f up = new Vector3f(0, 1, 0);
-		Quaternionf rotation = new Quaternionf();
+		if (isPoseModified()) {
 		
-		rotation.identity().rotateZ(roll);
-		rotation.transform(eye);
-		rotation.transform(up);
-
-		rotation.identity().rotateX(-pitch);
-		rotation.transform(eye);
-		rotation.transform(up);
+			// roll axis (Z)
+			eye.set(0, 0, 1);
+			// yaw axis (Y)
+			up.set(0, 1, 0);
+			
+			qRotate.identity().rotateZ(roll);
+			qRotate.transform(eye);
+			qRotate.transform(up);
+	
+			qRotate.identity().rotateX(-pitch);
+			qRotate.transform(eye);
+			qRotate.transform(up);
+			
+			qRotate.identity().rotateY(yaw);
+			qRotate.transform(eye);
+			qRotate.transform(up);
+			
+			qRotate.identity().lookRotate(eye, up).invert();
+		}
 		
-		rotation.identity().rotateY(yaw);
-		rotation.transform(eye);
-		rotation.transform(up);
-
-		
-		return rotation.identity().lookRotate(eye, up).invert();
+		return qRotate;
 	}
 
 	

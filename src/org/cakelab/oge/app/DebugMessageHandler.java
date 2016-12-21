@@ -62,7 +62,7 @@ import org.lwjgl.system.CallbackI;
 
 public class DebugMessageHandler {
 	
-	private ApplicationBase app;
+	private AbstractAplicationBase app;
 	private ByteArrayOutputStream buffer;
 	private PrintStream stream;
 	private GLCapabilities capabilities;
@@ -72,7 +72,7 @@ public class DebugMessageHandler {
 		return handle;
 	}
 
-	public DebugMessageHandler(GLCapabilities capabilities, ApplicationBase app) {
+	public DebugMessageHandler(GLCapabilities capabilities, AbstractAplicationBase app) {
 		this.capabilities = capabilities;
 		this.app = app;
 		buffer = new ByteArrayOutputStream();

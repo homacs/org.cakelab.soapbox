@@ -48,7 +48,7 @@ public class CoordPlaneRenderer extends Renderer {
 	}
 
 	@Override
-	protected void draw(double currentTime, VisualObject cube) {
+	public void draw(double currentTime, VisualObject cube) {
 		// Draw 3 lines (i.e. 6 vertices)
         glDrawArrays(GL_LINES, 0, 6);
 	}
@@ -57,6 +57,11 @@ public class CoordPlaneRenderer extends Renderer {
 	public void delete() {
 		glDeleteVertexArrays(vao);
 		super.delete();
+	}
+
+	@Override
+	public boolean needsNormals() {
+		return false;
 	}
 
 	

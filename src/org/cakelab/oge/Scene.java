@@ -9,6 +9,9 @@ public class Scene {
 
 	ArrayList<VisualObject> objects = new ArrayList<VisualObject>();
 	ArrayList<DynamicObject> dynamic = new ArrayList<DynamicObject>();
+	ArrayList<Lamp> lamps = new ArrayList<Lamp>();
+	
+	
 	
 	public void add(VisualObject vobj) {
 		objects.add(vobj);
@@ -24,5 +27,14 @@ public class Scene {
 	public ArrayList<DynamicObject> getDynamicObjects() {
 		return dynamic;
 	}
+
+	public void addLamp(Lamp lamp) {
+		lamps.add(lamp);
+	}
+
+	public ArrayList<Lamp> getLamps() {
+		return lamps;
+	}
+	
 
 }

@@ -60,8 +60,12 @@ public class Program {
 	}
 
 
-	public int getUniformLocation(String uniformName) {
-		return glGetUniformLocation(getProgramId(), uniformName);
+	public int getUniformLocation(String uniformName) throws GLException {
+		int location = glGetUniformLocation(getProgramId(), uniformName);
+		if (location == -1) {
+			throw new GLException("uniform attribute "+ uniformName + " not found in program " + programName);
+		}
+		return location;
 	}
 
 

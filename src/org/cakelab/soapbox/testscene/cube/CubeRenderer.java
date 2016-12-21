@@ -105,7 +105,7 @@ public class CubeRenderer extends Renderer {
 	             0.25f,  0.25f,  0.25f,
 	            -0.25f,  0.25f,  0.25f,
 	            -0.25f,  0.25f, -0.25f
-		});
+		}, -1, -1);
 
 		assets = new RenderAssets(mesh);
 	}
@@ -123,5 +123,10 @@ public class CubeRenderer extends Renderer {
 
 	public void draw(double currentTime, VisualObject cube) {
 		glDrawArrays(assets.getDrawingMethod(), 0, assets.getNumVertices());
+	}
+
+	@Override
+	public boolean needsNormals() {
+		return false;
 	}
 }
