@@ -27,6 +27,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 
+// TODO work on texture import
+//      turn this class in a tool and don't derive from GPUTexture
+//      maybe have a common oge specific internal format, which allows conversion into other formats
 public class TextureImageIO extends GPUTexture {
 	/** The colour model including alpha for the GL image */
     private static final ColorModel glAlphaColorModel = 
@@ -61,14 +64,14 @@ public class TextureImageIO extends GPUTexture {
     /**
      * 
      * @param image
-     * @param pixelFormat
-     * @param flip       True if we should flip the image on the y-axis while loading
-     * @param forceAlpha    Forces to create an alpha channel if none available in image.
-     * @param transparent   Color to be transparent (default: null -> black)
+     * @param requiredPixelFormat 	Pixel format needed.
+     * @param flip          		True if we should flip the image on the y-axis while loading
+     * @param forceAlpha    		Forces to create an alpha channel if none available in image.
+     * @param transparent   		Color to be transparent (default: null -> black)
      * @param minFilter
      * @param magFilter
      */
-	public TextureImageIO(BufferedImage image, int pixelFormat, boolean flip, boolean forceAlpha, int minFilter, int magFilter) {
+	public TextureImageIO(BufferedImage image, int requiredPixelFormat, boolean flip, boolean forceAlpha, int minFilter, int magFilter) {
         // TODO: textures: Not every texture needs to be converted
 		//       This constructor considers a lot of cases where the image is
 		//       not suitable for a OpenGL compatible texture. There should
@@ -171,15 +174,14 @@ public class TextureImageIO extends GPUTexture {
         glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
         
-       
         // produce a texture from the byte buffer
         GL11.glTexImage2D(target, 
                       0, 
-                      srcPixelFormat, 
+                      requiredPixelFormat, 
                       texWidth, 
                       texHeight, 
                       0, 
-                      pixelFormat, 
+                      srcPixelFormat, 
                       GL11.GL_UNSIGNED_BYTE, 
                       imageData); 
 
