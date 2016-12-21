@@ -1,7 +1,7 @@
 package org.cakelab.soapbox.testscene.cube;
 
 import org.cakelab.oge.Registry;
-import org.cakelab.oge.Scene;
+import org.cakelab.oge.scene.Scene;
 import org.cakelab.oge.shader.GLException;
 
 public class CubeScene extends Scene {

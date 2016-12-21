@@ -14,9 +14,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.cakelab.appbase.buffer.ByteArrayList;
-import org.cakelab.oge.GraphicContext;
-import org.cakelab.oge.app.ApplicationBase;
-import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.utils.BufferUtilsHelper;
 
 import static org.cakelab.oge.utils.GLAPIHelper.*;
@@ -457,43 +454,14 @@ public class SBMObject {
 
 		public void init(ByteBuffer data) throws IOException {
 			magic = data.getInt();
+			if (magic != SB6M_MAGIC) {
+				throw new IOException("file is not an SBM6 file");
+			}
 			size = data.getInt();
 			num_chunks = data.getInt();
 			flags = data.getInt();
 		}
 
-	}
-
-	
-	
-	// TEST APPLICATION
-	
-	public static void main(String[] args) throws IOException, GLException {
-		// small test
-		if (SB6M_MAGIC != 0x4d364253) {
-			err("SB6M_FOURCC not working correct");
-		}
-		ApplicationBase testApp = new ApplicationBase("object loader test") {
-
-			private SBMObject myobject;
-
-			@Override
-			protected void startup() throws Throwable {
-				myobject = new SBMObject();
-				myobject.load("../sb6code/bin/media/objects/sphere.sbm");
-			}
-
-			@Override
-			protected void render(double currentTime, GraphicContext gcontext) {
-				myobject.render();
-			}
-
-			@Override
-			protected void shutdown() {
-			}
-
-		};
-		testApp.run();
 	}
 
 

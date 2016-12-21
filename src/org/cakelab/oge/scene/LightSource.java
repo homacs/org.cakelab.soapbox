@@ -1,14 +1,14 @@
-package org.cakelab.oge;
+package org.cakelab.oge.scene;
 
 import org.joml.Vector3f;
 
 // TODO refactor: rename to Light
-// TODO lights may be dynamic object to
+// TODO lights may be dynamic objects too
 // TODO consider associating light source and light object
-public class Lamp extends Pose {
+public class LightSource extends Pose {
 
 	private Vector3f color;
-	private LampRenderData renderData;
+	private ModuleData renderData;
 
 	public Vector3f getColor() {
 		return color;
@@ -18,15 +18,15 @@ public class Lamp extends Pose {
 		this.color = color;
 	}
 
-	public Lamp(Vector3f color) {
+	public LightSource(Vector3f color) {
 		this.color = color;
 	}
 
-	public void setRenderData(LampRenderData renderData) {
+	public void setRenderData(ModuleData renderData) {
 		this.renderData = renderData;
 	}
 
-	public LampRenderData getRenderData() {
+	public ModuleData getRenderData() {
 		return renderData;
 	}
 }

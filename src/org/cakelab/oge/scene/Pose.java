@@ -1,11 +1,15 @@
-package org.cakelab.oge;
+package org.cakelab.oge.scene;
 
+import org.cakelab.oge.app.GlobalClock;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Pose {
-
-	private boolean modified = true;
+	// TODO xyz should be a vector
+	
+	
+	private double lastModified = 0;
+	
 	
 	/**
 	 * translation along x (left/right)
@@ -46,6 +50,7 @@ public class Pose {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		setPoseModified();
 	}
 
 	public Pose(float x, float y, float z, float pitch, float yaw, float roll) {
@@ -53,13 +58,17 @@ public class Pose {
 		setRotation(pitch, yaw, roll);
 	}
 
+	public void setPoseModified() {
+		lastModified = GlobalClock.getCurrentTime();
+	}
+	
 	public void set(Pose pose) {
 		this.x = pose.x;
 		this.y = pose.y;
 		this.z = pose.z;
 		this.dirUp.set(pose.dirUp);
 		this.dirForward.set(pose.dirForward);
-		this.modified = true;
+		setPoseModified();
 	}
 	
 	public float getX() {
@@ -68,7 +77,7 @@ public class Pose {
 
 	public void setX(float x) {
 		this.x = x;
-		modified = true;
+		setPoseModified();
 	}
 
 	public float getY() {
@@ -77,7 +86,7 @@ public class Pose {
 
 	public void setY(float y) {
 		this.y = y;
-		modified = true;
+		setPoseModified();
 	}
 
 	public float getZ() {
@@ -86,7 +95,7 @@ public class Pose {
 
 	public void setZ(float z) {
 		this.z = z;
-		modified = true;
+		setPoseModified();
 	}
 
 	
@@ -97,26 +106,27 @@ public class Pose {
 	}
 	
 	private Vector3f getPitchAxis() {
+		// TODO this might be the reason why camera flips around if turned upside down
 		return new Vector3f(dirForward).cross(dirUp);
 	}
 
 	public void addPitch(float pitch) {
 		Quaternionf rotation = tempQuat.identity().rotateAxis(pitch, getPitchAxis());
 		apply(rotation);
-		modified = true;
+		setPoseModified();
 	}
 
 	public void addYaw(float yaw) {
 		Quaternionf rotation = tempQuat.identity().rotateAxis(yaw, dirUp);
 		apply(rotation);
-		modified = true;
+		setPoseModified();
 	}
 	
 	
 	public void addRoll(float roll) {
 		Quaternionf rotation = tempQuat.identity().rotateAxis(roll, dirForward);
 		apply(rotation);
-		modified = true;
+		setPoseModified();
 	}
 	
 	public void addRotation(float pitch, float yaw, float roll) {
@@ -126,30 +136,31 @@ public class Pose {
 				.rotateAxis(roll, dirForward)
 				;
 		apply(rotation);
-		modified = true;
+		setPoseModified();
 	}
 	
 	public void setRotation(float pitch, float yaw, float roll) {
 		resetRotation();
 		addRotation(pitch, yaw, roll);
-		modified = true;
+		setPoseModified();
 	}
 	
 	public void resetRotation() {
 		dirUp.set(0, 1, 0);
 		dirForward.set(0, 0, 1);
-		modified = true;
+		setPoseModified();
 	}
 
-	public boolean isPoseModified() {
-		return modified;
+	public boolean isPoseModified(double lastUpdate) {
+		return lastModified > lastUpdate;
+	}
+
+	public Vector3f getUpDirection() {
+		return dirUp;
+	}
+
+	public Vector3f getForwardDirection() {
+		return dirForward;
 	}
 	
-	public void setPoseModified(boolean modified) {
-		this.modified = modified;
-	}
-
-	public Quaternionf getRotationQuaternion() {
-		return tempQuat.identity().lookRotate(dirForward, dirUp).invert();
-	}
 }

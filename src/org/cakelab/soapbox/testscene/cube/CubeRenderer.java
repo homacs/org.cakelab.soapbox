@@ -1,21 +1,23 @@
 package org.cakelab.soapbox.testscene.cube;
 
 import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 
-import org.cakelab.oge.GraphicContext;
-import org.cakelab.oge.RenderAssets;
-import org.cakelab.oge.Renderer;
-import org.cakelab.oge.VisualObject;
+import org.cakelab.oge.app.ApplicationContext;
+import org.cakelab.oge.opengl.VertexArrayObject;
+import org.cakelab.oge.scene.VisualObject;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.shader.VertexShader;
+import org.cakelab.oge.utils.OGEMeshRenderData;
+import org.cakelab.oge.utils.SingleProgramRendererBase;
 import org.cakelab.soapbox.model.Mesh;
 import org.cakelab.soapbox.model.TriangleMesh;
 
-public class CubeRenderer extends Renderer {
+public class CubeRenderer extends SingleProgramRendererBase {
 	private TriangleMesh mesh;
-	private RenderAssets assets;
+	private OGEMeshRenderData assets;
 
 	public CubeRenderer() throws GLException {
 		String vs_source = "#version 410 core                                                  \n"
@@ -107,7 +109,8 @@ public class CubeRenderer extends Renderer {
 	            -0.25f,  0.25f, -0.25f
 		}, -1, -1);
 
-		assets = new RenderAssets(mesh);
+		assets = new OGEMeshRenderData(new VertexArrayObject(mesh, 0, GL_STATIC_DRAW), mesh.getGlDrawingMethod(), mesh.getNumVertices());
+
 	}
 
 	public void delete() {
@@ -117,7 +120,7 @@ public class CubeRenderer extends Renderer {
 
 	
 	@Override
-	public void prepareRenderPass(GraphicContext context, double currentTime) {
+	public void prepareRenderPass(ApplicationContext context, double currentTime) {
 		assets.bind();
 	}
 

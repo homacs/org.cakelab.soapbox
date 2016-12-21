@@ -5,10 +5,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_STEREO;
-import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
@@ -16,8 +17,10 @@ import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_API_ERROR_AMD;
 import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_DEPRECATION_AMD;
 import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_UNDEFINED_BEHAVIOR_AMD;
@@ -35,12 +38,9 @@ import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_ERROR;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_PORTABILITY;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR;
 
-import java.nio.DoubleBuffer;
 
 import org.cakelab.appbase.log.Log;
-import org.cakelab.oge.GraphicContext;
 import org.cakelab.oge.shader.GLException;
-import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -62,18 +62,21 @@ public abstract class AbstractAplicationBase {
 	protected GLFWCursorPosCallback cursorPosCB;
 	protected GLFWScrollCallback scrollCB;
 
-	protected GraphicContext context;
+	protected ApplicationContext context;
+
+	private boolean running;
 	protected static long window;
 
-	public abstract void createWindow();
-	
-	
+	/** Cached mouse pointer position */
+	private static Cursor cursor = new Cursor(0, 0);
+
 	
 	
 	protected void init() throws GLException {
 		if (!glfwInit()) {
 			throw new GLException("Failed to initialize GLFW\n");
 		}
+		
 		createWindow();
 
 		windowSizeCB = new GLFWWindowSizeCallback() {
@@ -154,7 +157,7 @@ public abstract class AbstractAplicationBase {
         // bindings available for use.
 		
         GLCapabilities capabilities = GL.createCapabilities();
-        context = new GraphicContext(capabilities);
+        context = new ApplicationContext(capabilities, info);
 		
 		// loading of extensions is done automatically by the lwjgl library,
 		// thus, we dont need w3g.
@@ -205,6 +208,7 @@ public abstract class AbstractAplicationBase {
 	protected void requestExit(int status) {
 		exitStatus = status;
 		glfwSetWindowShouldClose(window, true);
+		running = false;
 	}
 	
 	public void setVirtualCursor(boolean enabled) {
@@ -268,12 +272,8 @@ public abstract class AbstractAplicationBase {
 	}
 
 	static Cursor getMousePosition() {
-		// TODO keep cursor object!
-		final DoubleBuffer x = DoubleBuffer.allocate(1);
-		final DoubleBuffer y = DoubleBuffer.allocate(1);
-		glfwGetCursorPos(window, x, y);
-		return new Cursor(x.get(), y.get());
-
+		cursor.update(window);
+		return cursor;
 	}
 
 	void setVsync(boolean enable) {
@@ -315,81 +315,59 @@ public abstract class AbstractAplicationBase {
 	}
 	
 
-	public static class Info {
-		public String title;
-		public int windowWidth;
-		public int windowHeight;
-		public int majorVersion;
-		public int minorVersion;
-		public int samples;
-
-		public static class Flags {
-			public boolean fullscreen;
-			public boolean vsync;
-			public boolean cursor;
-			public boolean stereo;
-			public boolean debug;
-		}
-
-		public Flags flags = new Flags();
-		private Vector2f center = new Vector2f();
-
-		public int getWindowWidth() {
-			return windowWidth;
-		}
-
-		public void setWindowWidth(int windowWidth) {
-			this.windowWidth = windowWidth;
-			this.center.x = (float) ((((float)windowWidth) +0.5)/2);
-		}
-
-		public int getWindowHeight() {
-			return windowHeight;
-		}
-
-		public void setWindowHeight(int windowHeight) {
-			this.windowHeight = windowHeight;
-			this.center.y = (float) ((((float)windowHeight) +0.5)/2);
-		}
-
-		public Vector2f getCenter() {
-			return center;
-		}
-
-	}
-
-	public static class Cursor {
-
-		private double x;
-		private double y;
-
-		public Cursor(double x, double y) {
-			this.x = x;
-			this.y = y;
-		}
-
-		public double getX() {
-			return x;
-		}
-
-		public void setX(double x) {
-			this.x = x;
-		}
-
-		public double getY() {
-			return y;
-		}
-
-		public void setY(double y) {
-			this.y = y;
-		}
-
-	}
 
 
 	public void setVSync(boolean enable) {
         info.flags.vsync = enable;
         glfwSwapInterval(info.flags.vsync?1:0);
 	}
+	
+	public final void run() throws GLException {
+
+		exitStatus = 0;
+		try {
+		
+
+			init();
+			
+			startup();
+	
+			
+			
+			running = true;
+			while (running) {
+				GlobalClock.currentTime = glfwGetTime();
+
+				process(GlobalClock.currentTime, context);
+
+		        /* Poll for and process events */
+		        glfwPollEvents();
+
+				// Both buffers are full, one is displayed and the other waits to be swapped in after sync
+				// TODO: triple buffering, would allow rendering ahead of static and predictable objects
+				glfwSwapBuffers(window);
+
+				if (glfwWindowShouldClose(window)) {
+					running = false;
+				}
+
+			}
+	
+			shutdown();
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+			exitStatus = -1;
+		}
+
+		exit(exitStatus);
+	}
+
+
+
+	public abstract void createWindow();
+	protected abstract void startup() throws Throwable;
+	protected abstract void shutdown() throws Throwable;
+	protected abstract void process(double currentTime, ApplicationContext context) throws Throwable;
 	
 }

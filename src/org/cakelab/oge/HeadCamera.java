@@ -1,19 +1,10 @@
 package org.cakelab.oge;
 
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.cakelab.oge.utils.HeadCameraMatrices;
 
 public class HeadCamera extends Camera {
-
-	
-	private Quaternionf qRotate = new Quaternionf();
-	private Vector3f eye = new Vector3f(0, 0, 1);
-	private Vector3f up = new Vector3f(0, 1, 0);
-	
-	private Matrix4f viewTransform = new Matrix4f();
-	private Matrix4f orientationTransform = new Matrix4f();
-	
+	// TODO head camera is weird .. needs work
+	// pitch, yaw and roll actually part of pose?
 	
 	private float yaw;
 	private float pitch;
@@ -22,54 +13,36 @@ public class HeadCamera extends Camera {
 	
 	public HeadCamera(float x, float y, float z, float pitch, float yaw, float roll) {
 		super(x, y, z, pitch, yaw, roll);
+		matrices = new HeadCameraMatrices(this);
 	}
 
 
-	public Matrix4f getOrientationTransform() {
-		applyModifications();
-		return orientationTransform;
-	}
-	
-	public Matrix4f getViewTransform() {
-		applyModifications();
-		return viewTransform;
-	}
-	
-	private void applyModifications() {
-		if (isPoseModified()) {
-			qRotate = getRotationQuaternion();
-			
-			orientationTransform.identity()
-				.rotate(qRotate);
-			viewTransform.identity()
-				.translate(getX(), getY(), getZ())
-				.rotate(qRotate)
-				.invert()
-				;
-			
-			setPoseModified(false);
+
+	@Override
+	public void addPitch(float pitch) {
+		float newPitch = Math.max(Math.min(this.pitch + pitch, 90), -90);
+		if (newPitch != this.pitch) { 
+			setPoseModified();
+			this.pitch = newPitch;
 		}
 	}
 
 
 	@Override
-	public void addPitch(float pitch) {
-		setPoseModified(true);
-		this.pitch += pitch;
-	}
-
-
-	@Override
 	public void addYaw(float yaw) {
-		setPoseModified(true);
+		setPoseModified();
 		this.yaw += yaw;
 	}
 
 
 	@Override
 	public void addRoll(float roll) {
-		setPoseModified(true);
-		this.roll += roll;
+		float newRoll = Math.max(Math.min(this.roll + roll, 90), -90);
+		if (newRoll != this.roll) {
+			setPoseModified();
+			this.roll = newRoll;
+		}
+		
 	}
 
 
@@ -80,34 +53,16 @@ public class HeadCamera extends Camera {
 		addRoll(roll);
 	}
 
-
-	@Override
-	public Quaternionf getRotationQuaternion() {
-		if (isPoseModified()) {
-		
-			// roll axis (Z)
-			eye.set(0, 0, 1);
-			// yaw axis (Y)
-			up.set(0, 1, 0);
-			
-			qRotate.identity().rotateZ(roll);
-			qRotate.transform(eye);
-			qRotate.transform(up);
-	
-			qRotate.identity().rotateX(-pitch);
-			qRotate.transform(eye);
-			qRotate.transform(up);
-			
-			qRotate.identity().rotateY(yaw);
-			qRotate.transform(eye);
-			qRotate.transform(up);
-			
-			qRotate.identity().lookRotate(eye, up).invert();
-		}
-		
-		return qRotate;
+	public float getYaw() {
+		return yaw;
 	}
 
-	
+	public float getPitch() {
+		return pitch;
+	}
+
+	public float getRoll() {
+		return roll;
+	}
 	
 }

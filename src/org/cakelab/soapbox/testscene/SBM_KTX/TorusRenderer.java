@@ -2,23 +2,21 @@ package org.cakelab.soapbox.testscene.SBM_KTX;
 
 import java.io.IOException;
 
-import org.cakelab.oge.GraphicContext;
-import org.cakelab.oge.Renderer;
-import org.cakelab.oge.VisualObject;
+import org.cakelab.oge.app.ApplicationContext;
+import org.cakelab.oge.scene.VisualObject;
 import org.cakelab.oge.shader.FragmentShader;
-import org.cakelab.oge.shader.GLCompilerException;
 import org.cakelab.oge.shader.GLException;
-import org.cakelab.oge.shader.GLLinkerException;
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.shader.VertexShader;
 import org.cakelab.oge.texture.GPUTexture;
+import org.cakelab.oge.utils.SingleProgramRendererBase;
 import org.cakelab.oge.utils.ktx.KTX;
 import org.cakelab.oge.utils.sbm.SBMObject;
 import org.cakelab.soapbox.testscene.SBM_KTX.resources.Resources;
 
 
 
-public class TorusRenderer extends Renderer {
+public class TorusRenderer extends SingleProgramRendererBase {
 
 	/** texture objects */
 	private GPUTexture[] textures = new GPUTexture[2];
@@ -62,7 +60,7 @@ public class TorusRenderer extends Renderer {
 	
 	
 	@Override
-	public void prepareRenderPass(GraphicContext context, double currentTime) {
+	public void prepareRenderPass(ApplicationContext context, double currentTime) {
 	}
 
 	@Override

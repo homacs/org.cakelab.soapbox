@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL42.glTexStorage2D;
 
 import java.nio.ByteBuffer;
 
-import org.cakelab.oge.RenderData;
+import org.cakelab.oge.scene.ModuleData;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
@@ -25,7 +25,7 @@ public class GPUTexture {
 	private int width;
 	private int height;
 	
-	private RenderData renderData;
+	private ModuleData renderData;
 
 	
 	protected GPUTexture() {}
@@ -97,10 +97,10 @@ public class GPUTexture {
 		return height;
 	}
 	
-	public void setRenderData(RenderData renderData) {
+	public void setRenderData(ModuleData renderData) {
 		this.renderData = renderData;
 	}
-	public RenderData getRenderData() {
+	public ModuleData getRenderData() {
 		return renderData;
 	}
 	

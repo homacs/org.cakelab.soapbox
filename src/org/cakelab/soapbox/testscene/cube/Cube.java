@@ -1,7 +1,7 @@
 package org.cakelab.soapbox.testscene.cube;
 
-import org.cakelab.oge.VisualObject;
-import org.cakelab.soapbox.DynamicObject;
+import org.cakelab.oge.scene.DynamicObject;
+import org.cakelab.oge.scene.VisualObject;
 
 
 public class Cube extends VisualObject implements DynamicObject {
@@ -9,6 +9,7 @@ public class Cube extends VisualObject implements DynamicObject {
 	private int i;
 
 	public Cube(int i) {
+		super(null);
 		this.i = i;
 	}
 

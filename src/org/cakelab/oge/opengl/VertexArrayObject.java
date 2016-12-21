@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import org.cakelab.soapbox.model.Mesh;
 
 public class VertexArrayObject {
-
+	// TODO [2] vertex array objects and vertex attributes
+	
 	private int vaoId;
 	private ArrayList<BufferObjectStatic> bufferObjects = new ArrayList<BufferObjectStatic>();
 	private BufferObjectStatic arrayBuffer;
@@ -67,6 +68,12 @@ public class VertexArrayObject {
 		glDeleteVertexArrays(vaoId);
 	}
 
+	/**
+	 * 
+	 * @param glAttribIndex
+	 * @param startIndex
+	 * @param size
+	 */
 	public void declareVertexAttribute(int glAttribIndex, int startIndex, int size) {
 		glVertexAttribPointer(glAttribIndex, size, arrayBuffer.getElemType(), false, arrayBuffer.getStrideSize(), startIndex * arrayBuffer.getElemSize());
         glEnableVertexAttribArray(glAttribIndex);

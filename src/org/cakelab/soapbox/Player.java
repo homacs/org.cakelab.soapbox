@@ -6,6 +6,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+// TODO player and its camera would be the first example of a group object
 public class Player {
 	private Camera camera;
 	Vector3f translationVelocity = new Vector3f();
@@ -45,7 +46,7 @@ public class Player {
 
 		Vector4f direction = new Vector4f(x, y, z, 1);
 		
-		Matrix4f orientation = new Matrix4f(getCamera().getOrientationTransform());
+		Matrix4f orientation = getCamera().matrices.getOrientationTransform();
 		
 		direction.mul(orientation);
 		

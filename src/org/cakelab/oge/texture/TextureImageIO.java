@@ -29,6 +29,7 @@ import org.lwjgl.opengl.GL13;
 
 // TODO work on texture import
 //      turn this class in a tool and don't derive from GPUTexture
+//      allow setting of all the different texture parameters
 //      maybe have a common oge specific internal format, which allows conversion into other formats
 public class TextureImageIO extends GPUTexture {
 	/** The colour model including alpha for the GL image */

@@ -1,7 +1,6 @@
 package org.cakelab.oge.app;
 
 
-import org.cakelab.oge.GraphicContext;
 import org.cakelab.oge.shader.GLException;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.Platform;
@@ -90,59 +89,6 @@ public abstract class ApplicationBase extends AbstractAplicationBase {
 			throw new RuntimeException("Failed to open window\n");
 		}
 	}
-
-
-
-	public void run() throws GLException {
-
-		exitStatus = 0;
-		try {
-		
-
-			init();
-			
-			startup();
-	
-			boolean running = true;
-			while (running) {
-
-				context.setViewport(0, 0, info.getWindowWidth(), info.getWindowHeight());
-				context.clearRGBA(0.0f, 0.0f, 0.0f, 1.0f);
-				context.clearDepth(1.0f);
-
-				
-				render(glfwGetTime(), context);
-	
-				// Both buffers are full, one is displayed and the other waits to be swapped in after sync
-				glfwSwapBuffers(window);
-				// TODO: triple buffering, would allow rendering ahead of static and predictable objects
-				
-		        /* Poll for and process events */
-		        glfwPollEvents();
-	
-				if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
-					running = false;
-				} else if (glfwWindowShouldClose(window)) {
-					running = false;
-				}
-			}
-	
-			shutdown();
-
-		} catch (Throwable t) {
-			t.printStackTrace();
-			exitStatus = -1;
-		}
-
-		exit(exitStatus);
-	}
-
-	protected abstract void startup() throws Throwable;
-
-	/** called from main loop to render the next frame */
-	protected abstract void render(double currentTime, GraphicContext gcontext) throws Throwable;
-	
-	protected abstract void shutdown() throws Throwable;
 
 
 

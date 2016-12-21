@@ -1,7 +1,7 @@
 package org.cakelab.soapbox.testscene.blenderRaw;
 
-import org.cakelab.oge.RenderAssets;
-import org.cakelab.soapbox.DynamicObject;
+import org.cakelab.oge.scene.DynamicObject;
+import org.cakelab.soapbox.model.Mesh;
 
 public class BlenderCube extends BlenderObject implements DynamicObject {
 
@@ -9,12 +9,12 @@ public class BlenderCube extends BlenderObject implements DynamicObject {
 	private float yOff;
 	private float zOff;
 
-	public BlenderCube(RenderAssets assets) {
-		super(assets);
+	public BlenderCube(Mesh mesh) {
+		this(0,0,0, mesh);
 	}
 
-	public BlenderCube(float x, float y, float z, RenderAssets assets) {
-		super(assets);
+	public BlenderCube(float x, float y, float z, Mesh mesh) {
+		super(mesh);
 		xOff = x;
 		yOff = y;
 		zOff = z;

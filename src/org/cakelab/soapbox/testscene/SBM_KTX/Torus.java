@@ -1,7 +1,8 @@
 package org.cakelab.soapbox.testscene.SBM_KTX;
 
-import org.cakelab.oge.VisualObject;
-import org.cakelab.soapbox.DynamicObject;
+import org.cakelab.oge.scene.DynamicObject;
+import org.cakelab.oge.scene.Material;
+import org.cakelab.oge.scene.VisualObject;
 
 public class Torus extends VisualObject implements DynamicObject {
 
@@ -12,6 +13,7 @@ public class Torus extends VisualObject implements DynamicObject {
 
 
 	public Torus() {
+		super(new Material());
 		tex_index = 0;
 	}
 	

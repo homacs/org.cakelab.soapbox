@@ -2,22 +2,26 @@ package org.cakelab.soapbox;
 
 
 import static org.lwjgl.opengl.GL11.GL_CCW;
+import static org.lwjgl.opengl.GL11.GL_COLOR;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glFrontFace;
+import static org.lwjgl.opengl.GL11.glViewport;
 
-
-import org.cakelab.oge.GraphicContext;
 import org.cakelab.oge.Registry;
-import org.cakelab.oge.Renderer;
-import org.cakelab.oge.Scene;
-import org.cakelab.oge.VisualObject;
 import org.cakelab.oge.app.ApplicationBase;
+import org.cakelab.oge.app.ApplicationContext;
+import org.cakelab.oge.scene.DynamicObject;
+import org.cakelab.oge.scene.Scene;
+import org.cakelab.oge.scene.VisualObject;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.utils.BufferedMatrix4f;
+import org.cakelab.oge.utils.GLAPIHelper;
+import org.cakelab.oge.utils.SingleProgramRendererBase;
 import org.cakelab.soapbox.testscene.TestRoom;
 import org.lwjgl.glfw.GLFW;
 
@@ -58,8 +62,11 @@ public class SoapBox extends ApplicationBase {
 	}
 
 	@Override
-	protected synchronized void render(double currentTime, GraphicContext context) {
-		
+	protected synchronized void process(double currentTime, ApplicationContext context) {
+		glViewport(0, 0, context.getWindowWidth(), context.getWindowHeight());
+		GLAPIHelper.glClearBuffer4f(GL_COLOR, 0, 0.5f, 0.5f, 0.5f, 1.0f);
+		GLAPIHelper.glClearBuffer1f(GL_DEPTH, 0, 1f);
+
 		player.update(currentTime);
 		
 		for (DynamicObject vobj : scene.getDynamicObjects()) {
@@ -70,7 +77,7 @@ public class SoapBox extends ApplicationBase {
 		context.setProjectionTransform(projection);
 
 		for (VisualObject vobj : scene.getVisualObjects()) {
-			Renderer renderer = Registry.getRenderer(vobj.getClass());
+			SingleProgramRendererBase renderer = Registry.getRenderer(vobj.getClass());
 			if (renderer == null) {
 				throw new Error("no renderer registered for " + vobj.getClass().getCanonicalName());
 			}

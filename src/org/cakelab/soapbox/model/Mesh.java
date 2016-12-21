@@ -3,7 +3,7 @@ package org.cakelab.soapbox.model;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
-import org.cakelab.oge.MeshRenderData;
+import org.cakelab.oge.scene.ModuleData;
 import org.cakelab.oge.utils.BufferUtilsHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -15,7 +15,7 @@ public class Mesh {
 	protected int normalsOffset;
 	protected int verticesPerPolygon;
 	protected int glDrawingMethod;
-	private MeshRenderData renderData;
+	private ModuleData renderData;
 
 	
 	/**
@@ -162,11 +162,11 @@ public class Mesh {
 		System.arraycopy(source, v*vectorSize, target, targetPos, vectorSize);
 	}
 
-	public void setRenderData(MeshRenderData renderData) {
+	public void setRenderData(ModuleData renderData) {
 		this.renderData = renderData;
 	}
 
-	public MeshRenderData getRenderData() {
+	public ModuleData getRenderData() {
 		return renderData;
 	}
 

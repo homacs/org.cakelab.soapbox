@@ -8,17 +8,17 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.io.IOException;
 
-import org.cakelab.oge.GraphicContext;
-import org.cakelab.oge.Renderer;
-import org.cakelab.oge.VisualObject;
+import org.cakelab.oge.app.ApplicationContext;
+import org.cakelab.oge.scene.VisualObject;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.shader.VertexShader;
+import org.cakelab.oge.utils.SingleProgramRendererBase;
 import org.cakelab.soapbox.testscene.coords.resources.CoordPlaneResources;
 
 
-public class CoordPlaneRenderer extends Renderer {
+public class CoordPlaneRenderer extends SingleProgramRendererBase {
 
 
 	private int vao;
@@ -43,7 +43,7 @@ public class CoordPlaneRenderer extends Renderer {
 	
 	
 	@Override
-	public void prepareRenderPass(GraphicContext context, double currentTime) {
+	public void prepareRenderPass(ApplicationContext context, double currentTime) {
 		glBindVertexArray(vao);
 	}
 

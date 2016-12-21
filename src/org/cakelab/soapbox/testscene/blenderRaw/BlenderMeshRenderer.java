@@ -1,17 +1,16 @@
 package org.cakelab.soapbox.testscene.blenderRaw;
 
-import static org.lwjgl.opengl.GL11.glDrawArrays;
 
-import org.cakelab.oge.GraphicContext;
-import org.cakelab.oge.RenderAssets;
-import org.cakelab.oge.Renderer;
-import org.cakelab.oge.VisualObject;
+import org.cakelab.oge.app.ApplicationContext;
+import org.cakelab.oge.scene.VisualObject;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
 import org.cakelab.oge.shader.VertexShader;
+import org.cakelab.oge.utils.OGEMeshRenderData;
+import org.cakelab.oge.utils.SingleProgramRendererBase;
 
-public class BlenderMeshRenderer extends Renderer {
+public class BlenderMeshRenderer extends SingleProgramRendererBase {
 	private static BlenderMeshRenderer SINGLETON;
 
 	public static BlenderMeshRenderer getInstance() {
@@ -64,14 +63,13 @@ public class BlenderMeshRenderer extends Renderer {
 	}
 
 	@Override
-	public void prepareRenderPass(GraphicContext context, double currentTime) {
+	public void prepareRenderPass(ApplicationContext context, double currentTime) {
 	}
 
 	public void draw(double currentTime, VisualObject vobj) {
 		BlenderObject bobj = (BlenderObject) vobj;
-		RenderAssets assets = bobj.getRenderAssets();
-		assets.bind();
-		glDrawArrays(assets.getDrawingMethod(), 0, assets.getNumVertices());
+		OGEMeshRenderData assets = (OGEMeshRenderData) bobj.getRenderData();
+		assets.draw();
 	}
 
 

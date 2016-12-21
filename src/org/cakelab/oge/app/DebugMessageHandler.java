@@ -53,6 +53,7 @@ import static org.lwjgl.system.MemoryUtil.memUTF8;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import org.cakelab.appbase.log.Log;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.opengl.GLDebugMessageAMDCallback;
 import org.lwjgl.opengl.GLDebugMessageARBCallback;
@@ -99,41 +100,35 @@ public class DebugMessageHandler {
 	 */
 	public CallbackI.V setupDebugMessageCallback() {
 		if ( capabilities.OpenGL43 ) {
-			log("[GL] Using OpenGL 4.3 callback for error logging.");
+			Log.info("[GL] Using OpenGL 4.3 callback for error logging.");
 			GLDebugMessageCallback proc = createDEBUGPROC();
 			glDebugMessageCallback(proc, NULL);
 			return proc;
 		}
 
 		if ( capabilities.GL_KHR_debug ) {
-			log("[GL] Using KHR_debug callback for error logging.");
+			Log.info("[GL] Using KHR_debug callback for error logging.");
 			GLDebugMessageCallback proc = createDEBUGPROC();
 			KHRDebug.glDebugMessageCallback(proc, NULL);
 			return proc;
 		}
 
 		if ( capabilities.GL_ARB_debug_output ) {
-			log("[GL] Using ARB_debug_output callback for error logging.");
+			Log.info("[GL] Using ARB_debug_output callback for error logging.");
 			GLDebugMessageARBCallback proc = createDEBUGPROCARB();
 			glDebugMessageCallbackARB(proc, NULL);
 			return proc;
 		}
 
 		if ( capabilities.GL_AMD_debug_output ) {
-			log("[GL] Using AMD_debug_output callback for error logging.");
+			Log.info("[GL] Using AMD_debug_output callback for error logging.");
 			GLDebugMessageAMDCallback proc = createDEBUGPROCAMD();
 			glDebugMessageCallbackAMD(proc, NULL);
 			return proc;
 		}
 
-		log("[GL] No debug output implementation is available.");
+		Log.error("[GL] No debug output implementation is available.");
 		return null;
-	}
-
-	private void log(String string) {
-		// TODO introduce global system log
-		System.out.println(string);
-		
 	}
 
 	private static void printDetail(PrintStream stream, String type, String message) {

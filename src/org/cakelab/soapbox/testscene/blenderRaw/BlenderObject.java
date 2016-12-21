@@ -1,22 +1,24 @@
 package org.cakelab.soapbox.testscene.blenderRaw;
 
-import org.cakelab.oge.RenderAssets;
-import org.cakelab.oge.VisualObject;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 
-public abstract class BlenderObject extends VisualObject {
+import org.cakelab.oge.opengl.VertexArrayObject;
+import org.cakelab.oge.scene.Material;
+import org.cakelab.oge.scene.VisualMeshObject;
+import org.cakelab.oge.utils.OGEMeshRenderData;
+import org.cakelab.soapbox.model.Mesh;
 
-	private RenderAssets assets;
+public abstract class BlenderObject extends VisualMeshObject {
 
-	public BlenderObject(RenderAssets assets) {
-		this.assets = assets;
+
+	public BlenderObject(Mesh mesh) {
+		this(mesh, 0,0,0);
 	}
 
-	public BlenderObject(RenderAssets assets, float x, float y, float z) {
-		super(x,y,z);
-		this.assets = assets;
+	public BlenderObject(Mesh mesh, float x, float y, float z) {
+		super(mesh, new Material(), x,y,z);
+		OGEMeshRenderData renderData = new OGEMeshRenderData(new VertexArrayObject(mesh, 0, GL_STATIC_DRAW), mesh.getGlDrawingMethod(), mesh.getNumVertices());
+		super.setRenderData(renderData);
 	}
 
-	public RenderAssets getRenderAssets() {
-		return assets;
-	}
 }
