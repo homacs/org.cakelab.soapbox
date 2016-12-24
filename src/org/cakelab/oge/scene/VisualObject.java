@@ -7,8 +7,7 @@ public abstract class VisualObject extends Pose {
 	
 	private ModuleData renderData;
 
-	// TODO [1] private
-	public ObjectMatrices matrices;
+	private ObjectMatrices matrices;
 
 	private Material material;
 
@@ -38,6 +37,10 @@ public abstract class VisualObject extends Pose {
 	 */
 	public void setRenderData(ModuleData renderData) {
 		this.renderData = renderData ;
+	}
+
+	public ObjectMatrices getMatrices() {
+		return matrices;
 	}
 
 }

@@ -61,8 +61,8 @@ public abstract class SingleProgramRendererBase implements Renderer {
 	public void render(ApplicationContext context, double currentTime, VisualObject vobj) {
 		Camera camera = context.getActiveCamera();
 		mv_matrix.identity()
-			.mul(camera.matrices.getViewTransform())
-			.mul(vobj.matrices.getWorldTransform())
+			.mul(camera.getMatrices().getViewTransform())
+			.mul(vobj.getMatrices().getWorldTransform())
 		;
 		
 		glUniformMatrix4fv(uniform_mv_matrix, false, mv_matrix.getFloatBuffer());

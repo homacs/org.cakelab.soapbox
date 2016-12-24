@@ -1,10 +1,10 @@
 package org.cakelab.soapbox.testscene.cube;
 
 import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.opengl.VertexArrayObject;
+import org.cakelab.oge.opengl.BufferObject.Usage;
+import org.cakelab.oge.opengl.MeshVertexArray;
 import org.cakelab.oge.scene.VisualObject;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
@@ -109,7 +109,7 @@ public class CubeRenderer extends SingleProgramRendererBase {
 	            -0.25f,  0.25f, -0.25f
 		}, -1, -1);
 
-		assets = new OGEMeshRenderData(new VertexArrayObject(mesh, 0, GL_STATIC_DRAW), mesh.getGlDrawingMethod(), mesh.getNumVertices());
+		assets = new OGEMeshRenderData(new MeshVertexArray(mesh, 0, Usage.STATIC_DRAW), mesh.getGlDrawingMethod(), mesh.getNumVertices());
 
 	}
 

@@ -28,5 +28,9 @@ public class Camera extends Pose {
 		this.fov = that.fov;
 	}
 
+	public CameraMatrices getMatrices() {
+		return matrices;
+	}
+
 	
 }

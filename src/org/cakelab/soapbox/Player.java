@@ -50,7 +50,7 @@ public class Player {
 		
 		direction.mul(orientation);
 		
-		Vector4f pos = new Vector4f(getCamera().getX(), getCamera().getY(), getCamera().getZ(), 1).add(direction);
+		Vector4f pos = new Vector4f(getCamera().getPosition(), 1).add(direction);
 		getCamera().setX(pos.x);
 		getCamera().setY(pos.y);
 		getCamera().setZ(pos.z);

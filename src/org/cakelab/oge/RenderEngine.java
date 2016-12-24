@@ -5,7 +5,7 @@ import org.cakelab.oge.scene.Scene;
 import org.cakelab.oge.shader.GLException;
 
 public interface RenderEngine {
-	// TODO clarify rendering model (engine, renderer, shader, shader program, render tasks, render data, etc.)
+	// TODO [5] clarify rendering model (engine, renderer, shader, shader program, render tasks, render data, etc.)
 	void setup(Scene scene) throws GLException;
 
 	void setView(int width, int height, float fov) throws GLException;

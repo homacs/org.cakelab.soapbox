@@ -2,16 +2,16 @@ package org.cakelab.oge.utils;
 
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 
-import org.cakelab.oge.opengl.VertexArrayObject;
+import org.cakelab.oge.opengl.MeshVertexArray;
 import org.cakelab.oge.scene.ModuleData;
 
 public class OGEMeshRenderData implements ModuleData {
 
-	private VertexArrayObject vao;
+	private MeshVertexArray vao;
 	private int drawingMethod;
 	private int numVertices;
 
-	public OGEMeshRenderData(VertexArrayObject vertexArrayObject, int drawingMethod, int numVertices) {
+	public OGEMeshRenderData(MeshVertexArray vertexArrayObject, int drawingMethod, int numVertices) {
 		this.vao = vertexArrayObject;
 		this.drawingMethod = drawingMethod;
 		this.numVertices = numVertices;
@@ -19,10 +19,10 @@ public class OGEMeshRenderData implements ModuleData {
 
 	@Override
 	public void delete() {
-		vao.delete();
+		vao.delete(true);
 	}
 
-	public VertexArrayObject getVertexArrayObject() {
+	public MeshVertexArray getVertexArrayObject() {
 		return vao;
 	}
 

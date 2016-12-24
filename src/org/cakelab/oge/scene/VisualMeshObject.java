@@ -16,6 +16,4 @@ public class VisualMeshObject extends VisualObject {
 		return mesh;
 	}
 
-	
-
 }

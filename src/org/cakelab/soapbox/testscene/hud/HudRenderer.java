@@ -1,12 +1,12 @@
 package org.cakelab.soapbox.testscene.hud;
 
 import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 
 import java.io.IOException;
 
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.opengl.VertexArrayObject;
+import org.cakelab.oge.opengl.BufferObject.Usage;
+import org.cakelab.oge.opengl.MeshVertexArray;
 import org.cakelab.oge.scene.VisualObject;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
@@ -55,7 +55,7 @@ public class HudRenderer extends SingleProgramRendererBase {
 		int attrIdxTexCoord = 4;
 		int elemsPerVector = 4;
 		int startIndex = 2;
-		assets = new OGEMeshRenderData(new VertexArrayObject(mesh, 0, GL_STATIC_DRAW), mesh.getGlDrawingMethod(), mesh.getNumVertices());
+		assets = new OGEMeshRenderData(new MeshVertexArray(mesh, 0, Usage.STATIC_DRAW), mesh.getGlDrawingMethod(), mesh.getNumVertices());
 		assets.getVertexArrayObject().declareVertexAttribute(attrIdxTexCoord, elemsPerVector, startIndex);
 	}
 

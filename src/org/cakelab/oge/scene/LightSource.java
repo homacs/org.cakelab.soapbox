@@ -2,7 +2,6 @@ package org.cakelab.oge.scene;
 
 import org.joml.Vector3f;
 
-// TODO refactor: rename to Light
 // TODO lights may be dynamic objects too
 // TODO consider associating light source and light object
 public class LightSource extends Pose {

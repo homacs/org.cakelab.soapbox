@@ -5,26 +5,14 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Pose {
-	// TODO xyz should be a vector
 	
 	
 	private double lastModified = 0;
 	
-	
 	/**
-	 * translation along x (left/right)
+	 * Position vector
 	 */
-	private float x = 0;
-	
-	/**
-	 * translation along y (up/down)
-	 */
-	private float y = 0;
-	
-	/**
-	 * translation along z (forward/backward)
-	 */
-	private float z = 0;
+	private Vector3f pos = new Vector3f();
 	
 	/**
 	 * Axis to apply Yaw.
@@ -47,9 +35,7 @@ public class Pose {
 	
 	public Pose(float x, float y, float z) {
 		this();
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.pos.set(x,y,z);
 		setPoseModified();
 	}
 
@@ -63,38 +49,36 @@ public class Pose {
 	}
 	
 	public void set(Pose pose) {
-		this.x = pose.x;
-		this.y = pose.y;
-		this.z = pose.z;
+		this.pos.set(pose.pos);
 		this.dirUp.set(pose.dirUp);
 		this.dirForward.set(pose.dirForward);
 		setPoseModified();
 	}
 	
 	public float getX() {
-		return x;
+		return pos.x;
 	}
 
 	public void setX(float x) {
-		this.x = x;
+		this.pos.x = x;
 		setPoseModified();
 	}
 
 	public float getY() {
-		return y;
+		return pos.y;
 	}
 
 	public void setY(float y) {
-		this.y = y;
+		this.pos.y = y;
 		setPoseModified();
 	}
 
 	public float getZ() {
-		return z;
+		return pos.z;
 	}
 
 	public void setZ(float z) {
-		this.z = z;
+		this.pos.z = z;
 		setPoseModified();
 	}
 
@@ -161,6 +145,10 @@ public class Pose {
 
 	public Vector3f getForwardDirection() {
 		return dirForward;
+	}
+
+	public Vector3f getPosition() {
+		return pos;
 	}
 	
 }

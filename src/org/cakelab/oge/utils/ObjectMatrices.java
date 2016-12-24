@@ -30,7 +30,7 @@ public class ObjectMatrices {
 			Quaternionf qRotate = getRotationQuaternion();
 			worldTransform
 				.identity()
-				.translate(visualObject.getX(), visualObject.getY(), visualObject.getZ())
+				.translate(visualObject.getPosition())
 				.rotate(qRotate)
 			;
 			

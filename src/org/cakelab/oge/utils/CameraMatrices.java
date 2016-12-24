@@ -43,7 +43,7 @@ public class CameraMatrices {
 		orientationTransform.identity()
 			.rotate(qRotate);
 		viewTransform.identity()
-			.translate(pose.getX(), pose.getY(), pose.getZ())
+			.translate(pose.getPosition())
 			.rotate(qRotate)
 			.invert()
 			;
