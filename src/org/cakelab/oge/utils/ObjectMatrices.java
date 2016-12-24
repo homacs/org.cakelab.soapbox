@@ -9,7 +9,7 @@ public class ObjectMatrices {
 
 	private VisualObject visualObject;
 	private Matrix4f worldTransform = new Matrix4f();
-	private Matrix4f modelTransform;
+	private Matrix4f modelTransform = new Matrix4f();
 	private Quaternionf tempQuat = new Quaternionf();
 
 	private double lastUpdate = 0;
@@ -33,10 +33,8 @@ public class ObjectMatrices {
 				.translate(visualObject.getPosition())
 				.rotate(qRotate)
 			;
-			
-			if (modelTransform != null) {
-				worldTransform.mul(modelTransform);
-			}
+			modelTransform.identity().scale(visualObject.getScale());
+			worldTransform.mul(modelTransform);
 			lastUpdate = GlobalClock.getCurrentTime();
 		}
 	}

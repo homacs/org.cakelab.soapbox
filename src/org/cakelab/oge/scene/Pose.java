@@ -14,18 +14,23 @@ public class Pose {
 	 */
 	private Vector3f pos = new Vector3f();
 	
+	/** 
+	 * Scaling in x y and z direction.
+	 */
+	private Vector3f scale = new Vector3f(1,1,1);
+	
 	/**
 	 * Axis to apply Yaw.
 	 * It's the local Y axis.
 	 * Also the Up axis.
 	 */
-	private Vector3f dirUp = new Vector3f();
+	private Vector3f dirUp = new Vector3f(0,1,0);
 	/**
 	 * Axis to apply roll.
 	 * It's the local Z axis.
 	 * Inverse to eye.
 	 */
-	private Vector3f dirForward = new Vector3f();
+	private Vector3f dirForward = new Vector3f(0,0,1);
 
 	private Quaternionf tempQuat = new Quaternionf();
 
@@ -52,6 +57,7 @@ public class Pose {
 		this.pos.set(pose.pos);
 		this.dirUp.set(pose.dirUp);
 		this.dirForward.set(pose.dirForward);
+		this.scale.set(pose.scale);
 		setPoseModified();
 	}
 	
@@ -90,7 +96,6 @@ public class Pose {
 	}
 	
 	private Vector3f getPitchAxis() {
-		// TODO this might be the reason why camera flips around if turned upside down
 		return new Vector3f(dirForward).cross(dirUp);
 	}
 
@@ -150,5 +155,13 @@ public class Pose {
 	public Vector3f getPosition() {
 		return pos;
 	}
+
+	public void setScale(float x, float y, float z) {
+		scale.set(x,y,z);
+	}
+	public Vector3f getScale() {
+		return scale;
+	}
+
 	
 }
