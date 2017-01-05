@@ -1,24 +1,24 @@
 package org.cakelab.oge.scene;
 
-import org.cakelab.oge.utils.ObjectMatrices;
+import org.cakelab.oge.utils.EntityMatrices;
 
-public abstract class VisualObject extends Pose {
+public abstract class VisualEntity extends Entity {
 	// TODO object groups
 	
 	private ModuleData renderData;
 
-	private ObjectMatrices matrices;
+	private EntityMatrices matrices;
 
 	private Material material;
 
-	public VisualObject(Material material) {
+	public VisualEntity(Material material) {
 		this(material,0,0,0);
 	}
 	
-	public VisualObject(Material material, float x, float y, float z) {
+	public VisualEntity(Material material, float x, float y, float z) {
 		super(x,y,z);
 		this.material = material;
-		matrices = new ObjectMatrices(this);
+		matrices = new EntityMatrices(this);
 	}
 
 	public Material getMaterial() {
@@ -39,7 +39,7 @@ public abstract class VisualObject extends Pose {
 		this.renderData = renderData ;
 	}
 
-	public ObjectMatrices getMatrices() {
+	public EntityMatrices getMatrices() {
 		return matrices;
 	}
 

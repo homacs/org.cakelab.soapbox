@@ -1,10 +1,10 @@
 package org.cakelab.soapbox.testscene.cube;
 
-import org.cakelab.oge.scene.DynamicObject;
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.DynamicEntity;
+import org.cakelab.oge.scene.VisualEntity;
 
 
-public class Cube extends VisualObject implements DynamicObject {
+public class Cube extends VisualEntity implements DynamicEntity {
 
 	private int i;
 

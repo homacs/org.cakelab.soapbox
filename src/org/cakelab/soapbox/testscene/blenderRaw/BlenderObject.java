@@ -4,12 +4,12 @@ package org.cakelab.soapbox.testscene.blenderRaw;
 import org.cakelab.oge.opengl.BufferObject.Usage;
 import org.cakelab.oge.opengl.MeshVertexArray;
 import org.cakelab.oge.scene.Material;
-import org.cakelab.oge.scene.VisualMeshObject;
+import org.cakelab.oge.scene.VisualMeshEntity;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.utils.OGEMeshRenderData;
 import org.cakelab.soapbox.model.Mesh;
 
-public abstract class BlenderObject extends VisualMeshObject {
+public abstract class BlenderObject extends VisualMeshEntity {
 
 
 	public BlenderObject(Mesh mesh) throws GLException {

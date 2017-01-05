@@ -2,19 +2,19 @@ package org.cakelab.oge;
 
 import java.util.HashMap;
 
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.utils.SingleProgramRendererBase;
 
 
 public class Registry {
 
-	private static HashMap<Class<? extends VisualObject>, SingleProgramRendererBase> renderers = new HashMap<Class<? extends VisualObject>, SingleProgramRendererBase>();
+	private static HashMap<Class<? extends VisualEntity>, SingleProgramRendererBase> renderers = new HashMap<Class<? extends VisualEntity>, SingleProgramRendererBase>();
 	
-	public static void registerRenderer(Class<? extends VisualObject> modelClass, SingleProgramRendererBase renderer) {
+	public static void registerRenderer(Class<? extends VisualEntity> modelClass, SingleProgramRendererBase renderer) {
 		renderers.put(modelClass,  renderer);
 	}
 	
-	public static SingleProgramRendererBase getRenderer(Class<? extends VisualObject> modelClass) {
+	public static SingleProgramRendererBase getRenderer(Class<? extends VisualEntity> modelClass) {
 		SingleProgramRendererBase renderer = null;
 		Class<?> clazz = modelClass;
 		while(renderer == null && !clazz.equals(Object.class)) {

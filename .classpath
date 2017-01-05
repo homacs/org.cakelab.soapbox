@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry exported="true" kind="lib" path="lib/joml-1.3.0/joml-1.3.0.jar" sourcepath="lib/joml-1.3.0/JOML-1.3.0.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/lwjgl-3.1.0/jar/lwjgl-glfw.jar" sourcepath="lib/lwjgl-3.1.0/src/lwjgl-glfw-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/lwjgl-3.1.0/jar/lwjgl-jemalloc.jar" sourcepath="lib/lwjgl-3.1.0/src/lwjgl-jemalloc-sources.jar"/>

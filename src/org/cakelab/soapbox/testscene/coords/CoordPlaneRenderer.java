@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import java.io.IOException;
 
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
@@ -48,7 +48,7 @@ public class CoordPlaneRenderer extends SingleProgramRendererBase {
 	}
 
 	@Override
-	public void draw(double currentTime, VisualObject cube) {
+	public void draw(double currentTime, VisualEntity cube) {
 		// Draw 3 lines (i.e. 6 vertices)
         glDrawArrays(GL_LINES, 0, 6);
 	}

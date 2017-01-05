@@ -15,9 +15,9 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import org.cakelab.oge.Registry;
 import org.cakelab.oge.app.ApplicationBase;
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.scene.DynamicObject;
+import org.cakelab.oge.scene.DynamicEntity;
 import org.cakelab.oge.scene.Scene;
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.utils.BufferedMatrix4f;
 import org.cakelab.oge.utils.GLAPIHelper;
@@ -69,14 +69,14 @@ public class SoapBox extends ApplicationBase {
 
 		player.update(currentTime);
 		
-		for (DynamicObject vobj : scene.getDynamicObjects()) {
+		for (DynamicEntity vobj : scene.getDynamicObjects()) {
 			vobj.update(currentTime);
 		}
 		
 		context.setActiveCamera(player.getCamera());
 		context.setProjectionTransform(projection);
 
-		for (VisualObject vobj : scene.getVisualObjects()) {
+		for (VisualEntity vobj : scene.getVisualObjects()) {
 			SingleProgramRendererBase renderer = Registry.getRenderer(vobj.getClass());
 			if (renderer == null) {
 				throw new Error("no renderer registered for " + vobj.getClass().getCanonicalName());

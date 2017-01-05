@@ -6,15 +6,15 @@ import static org.lwjgl.opengl.GL20.*;
 import org.cakelab.oge.Camera;
 import org.cakelab.oge.Renderer;
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
 
 public abstract class SingleProgramRendererBase implements Renderer {
 	protected Program shaderProgram;
 
-	private BufferedMatrix4f mv_matrix = new BufferedMatrix4f();
-	private int uniform_mv_matrix;
+	protected BufferedMatrix4f mv_matrix = new BufferedMatrix4f();
+	protected int uniform_mv_matrix;
 	private int uniform_proj_matrix;
 
 	private double preparedLast;
@@ -41,7 +41,7 @@ public abstract class SingleProgramRendererBase implements Renderer {
 	 * This method is supposed to contain code that needs to be executed
 	 * exactly once per render pass. That means in case there are multiple
 	 * objects to be rendered by a particular renderer, contents of this 
-	 * method is executed once while the {@link #render(ApplicationContext, double, VisualObject)}
+	 * method is executed once while the {@link #render(ApplicationContext, double, VisualEntity)}
 	 * is executed for each object.
 	 * 
 	 * This method calls prepareRenderPass exactly once for each render pass.
@@ -58,7 +58,7 @@ public abstract class SingleProgramRendererBase implements Renderer {
 	
 	public abstract void prepareRenderPass(ApplicationContext context, double currentTime);
 
-	public void render(ApplicationContext context, double currentTime, VisualObject vobj) {
+	public void render(ApplicationContext context, double currentTime, VisualEntity vobj) {
 		Camera camera = context.getActiveCamera();
 		mv_matrix.identity()
 			.mul(camera.getMatrices().getViewTransform())
@@ -69,7 +69,7 @@ public abstract class SingleProgramRendererBase implements Renderer {
 		draw(currentTime, vobj);
 	}
 
-	public abstract void draw(double currentTime, VisualObject vobj);
+	public abstract void draw(double currentTime, VisualEntity vobj);
 
 	public abstract boolean needsNormals();
 

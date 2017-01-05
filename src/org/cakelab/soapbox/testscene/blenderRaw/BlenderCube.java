@@ -1,10 +1,10 @@
 package org.cakelab.soapbox.testscene.blenderRaw;
 
-import org.cakelab.oge.scene.DynamicObject;
+import org.cakelab.oge.scene.DynamicEntity;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.soapbox.model.Mesh;
 
-public class BlenderCube extends BlenderObject implements DynamicObject {
+public class BlenderCube extends BlenderObject implements DynamicEntity {
 
 	private float xOff;
 	private float yOff;

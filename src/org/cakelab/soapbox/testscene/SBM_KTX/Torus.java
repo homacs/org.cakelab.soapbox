@@ -1,10 +1,10 @@
 package org.cakelab.soapbox.testscene.SBM_KTX;
 
-import org.cakelab.oge.scene.DynamicObject;
+import org.cakelab.oge.scene.DynamicEntity;
 import org.cakelab.oge.scene.Material;
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.VisualEntity;
 
-public class Torus extends VisualObject implements DynamicObject {
+public class Torus extends VisualEntity implements DynamicEntity {
 
 
 

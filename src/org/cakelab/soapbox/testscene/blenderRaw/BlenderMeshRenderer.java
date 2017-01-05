@@ -2,7 +2,7 @@ package org.cakelab.soapbox.testscene.blenderRaw;
 
 
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
@@ -66,7 +66,7 @@ public class BlenderMeshRenderer extends SingleProgramRendererBase {
 	public void prepareRenderPass(ApplicationContext context, double currentTime) {
 	}
 
-	public void draw(double currentTime, VisualObject vobj) {
+	public void draw(double currentTime, VisualEntity vobj) {
 		BlenderObject bobj = (BlenderObject) vobj;
 		OGEMeshRenderData assets = (OGEMeshRenderData) bobj.getRenderData();
 		assets.draw();

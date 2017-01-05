@@ -9,6 +9,15 @@ public class LightSource extends Pose {
 	private Vector3f color;
 	private ModuleData renderData;
 
+	public LightSource(Vector3f color) {
+		this(0, 0, 0, color);
+	}
+
+	public LightSource(int x, int y, int z, Vector3f color) {
+		super(x,y,z);
+		this.color = color;
+	}
+
 	public Vector3f getColor() {
 		return color;
 	}
@@ -17,9 +26,6 @@ public class LightSource extends Pose {
 		this.color = color;
 	}
 
-	public LightSource(Vector3f color) {
-		this.color = color;
-	}
 
 	public void setRenderData(ModuleData renderData) {
 		this.renderData = renderData;

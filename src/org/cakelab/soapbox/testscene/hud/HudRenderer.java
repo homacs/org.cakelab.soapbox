@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.cakelab.oge.app.ApplicationContext;
 import org.cakelab.oge.opengl.BufferObject.Usage;
 import org.cakelab.oge.opengl.MeshVertexArray;
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
@@ -84,7 +84,7 @@ public class HudRenderer extends SingleProgramRendererBase {
 	}
 
 	@Override
-	public void draw(double currentTime, VisualObject vobj) {
+	public void draw(double currentTime, VisualEntity vobj) {
 		glDrawArrays(assets.getDrawingMethod(), 0, assets.getNumVertices());
 	}
 

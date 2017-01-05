@@ -8,27 +8,27 @@ public class Scene {
 	/**
 	 * All visual objects.
 	 */
-	ArrayList<VisualObject> objects = new ArrayList<VisualObject>();
+	ArrayList<VisualEntity> objects = new ArrayList<VisualEntity>();
 	/**
 	 * Subset of objects which are dynamic objects.
 	 */
-	ArrayList<DynamicObject> dynamicObjects = new ArrayList<DynamicObject>();
+	ArrayList<DynamicEntity> dynamicObjects = new ArrayList<DynamicEntity>();
 	ArrayList<LightSource> lightSources = new ArrayList<LightSource>();
 	
 	
 	
-	public void add(VisualObject vobj) {
+	public void add(VisualEntity vobj) {
 		objects.add(vobj);
-		if (vobj instanceof DynamicObject) {
-			dynamicObjects.add((DynamicObject) vobj);
+		if (vobj instanceof DynamicEntity) {
+			dynamicObjects.add((DynamicEntity) vobj);
 		}
 	}
 	
-	public ArrayList<VisualObject> getVisualObjects() {
+	public ArrayList<VisualEntity> getVisualObjects() {
 		return objects;
 	}
 
-	public ArrayList<DynamicObject> getDynamicObjects() {
+	public ArrayList<DynamicEntity> getDynamicObjects() {
 		return dynamicObjects;
 	}
 

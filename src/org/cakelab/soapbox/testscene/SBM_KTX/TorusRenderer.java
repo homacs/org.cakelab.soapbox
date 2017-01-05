@@ -3,7 +3,7 @@ package org.cakelab.soapbox.testscene.SBM_KTX;
 import java.io.IOException;
 
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.scene.VisualObject;
+import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.oge.shader.Program;
@@ -64,7 +64,7 @@ public class TorusRenderer extends SingleProgramRendererBase {
 	}
 
 	@Override
-	public void draw(double currentTime, VisualObject vobj) {
+	public void draw(double currentTime, VisualEntity vobj) {
 		Torus torus = (Torus) vobj;
 	    // activate the texture we want to use for the torus
 		textures[torus.tex_index].bind();
