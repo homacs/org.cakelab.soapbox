@@ -1,18 +1,13 @@
 package org.cakelab.soapbox;
 
 import org.cakelab.oge.Camera;
-import org.cakelab.oge.HeadCamera;
+import org.cakelab.oge.math.Orientation;
+import org.cakelab.oge.math.OrientationImpl;
 import org.cakelab.oge.scene.Entity;
 import org.cakelab.oge.scene.Pose;
-import org.joml.AxisAngle4f;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
-// TODO Player class needs to maintain its own Pose as parent for its camera.
-// TODO player and its camera would be the first example of a group object
 public class Player extends Entity implements MovementAdapter {
 	private HeadCamera camera;
 	Vector3f translationVelocity = new Vector3f();
@@ -20,11 +15,13 @@ public class Player extends Entity implements MovementAdapter {
 	private double lastTime = -1;
 	private float velocityMultiplier = 1.0f;
 	
+	
 	public Player() {
 		super(0f, 1.75f, +6f);
 		// init head cam with some random position
 		camera = new HeadCamera();
 		camera.setReferenceSystem(this);
+		
 	}
 
 	public void moveForward(float amount) {
@@ -52,26 +49,17 @@ public class Player extends Entity implements MovementAdapter {
 	}
 
 	private void moveAlong(float x, float y, float z) {
+		Vector3f tmpV = new Vector3f();
+		Vector3f direction = tmpV.set(x, y, z);
+		Quaternionf orientation = getOrientation().getRotation(new Quaternionf());
+		
+		orientation.transform(direction);
+		
+		Vector3f pos = direction.add(getPosition());
+		setPosition(pos);
 
-		Vector4f direction = new Vector4f(x, y, z, 1);
-		
-		Matrix4f orientation = getOrientationTransform();
-		
-		direction.mul(orientation);
-		
-		Vector4f pos = new Vector4f(getPosition(), 1).add(direction);
-		setX(pos.x);
-		setY(pos.y);
-		setZ(pos.z);
-		
 	}
 
-
-	private Matrix4f getOrientationTransform() {
-		Matrix4f orientationTransform = new Matrix4f()
-				.lookAlong(getForwardDirection(), getUpDirection()).invert();
-		return orientationTransform;
-	}
 
 	/**
 	 * +degree: turn left
@@ -79,7 +67,7 @@ public class Player extends Entity implements MovementAdapter {
 	 * @param degree
 	 */
 	public void addYaw(float degree) {
-		this.addLocalYaw(degree);
+		this.addLocalYaw((float)Math.toRadians(degree));
 	}
 	
 	
@@ -89,7 +77,7 @@ public class Player extends Entity implements MovementAdapter {
 	 * @param degree
 	 */
 	public void addPitch(float degree) {
-		camera.addLocalPitch(degree);
+		camera.addLocalPitch((float)Math.toRadians(degree));
 	}
 	
 	/**
@@ -98,7 +86,7 @@ public class Player extends Entity implements MovementAdapter {
 	 * @param degree
 	 */
 	public void addRoll(float degree) {
-		camera.addLocalRoll(degree);
+		camera.addLocalRoll((float)Math.toRadians(degree));
 	}
 	
 	
@@ -136,6 +124,12 @@ public class Player extends Entity implements MovementAdapter {
 		return camera;
 	}
 
+	
+	public void init(Camera camera) {
+		set(this.camera);
+		init((Pose)camera);
+	}
+
 	@Override
 	public void init(Pose that) {
 		
@@ -145,10 +139,26 @@ public class Player extends Entity implements MovementAdapter {
 		
 		// Now calc an appropriate forward direction in x-z plane
 		// 
-		Vector3f u = that.getForwardDirection();
-		Vector3f v = that.getUpDirection();
-//		Vector3f u = new Vector3f(0,0,-1); // testing
-//		Vector3f v = new Vector3f(1,0,0);  // testing
+		// We do this by considering the intersection of the plane
+		// spanned by forward (u) and up (v) with the x-z plane
+		// as a line and search for a point on that line. To do that
+		// we search for a point V=(x,0,z) in the x-z plane which is equal to
+		// a point in the u-v plane. This is can be done by solving 
+		// the following equation:
+		//     V = s*U + t*V
+		// This results in a system with 3 equations and 4 unknown 
+		// variables x,y,s and t. For now, we just want the orientation
+		// of the vector V and not which way is pointing forwards and
+		// the length doesn't matter either. Thus we can choose any value 
+		// for x (respective z) and calculate the other value z (respective x).
+		//
+		// We also need to consider the special case, in which the u-v plane 
+		// is equal to the x-z plane. In this case the actual forward direction
+		// of the player doesn't matter, because we can rotate his head in 
+		// with roll and/or pitch to get into the x-z plane.
+		Vector3f u = that.getForwardDirection(new Vector3f());
+		Vector3f v = that.getUpDirection(new Vector3f());
+
 		Vector3f forward;
 		// try with (x,0,1)
 		float x = (v.x - (v.y*u.x)/u.y) / (v.z - (v.y * u.z)/u.y);
@@ -164,7 +174,7 @@ public class Player extends Entity implements MovementAdapter {
 				// no intersection with (1,0,z) either, which means
 				// u-v plane equals x-z plane
 				// -> use standard orientation
-				forward = new Vector3f(0,0,-1);
+				forward = new Vector3f(Orientation.DEFAULT_FORWARD);
 			}
 		}
 		// now we do have a vector in x-z plane, but we don't know if it
@@ -185,37 +195,27 @@ public class Player extends Entity implements MovementAdapter {
 		setOrientation(forward, up);
 
 		// now determine the camera orientation relative to the player's orientation
-		forward = new Vector3f(that.getForwardDirection());
-		up = new Vector3f(that.getUpDirection());
-		Vector3f camForward = new Vector3f(0,0,1);
-		Vector3f camUp = new Vector3f(0,1,0);
-		Vector3f euler = new Vector3f();
+		// 1. Calc the difference between both rotations
+		// 2. Set the difference as camera rotation
 		
 		// remove the rotation of the player from the camera orientation
-		Quaternionf thisRotation = new Quaternionf().lookRotate(new Vector3f(this.getForwardDirection()), this.getUpDirection());
-		thisRotation.getEulerAnglesXYZ(euler);
-		Quaternionf inverse = new Quaternionf(thisRotation).invert();
-		inverse.getEulerAnglesXYZ(euler);
-		
-		inverse.transform(forward);
-		inverse.transform(up);
-		
-		Quaternionf rotation = new Quaternionf().lookRotate(new Vector3f(forward), up);
-		rotation.getEulerAnglesXYZ(euler);
-		rotation.transform(camForward);
-		rotation.transform(camUp);
+		Quaternionf thisRotation = getOrientation().getRotation(new Quaternionf());
+		Quaternionf camRotation = that.getOrientation().getRotation(new Quaternionf());
 
-		Vector3f testForward = new Vector3f(camForward);
-		Vector3f testUp = new Vector3f(camUp);
-		thisRotation.transform(testForward);
-		thisRotation.transform(testUp);
+		Quaternionf diff = thisRotation.difference(camRotation, new Quaternionf());
+
+		forward = camera.getForwardDirection(forward);
+		up = camera.getUpDirection(up);
 		
+		diff.transform(forward);
+		diff.transform(up);
 		
-		rotation = new Quaternionf().lookRotate(new Vector3f(forward).negate(), up).invert();
-		rotation.getEulerAnglesXYZ(euler);
 		camera.setPosition(0, 0, 0);
-		camera.setOrientation(new Vector3f(0,0,-1), new Vector3f(0,1,0));
-		camera.addRotation(euler.x, 0, euler.z);
+//		camera.setOrientation(Orientation.DEFAULT_FORWARD, Orientation.DEFAULT_UP);
+//		camera.apply(diff);
+		camera.setOrientation(forward, up);
+		
+		
 		setPoseModified();
 	}
 

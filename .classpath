@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry exported="true" kind="lib" path="lib/joml-1.3.0/joml-1.3.0.jar" sourcepath="lib/joml-1.3.0/JOML-1.3.0.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/lwjgl-3.1.0/jar/lwjgl-glfw.jar" sourcepath="lib/lwjgl-3.1.0/src/lwjgl-glfw-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/lwjgl-3.1.0/jar/lwjgl-jemalloc.jar" sourcepath="lib/lwjgl-3.1.0/src/lwjgl-jemalloc-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/lwjgl-3.1.0/jar/lwjgl-openal.jar" sourcepath="lib/lwjgl-3.1.0/src/lwjgl-openal-sources.jar"/>
@@ -17,5 +16,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/lwjgl-3.1.0/native/linux/lwjgl-stb-natives-linux.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/AppBase"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="lib/joml-1.9.1/joml-1.9.1.jar" sourcepath="lib/joml-1.9.1/joml-1.9.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,8 +1,10 @@
-package org.cakelab.oge;
+package org.cakelab.soapbox;
 
+import org.cakelab.oge.Camera;
+import org.cakelab.oge.math.Orientation;
 import org.cakelab.oge.utils.HeadCameraMatrices;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 
 /**
@@ -14,9 +16,8 @@ import org.joml.Vector3f;
  * @author homac
  */
 public class HeadCamera extends Camera {
-	// TODO head camera is nonsense! 
-	// CHANGE: Player moves and camera movement is 
-	// restricted by the player class, not by the camera itself.
+	private static final float DEGREES_90 = (float) Math.toRadians(90);
+	private static final float DEGREES_45 = (float) Math.toRadians(45);
 	
 	private float yaw;
 	private float pitch;
@@ -41,14 +42,29 @@ public class HeadCamera extends Camera {
 
 	public void set(Camera that) {
 		super.set(that);
-		Quaternionf rotation = new Quaternionf().lookRotate(that.getForwardDirection().negate(), that.getUpDirection());
+		updateRotationAngles();
+		
+		setPoseModified();
+	}
+
+	
+	private void updateRotationAngles() {
+		Orientation rotation = getOrientation();
 		Vector3f euler = new Vector3f();
-		rotation.invert();
-		rotation.getEulerAnglesXYZ(euler);
+		rotation.getEulerAnglesYXZ(euler);
+		
 		this.yaw = euler.y;
 		this.roll = euler.z;
 		this.pitch = euler.x;
 		
+		
+		System.out.println(Math.toDegrees(yaw) + " " + Math.toDegrees(pitch) + " " + Math.toDegrees(roll));
+	}
+	
+	
+	public void setOrientation(Vector3fc forward, Vector3fc up) {
+		super.setOrientation(forward, up);
+		updateRotationAngles();
 		setPoseModified();
 	}
 
@@ -58,12 +74,13 @@ public class HeadCamera extends Camera {
 
 	@Override
 	public void addLocalPitch(float degree) {
+		
 		recursion++;
 		float newPitch = this.pitch + degree;
-		if (newPitch > 90) {
-			degree -= newPitch -  90;
-		} else if (newPitch < -90) {
-			degree -= newPitch - -90;
+		if (newPitch > DEGREES_90) {
+			degree -= newPitch -  DEGREES_90;
+		} else if (newPitch < -DEGREES_90) {
+			degree -= newPitch - -DEGREES_90;
 		}
 		if (degree != 0) { 
 			this.pitch += degree;
@@ -79,7 +96,7 @@ public class HeadCamera extends Camera {
 	
 	@Override
 	public void addLocalRoll(float degree) {
-		final float maxRoll = 45;
+		final float maxRoll = DEGREES_45;
 		recursion++;
 		float newRoll = this.roll + degree;
 		if (newRoll > maxRoll) {

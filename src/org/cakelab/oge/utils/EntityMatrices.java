@@ -7,15 +7,15 @@ import org.joml.Quaternionf;
 
 public class EntityMatrices {
 
-	private VisualEntity visualObject;
+	private VisualEntity entity;
 	private Matrix4f worldTransform = new Matrix4f();
 	private Matrix4f modelTransform = new Matrix4f();
 	private Quaternionf tempQuat = new Quaternionf();
 
 	private double lastUpdate = 0;
 	
-	public EntityMatrices(VisualEntity visualObject) {
-		this.visualObject = visualObject;
+	public EntityMatrices(VisualEntity entity) {
+		this.entity = entity;
 	}
 
 	public Matrix4f getWorldTransform() {
@@ -24,13 +24,13 @@ public class EntityMatrices {
 	}
 
 	private void applyModifications() {
-		if (visualObject.isPoseModified(lastUpdate)) {
+		if (entity.isPoseModified(lastUpdate)) {
 			Quaternionf qRotate = getRotationQuaternion();
 			worldTransform
 				.identity()
-				.translate(visualObject.getPosition())
+				.translate(entity.getPosition())
 				.rotate(qRotate)
-				.scale(visualObject.getScale())
+				.scale(entity.getScale())
 			;
 			// TODO [1] reconsider scale
 			if (modelTransform != null) {
@@ -62,7 +62,8 @@ public class EntityMatrices {
 	
 
 	public Quaternionf getRotationQuaternion() {
-		return tempQuat.identity().lookRotate(visualObject.getForwardDirection(), visualObject.getUpDirection()).invert();
+		entity.getOrientation().getRotation(tempQuat);
+		return tempQuat;
 	}
 
 

@@ -10,7 +10,7 @@ import org.joml.Vector3f;
  */
 public class Entity extends Pose {
 	/** 
-	 * Scaling in x y and z direction.
+	 * Scaling in x, y and z direction.
 	 */
 	private Vector3f scale = new Vector3f(1,1,1);
 	

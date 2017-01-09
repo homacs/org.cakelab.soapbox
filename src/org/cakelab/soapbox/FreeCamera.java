@@ -3,13 +3,13 @@ package org.cakelab.soapbox;
 import org.cakelab.oge.Camera;
 import org.cakelab.oge.scene.DynamicEntity;
 import org.cakelab.oge.scene.Pose;
-import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter {
 	Vector3f translationVelocity = new Vector3f();
 	Vector3f rotationVelocity = new Vector3f();
+	Vector3f tmpV = new Vector3f();
 	private double lastTime = -1;
 	private float velocityMultiplier = 1.0f;
 	
@@ -17,6 +17,10 @@ public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter
 		super(0f, 1.75f, +6f, 0f, 0f, 0f);
 	}
 	
+	public void init(Camera camera) {
+		set(camera);
+	}
+
 	@Override
 	public void init(Pose pose) {
 		set(pose);
@@ -53,17 +57,13 @@ public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter
 	}
 
 	private void moveAlong(float x, float y, float z) {
-
-		Vector4f direction = new Vector4f(x, y, z, 1);
+		Vector3f direction = tmpV.set(x, y, z);
+		Quaternionf orientation = getOrientation().getRotation(new Quaternionf());
 		
-		Matrix4f orientation = matrices.getOrientationTransform();
+		orientation.transform(direction);
 		
-		direction.mul(orientation);
-		
-		Vector4f pos = new Vector4f(getPosition(), 1).add(direction);
-		setX(pos.x);
-		setY(pos.y);
-		setZ(pos.z);
+		Vector3f pos = direction.add(getPosition());
+		setPosition(pos);
 		
 	}
 
@@ -74,7 +74,7 @@ public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter
 	 * @param degree
 	 */
 	public void addYaw(float degree) {
-		addLocalYaw(degree);
+		addLocalYaw((float) Math.toRadians(degree));
 	}
 	
 	
@@ -85,7 +85,7 @@ public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter
 	 */
 	@Override
 	public void addPitch(float degree) {
-		addLocalPitch(degree);
+		addLocalPitch((float) Math.toRadians(degree));
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter
 	 */
 	@Override
 	public void addRoll(float degree) {
-		addLocalRoll(degree);
+		addLocalRoll((float) Math.toRadians(degree));
 	}
 	
 	
@@ -124,7 +124,7 @@ public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter
 
 	@Override
 	public void addRotation(float pitch, float yaw, float roll) {
-		addLocalRotation(pitch, yaw, roll);
+		addLocalRotation((float) Math.toRadians(pitch), (float) Math.toRadians(yaw), (float) Math.toRadians(roll));
 	}
 
 	@Override

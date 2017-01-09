@@ -13,7 +13,9 @@ public class CameraMatrices {
 	protected Matrix4f orientationTransform = new Matrix4f();
 
 	private Quaternionf tempQuat = new Quaternionf();
-
+	private Vector3f tmpForward = new Vector3f();
+	private Vector3f tmpUp = new Vector3f();
+	
 	protected Pose pose;
 
 	public CameraMatrices(Pose pose) {
@@ -34,26 +36,33 @@ public class CameraMatrices {
 	}
 
 	public void update() {
-		if (pose.isPoseModified(lastUpdate) 
-				|| pose.getReferenceSystem() != null && pose.getReferenceSystem().isPoseModified(lastUpdate)) {
+		if (pose.isWorldPoseModified(lastUpdate)) {
 			applyModifications();
 			lastUpdate = GlobalClock.getCurrentTime();
 		}			
 	}
 	
 	protected void applyModifications() {
+		//
+		// To get a view transformation we 
+		// 1. move the entities away from us by the distance of our pos from center
+		// 2. and then rotate them (the world) against our rotation around us.
+		// This is the same as the inverse of (1) rotate by our rotation, then (2) move to our location.
+		// 
+		// OpenGLs default camera orientation is forward(0,0,-1) up(0,1,0)
+		// The rotation of our entity orientation is relative to forward(0,0,1) up(0,1,0)
+		// Thus, to get a rotation for the negative Z axis we first apply a 180 degree rotation around Y.
+		//
+		
 		Pose reference = pose.getReferenceSystem();
 
 		if (reference == null) {
-
-			orientationTransform.identity()
-				.lookAlong(pose.getForwardDirection(), pose.getUpDirection()).invert();
-			
 			viewTransform.identity()
 				.translate(pose.getPosition())
-				.mul(orientationTransform)
+				.rotate(pose.getOrientation().getRotation(tempQuat))
+				.rotateY((float) Math.PI)
 				.invert()
-				;
+			;
 		
 		} else {
 			// with reference system:
@@ -61,33 +70,31 @@ public class CameraMatrices {
 			// 2. move to position from 0,0
 			// 3. rotate according to reference system
 			// 4. translate according to reference system
+			// 5. repeat at 3 for reference systems of reference systems
+			// To do this in this exact order, we just need to apply the 
+			// reverse rotations and translations
+			Quaternionf inverseRotation = new Quaternionf();
+			Vector3f inversePosition = new Vector3f();
 
-			orientationTransform.identity()
-				.lookAlong(pose.getForwardDirection(), pose.getUpDirection())
-				.invert()
-				;
-		
-			System.out.println("cam: " + pose.getPosition() + pose.getForwardDirection() + pose.getUpDirection());
-			System.out.println("ref: " + reference.getPosition() + reference.getForwardDirection() + reference.getUpDirection());
-			
-			Matrix4f referenceOrientation = new Matrix4f()
-					.lookAlong(reference.getForwardDirection(), reference.getUpDirection())
-					.invert();
-			
-			viewTransform.identity()
-				.translate(reference.getPosition())
-				.mul(referenceOrientation)
-				.translate(pose.getPosition())
-				.mul(orientationTransform)
-				.invert()
-				;
+			// first apply the 180 degrees rotation around as explained above
+			viewTransform.rotationY((float)Math.PI);
+
+			// now apply inverse rotations and translations in the order of reference
+			// systems.
+			for (Pose p = pose; p != null; p = p.getReferenceSystem()) {
+				p.getOrientation().getRotation(inverseRotation).conjugate();
+				inversePosition.set(p.getPosition()).negate();
+				viewTransform
+					.rotate(inverseRotation)
+					.translate(inversePosition)
+					;
+			}
 		}
 	}
 
 	public Quaternionf getRotationQuaternion() {
-		Vector3f eye = new Vector3f(pose.getForwardDirection());
-		Vector3f up = new Vector3f(pose.getUpDirection());
-		return tempQuat.identity().lookRotate(eye.negate(), up).rotate(0,180,0);
+		pose.getOrientation().getRotation(tempQuat);
+		return tempQuat;
 	}
 
 }

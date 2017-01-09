@@ -1,8 +1,11 @@
 package org.cakelab.oge.scene;
 
 import org.cakelab.oge.app.GlobalClock;
+import org.cakelab.oge.math.Orientation;
+import org.cakelab.oge.math.OrientationReverse;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 
 
@@ -24,24 +27,10 @@ public class Pose {
 	 * Position vector
 	 */
 	private Vector3f pos = new Vector3f();
-	
-	/**
-	 * Axis to apply Yaw.
-	 * It's the local Y axis.
-	 * Also the Up axis.
-	 */
-	private Vector3f dirUp = new Vector3f(0,1,0);
-	/**
-	 * Axis to apply roll.
-	 * It's the local Z axis.
-	 * Inverse to eye.
-	 */
-	private Vector3f dirForward = new Vector3f(0,0,1);
 
-	private Quaternionf tempQuat = new Quaternionf();
+	private Orientation orientation = new OrientationReverse();
 
 	public Pose() {	
-		resetRotation();
 	}
 	
 	public Pose(float x, float y, float z) {
@@ -57,8 +46,7 @@ public class Pose {
 	
 	public Pose(float x, float y, float z, Vector3f dirForward, Vector3f dirUp) {
 		this(x,y,z);
-		this.dirForward = dirForward;
-		this.dirUp = dirUp;
+		this.orientation.set(dirForward,dirUp);
 	}
 
 	public void setPoseModified() {
@@ -67,13 +55,12 @@ public class Pose {
 	
 	public void set(Pose pose) {
 		this.pos.set(pose.pos);
-		this.dirUp.set(pose.dirUp);
-		this.dirForward.set(pose.dirForward);
+		this.orientation.set(pose.getOrientation());
 		setPoseModified();
 	}
 	
 	public void setPosition(Vector3f position) {
-		this.pos = position;
+		this.pos.set(position);
 	}
 
 	public float getX() {
@@ -106,12 +93,11 @@ public class Pose {
 	
 
 	public void apply(Quaternionf rotation) {
-		rotation.transform(dirUp);
-		rotation.transform(dirForward);
+		orientation.apply(rotation);
 	}
 	
-	private Vector3f getPitchAxis() {
-		return new Vector3f(dirForward).cross(dirUp);
+	private Vector3f getPitchAxis(Vector3f v) {
+		return orientation.getLocalXAxis(v);
 	}
 
 	public void addPitch(float pitch) {
@@ -139,56 +125,34 @@ public class Pose {
 	}
 	
 	public void addLocalRotation(float pitch, float yaw, float roll) {
-		Quaternionf rotation = tempQuat.identity()
-			.rotateAxis(yaw, dirUp)
-			.rotateAxis(pitch, getPitchAxis())
-			.rotateAxis(roll, dirForward)
-			;
-		apply(rotation);
-		
+		orientation.addLocalEulerZXY(pitch, yaw, roll);
 		setPoseModified();
 	}	
 	
 	public void addRotation(float xAngle, float yAngle, float zAngle) {
-		Quaternionf rotation = tempQuat.identity()
-			.rotateY(yAngle)
-			.rotateX(xAngle)
-			.rotateZ(zAngle)
-			;
-		apply(rotation);
-		
-		
+		orientation.addEulerZXY(xAngle, yAngle, zAngle);
 		setPoseModified();
 	}
 
 	public void setRotation(float pitch, float yaw, float roll) {
-		resetRotation();
-		addRotation(pitch, yaw, roll);
+		orientation.setEulerZXY(pitch, yaw, roll);
 		setPoseModified();
 	}
 	
-	public void resetRotation() {
-		// FIXME [0] this is dangerous in case the user expects another default orientation (set by setOrientation)
-		dirUp.set(0, 1, 0);
-		dirForward.set(0, 0, 1);
-		setPoseModified();
+	public boolean isPoseModified(double since) {
+		return lastModified > since;
 	}
 
-	public boolean isPoseModified(double lastUpdate) {
-		return lastModified > lastUpdate;
+	public Vector3f getUpDirection(Vector3f v) {
+		return orientation.getLocalYAxis(v);
 	}
 
-	public Vector3f getUpDirection() {
-		return dirUp;
+	public Vector3f getForwardDirection(Vector3f v) {
+		return orientation.getLocalZAxis(v);
 	}
 
-	public Vector3f getForwardDirection() {
-		return dirForward;
-	}
-
-	public void setOrientation(Vector3f forward, Vector3f up) {
-		this.dirForward = forward;
-		this.dirUp = up;
+	public void setOrientation(Vector3fc defaultForward, Vector3fc defaultUp) {
+		this.orientation.set(defaultForward, defaultUp);
 		setPoseModified();
 	}
 
@@ -204,7 +168,7 @@ public class Pose {
 	}
 
 	public void setRotation(Quaternionf rotation) {
-		apply(rotation);
+		orientation.apply(rotation);
 	}
 
 	public Pose getReferenceSystem() {
@@ -215,5 +179,16 @@ public class Pose {
 		this.referenceSystem = referenceSystem;
 	}
 
-	
+	public Orientation getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(Orientation orientation) {
+		this.orientation = orientation;
+	}
+
+	public boolean isWorldPoseModified(double since) {
+		return isPoseModified(since) || (referenceSystem != null && referenceSystem.isWorldPoseModified(since));
+	}
+
 }

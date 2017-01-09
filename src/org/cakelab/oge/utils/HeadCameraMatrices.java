@@ -1,6 +1,6 @@
 package org.cakelab.oge.utils;
 
-import org.cakelab.oge.HeadCamera;
+import org.cakelab.soapbox.HeadCamera;
 import org.joml.Matrix4f;
 
 public class HeadCameraMatrices extends CameraMatrices {

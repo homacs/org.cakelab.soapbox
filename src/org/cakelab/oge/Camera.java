@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 
 /**
  * Camera is the base class for any camera 
- * without any restrictions.
+ * without any restrictions in terms of movement or rotation.
  * 
  * @author homac
  *
@@ -15,9 +15,7 @@ public class Camera extends Pose {
 	
 	public CameraMatrices matrices;
 	
-	private float fov;
-	
-
+	private float fov = 60f;
 	
 	public Camera(float x, float y, float z, float pitch, float yaw, float roll) {
 		super(x, y, z, pitch, yaw, roll);
