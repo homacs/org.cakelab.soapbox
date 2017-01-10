@@ -28,7 +28,7 @@ public class Scene {
 		return objects;
 	}
 
-	public ArrayList<DynamicEntity> getDynamicObjects() {
+	public ArrayList<DynamicEntity> getDynamicEntities() {
 		return dynamicObjects;
 	}
 

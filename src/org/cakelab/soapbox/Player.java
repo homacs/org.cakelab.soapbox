@@ -1,8 +1,7 @@
 package org.cakelab.soapbox;
 
 import org.cakelab.oge.Camera;
-import org.cakelab.oge.math.Orientation;
-import org.cakelab.oge.math.OrientationImpl;
+import org.cakelab.oge.math.OrientationC;
 import org.cakelab.oge.scene.Entity;
 import org.cakelab.oge.scene.Pose;
 import org.joml.Quaternionf;
@@ -12,6 +11,10 @@ public class Player extends Entity implements MovementAdapter {
 	private HeadCamera camera;
 	Vector3f translationVelocity = new Vector3f();
 	Vector3f rotationVelocity = new Vector3f();
+	
+	Vector3f tmpVect = new Vector3f();
+	Quaternionf tmpQuat = new Quaternionf();
+	
 	private double lastTime = -1;
 	private float velocityMultiplier = 1.0f;
 	
@@ -49,17 +52,28 @@ public class Player extends Entity implements MovementAdapter {
 	}
 
 	private void moveAlong(float x, float y, float z) {
-		Vector3f tmpV = new Vector3f();
-		Vector3f direction = tmpV.set(x, y, z);
-		Quaternionf orientation = getOrientation().getRotation(new Quaternionf());
+		// TODO: join movement code from headcam and player somewhere?
 		
-		orientation.transform(direction);
+		if (isSignificant(x) || isSignificant(y) || isSignificant(z) ) {
+			Vector3f direction = tmpVect.set(x, y, z);
+			
+			// FIXME Bug player stops moving because Quaternionf.set() returns q=(0,0,0,0)
+			// Probably caused by an off-by-one error in native code.
+			Quaternionf orientation = getOrientation().getRotation(tmpQuat);
+			
+			orientation.transform(direction);
+			Vector3f pos = direction.add(getPosition());
+			setPosition(pos);
+		}
+
 		
-		Vector3f pos = direction.add(getPosition());
-		setPosition(pos);
 
 	}
 
+
+	private boolean isSignificant(float f) {
+		return Math.abs(f) > 0.0000001;
+	}
 
 	/**
 	 * +degree: turn left
@@ -132,10 +146,11 @@ public class Player extends Entity implements MovementAdapter {
 
 	@Override
 	public void init(Pose that) {
-		
 
 		// We want the player body to be upright
 		Vector3f up = new Vector3f(0,1,0);
+		
+		// TODO move calculation to math package
 		
 		// Now calc an appropriate forward direction in x-z plane
 		// 
@@ -174,7 +189,7 @@ public class Player extends Entity implements MovementAdapter {
 				// no intersection with (1,0,z) either, which means
 				// u-v plane equals x-z plane
 				// -> use standard orientation
-				forward = new Vector3f(Orientation.DEFAULT_FORWARD);
+				forward = new Vector3f(OrientationC.DEFAULT_FORWARD);
 			}
 		}
 		// now we do have a vector in x-z plane, but we don't know if it
@@ -201,7 +216,6 @@ public class Player extends Entity implements MovementAdapter {
 		// remove the rotation of the player from the camera orientation
 		Quaternionf thisRotation = getOrientation().getRotation(new Quaternionf());
 		Quaternionf camRotation = that.getOrientation().getRotation(new Quaternionf());
-
 		Quaternionf diff = thisRotation.difference(camRotation, new Quaternionf());
 
 		forward = camera.getForwardDirection(forward);
@@ -211,8 +225,6 @@ public class Player extends Entity implements MovementAdapter {
 		diff.transform(up);
 		
 		camera.setPosition(0, 0, 0);
-//		camera.setOrientation(Orientation.DEFAULT_FORWARD, Orientation.DEFAULT_UP);
-//		camera.apply(diff);
 		camera.setOrientation(forward, up);
 		
 		

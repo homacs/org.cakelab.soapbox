@@ -1,17 +1,34 @@
 package org.cakelab.oge.scene;
 
 import org.cakelab.oge.app.GlobalClock;
+import org.cakelab.oge.math.OrientationC;
 import org.cakelab.oge.math.Orientation;
-import org.cakelab.oge.math.OrientationReverse;
-import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 
 
 /**
- * A Pose describes position and orientation of an object. 
- * 
+ * <p>
+ * A Pose holds a position and an orientation (of an entity). 
+ * Both are relative to a reference system, which is by 
+ * default the global coordinate system (world coordinates).
+ * </p><p>
+ * Position and orientation are always local. The position of 
+ * a Pose is its relative position from the centre (0,0,0) of its
+ * local coordinate system and the orientation defines a rotation 
+ * relative to the default orientation (see {@link OrientationC#DEFAULT}) 
+ * around its position (origin). 
+ * </p><p>
+ * A Pose can have a reference system other then the world coordinate 
+ * system (see {@link Pose#setReferenceSystem(Pose)}). E.g. tires of 
+ * a car have the car as reference system. The global position and 
+ * orientation of the pose, then is relative to its reference system, 
+ * such as the tires will always stick to the car. Thus, translations 
+ * and rotations of parenting reference systems have to be considered 
+ * when calculating the global position and rotation of an entity. 
+ * </p>
  * @author homac
  *
  */
@@ -28,7 +45,7 @@ public class Pose {
 	 */
 	private Vector3f pos = new Vector3f();
 
-	private Orientation orientation = new OrientationReverse();
+	private Orientation orientation = new Orientation();
 
 	public Pose() {	
 	}
@@ -44,7 +61,7 @@ public class Pose {
 		setRotation(pitch, yaw, roll);
 	}
 	
-	public Pose(float x, float y, float z, Vector3f dirForward, Vector3f dirUp) {
+	public Pose(float x, float y, float z, Vector3fc dirForward, Vector3fc dirUp) {
 		this(x,y,z);
 		this.orientation.set(dirForward,dirUp);
 	}
@@ -59,7 +76,7 @@ public class Pose {
 		setPoseModified();
 	}
 	
-	public void setPosition(Vector3f position) {
+	public void setPosition(Vector3fc position) {
 		this.pos.set(position);
 	}
 
@@ -90,13 +107,11 @@ public class Pose {
 		setPoseModified();
 	}
 
-	
-
-	public void apply(Quaternionf rotation) {
+	public void apply(Quaternionfc rotation) {
 		orientation.apply(rotation);
 	}
 	
-	private Vector3f getPitchAxis(Vector3f v) {
+	public Vector3f getPitchAxis(Vector3f v) {
 		return orientation.getLocalXAxis(v);
 	}
 
@@ -143,20 +158,20 @@ public class Pose {
 		return lastModified > since;
 	}
 
-	public Vector3f getUpDirection(Vector3f v) {
-		return orientation.getLocalYAxis(v);
+	public Vector3f getUpDirection(Vector3f result) {
+		return orientation.getLocalYAxis(result);
 	}
 
-	public Vector3f getForwardDirection(Vector3f v) {
-		return orientation.getLocalZAxis(v);
+	public Vector3f getForwardDirection(Vector3f result) {
+		return orientation.getLocalZAxis(result);
 	}
 
-	public void setOrientation(Vector3fc defaultForward, Vector3fc defaultUp) {
-		this.orientation.set(defaultForward, defaultUp);
+	public void setOrientation(Vector3fc forward, Vector3fc up) {
+		this.orientation.set(forward, up);
 		setPoseModified();
 	}
 
-	public Vector3f getPosition() {
+	public Vector3fc getPosition() {
 		return pos;
 	}
 
@@ -167,19 +182,35 @@ public class Pose {
 		setPoseModified();
 	}
 
-	public void setRotation(Quaternionf rotation) {
+	public void setRotation(Quaternionfc rotation) {
+		orientation.set(Orientation.DEFAULT_FORWARD, Orientation.DEFAULT_UP);
 		orientation.apply(rotation);
 	}
 
+	/**
+	 * Returns the reference coordinate system, which was set for 
+	 * this pose.
+	 * @return
+	 */
 	public Pose getReferenceSystem() {
 		return referenceSystem;
 	}
 
+	/**
+	 * Set a reference coordinate system for this pose. Position and 
+	 * orientation are from now on to be considered relative to the
+	 * reference system.
+	 * 
+	 * @param referenceSystem
+	 */
 	public void setReferenceSystem(Pose referenceSystem) {
 		this.referenceSystem = referenceSystem;
 	}
 
-	public Orientation getOrientation() {
+	/**
+	 * Returns the orientation of this pose.
+	 */
+	public OrientationC getOrientation() {
 		return orientation;
 	}
 

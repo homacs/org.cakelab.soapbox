@@ -1,6 +1,7 @@
 package org.cakelab.oge.scene;
 
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 /**
  * Any visual or non-visual object in the scene.
@@ -40,7 +41,7 @@ public class Entity extends Pose {
 	public void setScale(float x, float y, float z) {
 		scale.set(x,y,z);
 	}
-	public Vector3f getScale() {
+	public Vector3fc getScale() {
 		return scale;
 	}
 

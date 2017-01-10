@@ -1,10 +1,8 @@
 package org.cakelab.oge.scene;
 
-import org.cakelab.oge.utils.EntityMatrices;
+import org.cakelab.oge.math.EntityMatrices;
 
 public abstract class VisualEntity extends Entity {
-	// TODO object groups
-	
 	private ModuleData renderData;
 
 	private EntityMatrices matrices;

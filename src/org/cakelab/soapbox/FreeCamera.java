@@ -7,11 +7,12 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter {
-	Vector3f translationVelocity = new Vector3f();
-	Vector3f rotationVelocity = new Vector3f();
-	Vector3f tmpV = new Vector3f();
+	private Vector3f translationVelocity = new Vector3f();
+	private Vector3f rotationVelocity = new Vector3f();
 	private double lastTime = -1;
 	private float velocityMultiplier = 1.0f;
+	private Vector3f tmpV = new Vector3f();
+	private Quaternionf tmpQuat = new Quaternionf();
 	
 	public FreeCamera() {
 		super(0f, 1.75f, +6f, 0f, 0f, 0f);
@@ -58,7 +59,7 @@ public class FreeCamera extends Camera implements DynamicEntity, MovementAdapter
 
 	private void moveAlong(float x, float y, float z) {
 		Vector3f direction = tmpV.set(x, y, z);
-		Quaternionf orientation = getOrientation().getRotation(new Quaternionf());
+		Quaternionf orientation = getOrientation().getRotation(tmpQuat );
 		
 		orientation.transform(direction);
 		

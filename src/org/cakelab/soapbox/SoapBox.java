@@ -69,7 +69,7 @@ public class SoapBox extends ApplicationBase {
 
 		player.update(currentTime);
 		
-		for (DynamicEntity vobj : scene.getDynamicObjects()) {
+		for (DynamicEntity vobj : scene.getDynamicEntities()) {
 			vobj.update(currentTime);
 		}
 		

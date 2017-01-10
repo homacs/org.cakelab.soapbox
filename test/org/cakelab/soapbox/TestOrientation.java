@@ -1,9 +1,6 @@
 package org.cakelab.soapbox;
 
 import org.cakelab.oge.math.Orientation;
-import org.cakelab.oge.math.OrientationImpl;
-import org.cakelab.oge.math.OrientationOld;
-import org.cakelab.oge.math.OrientationReverse;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -27,11 +24,11 @@ public class TestOrientation extends RotTestBase {
 
 	
 	private static Orientation newOrientation() {
-		return new OrientationReverse();
+		return new Orientation();
 	}
 	
 	private static Orientation newOrientation(Vector3f forward, Vector3f up) {
-		return new OrientationReverse(forward, up);
+		return new Orientation(forward, up);
 	}
 
 
@@ -67,9 +64,6 @@ public class TestOrientation extends RotTestBase {
 		o = newOrientation();
 		o.addLocalEulerZXY((float) Math.toRadians(90), 0, 0);
 		o.addLocalEulerZXY(0, 0, (float) Math.toRadians(90));
-		Vector3f xAxis = o.getLocalXAxis(new Vector3f());
-		Vector3f yAxis = o.getLocalYAxis(new Vector3f());
-		Vector3f zAxis = o.getLocalZAxis(new Vector3f());
 		assert (
 				   equals(o.getLocalXAxis(v), new Vector3f(0,0,1))
 				&& equals(o.getLocalYAxis(v), new Vector3f(-1,0,0))

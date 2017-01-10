@@ -1,7 +1,7 @@
 package org.cakelab.oge;
 
+import org.cakelab.oge.math.CameraMatrices;
 import org.cakelab.oge.scene.Pose;
-import org.cakelab.oge.utils.CameraMatrices;
 import org.joml.Vector3f;
 
 /**
@@ -44,5 +44,4 @@ public class Camera extends Pose {
 		return matrices;
 	}
 
-	
 }

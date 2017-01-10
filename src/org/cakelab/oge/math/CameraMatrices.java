@@ -1,20 +1,20 @@
-package org.cakelab.oge.utils;
+package org.cakelab.oge.math;
 
 import org.cakelab.oge.app.GlobalClock;
 import org.cakelab.oge.scene.Pose;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 
 public class CameraMatrices {
 	protected double lastUpdate = 0;
 	
 	protected Matrix4f viewTransform = new Matrix4f();
-	protected Matrix4f orientationTransform = new Matrix4f();
+	protected Quaternionf rotation = new Quaternionf();
 
 	private Quaternionf tempQuat = new Quaternionf();
-	private Vector3f tmpForward = new Vector3f();
-	private Vector3f tmpUp = new Vector3f();
+	private Vector3f tempVect = new Vector3f();
 	
 	protected Pose pose;
 
@@ -23,11 +23,6 @@ public class CameraMatrices {
 	}
 	
 	protected CameraMatrices() {
-	}
-
-	public Matrix4f getOrientationTransform() {
-		update();
-		return orientationTransform;
 	}
 	
 	public Matrix4f getViewTransform() {
@@ -42,6 +37,9 @@ public class CameraMatrices {
 		}			
 	}
 	
+	/**
+	 * Method called each time the associated pose or its ancestors where modified.
+	 */
 	protected void applyModifications() {
 		//
 		// To get a view transformation we 
@@ -55,14 +53,20 @@ public class CameraMatrices {
 		//
 		
 		Pose reference = pose.getReferenceSystem();
-
+		rotation.identity();
+		
 		if (reference == null) {
+			
+			rotation.mul(pose.getOrientation().getRotation(tempQuat))
+				.rotateY((float) Math.PI);
+
 			viewTransform.identity()
 				.translate(pose.getPosition())
-				.rotate(pose.getOrientation().getRotation(tempQuat))
-				.rotateY((float) Math.PI)
+				.rotate(rotation)
 				.invert()
 			;
+			
+			rotation.invert();
 		
 		} else {
 			// with reference system:
@@ -73,28 +77,27 @@ public class CameraMatrices {
 			// 5. repeat at 3 for reference systems of reference systems
 			// To do this in this exact order, we just need to apply the 
 			// reverse rotations and translations
-			Quaternionf inverseRotation = new Quaternionf();
-			Vector3f inversePosition = new Vector3f();
+			Vector3f inversePosition = tempVect;
 
 			// first apply the 180 degrees rotation around as explained above
 			viewTransform.rotationY((float)Math.PI);
-
+			rotation.rotationY((float)Math.PI);
 			// now apply inverse rotations and translations in the order of reference
-			// systems.
+			// systems starting with the camera itself.
 			for (Pose p = pose; p != null; p = p.getReferenceSystem()) {
-				p.getOrientation().getRotation(inverseRotation).conjugate();
 				inversePosition.set(p.getPosition()).negate();
+				rotation.mul(p.getOrientation().getReverseRotation());
 				viewTransform
-					.rotate(inverseRotation)
+					.rotate(p.getOrientation().getReverseRotation())
 					.translate(inversePosition)
-					;
+				;
 			}
 		}
 	}
 
-	public Quaternionf getRotationQuaternion() {
-		pose.getOrientation().getRotation(tempQuat);
-		return tempQuat;
+	public Quaternionfc getInverseRotation() {
+		update();
+		return rotation;
 	}
 
 }

@@ -1,14 +1,27 @@
 package org.cakelab.soapbox;
 
-import org.cakelab.oge.math.Orientation;
+import org.cakelab.oge.math.OrientationC;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class TestQuaternion extends RotTestBase {
 	public static void main (String[] args) {
+		testWeirdBug();
 		testAxisRotation(new Vector3f(0,-1,0), new Vector3f(0,0,1));
 		testAxisRotation(new Vector3f(0,-1,0), new Vector3f(-1,0,0));
 		testAxisRotation(new Vector3f(0,0,-1), new Vector3f(-1,0,0));
+	}
+
+	private static void testWeirdBug() {
+		Vector3f v = new Vector3f(0,0,1);
+		Quaternionf rot = new Quaternionf().rotate((float) Math.PI, 0, 0).conjugate();
+		rot.conjugate();
+		Vector3f direction;
+		do {
+			Quaternionf copy = new Quaternionf().set(rot).conjugate();
+			direction = new Vector3f().set(v);
+			copy.transform(direction);
+		} while (direction.length() > 0.0000001);
 	}
 
 	private static void testAxisRotation(Vector3f forward, Vector3f up) {
@@ -26,7 +39,7 @@ public class TestQuaternion extends RotTestBase {
 		
 		
 		// rotate to match forward vector
-		q.rotateTo(forward, Orientation.DEFAULT_FORWARD);
+		q.rotateTo(forward, OrientationC.DEFAULT_FORWARD);
 
 		// get the rotated up vector
 		Vector3f rotatedUp = new Vector3f();

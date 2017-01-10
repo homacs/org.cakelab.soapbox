@@ -1,8 +1,8 @@
 package org.cakelab.soapbox;
 
 import org.cakelab.oge.Camera;
-import org.cakelab.oge.math.Orientation;
-import org.cakelab.oge.utils.HeadCameraMatrices;
+import org.cakelab.oge.math.CameraMatrices;
+import org.cakelab.oge.math.OrientationC;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -27,17 +27,17 @@ public class HeadCamera extends Camera {
 	
 	public HeadCamera() {
 		super(0,0,0,0,0,0);
-		matrices = new HeadCameraMatrices(this);
+		matrices = new CameraMatrices(this);
 	}
 
 	public HeadCamera(float x, float y, float z, float pitch, float yaw, float roll) {
 		super(x, y, z, pitch, yaw, roll);
-		matrices = new HeadCameraMatrices(this);
+		matrices = new CameraMatrices(this);
 	}
 
 	public HeadCamera(float x, float y, float z, Vector3f forward, Vector3f up) {
 		super(x, y, z, forward, up);
-		matrices = new HeadCameraMatrices(this);
+		matrices = new CameraMatrices(this);
 	}
 
 	public void set(Camera that) {
@@ -49,9 +49,9 @@ public class HeadCamera extends Camera {
 
 	
 	private void updateRotationAngles() {
-		Orientation rotation = getOrientation();
+		OrientationC rotation = getOrientation();
 		Vector3f euler = new Vector3f();
-		rotation.getEulerAnglesYXZ(euler);
+		rotation.getEulerAnglesXYZ(euler);
 		
 		this.yaw = euler.y;
 		this.roll = euler.z;
@@ -116,6 +116,7 @@ public class HeadCamera extends Camera {
 	}
 	
 	public void addYaw(float degree) {
+		// FIXME: This is currently not used but why did we add yaw globally but everything else locally?
 		recursion++;
 		yaw += degree;
 		super.addYaw(degree);
