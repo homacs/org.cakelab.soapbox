@@ -336,9 +336,9 @@ public abstract class AbstractAplicationBase {
 			
 			running = true;
 			while (running) {
-				GlobalClock.currentTime = glfwGetTime();
+				GlobalClock.frameTime = glfwGetTime();
 
-				process(GlobalClock.currentTime, context);
+				process(GlobalClock.frameTime, context);
 
 		        /* Poll for and process events */
 		        glfwPollEvents();

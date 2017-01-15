@@ -35,7 +35,7 @@ import org.joml.Vector3fc;
 public class Pose {
 	
 	
-	private double lastModified = 0;
+	private double lastModified = GlobalClock.TIME_INVALID;
 	
 	
 	private Pose referenceSystem;
@@ -67,7 +67,7 @@ public class Pose {
 	}
 
 	public void setPoseModified() {
-		lastModified = GlobalClock.getCurrentTime();
+		lastModified = GlobalClock.getFrameTime();
 	}
 	
 	public void set(Pose pose) {
@@ -78,6 +78,7 @@ public class Pose {
 	
 	public void setPosition(Vector3fc position) {
 		this.pos.set(position);
+		setPoseModified();
 	}
 
 	public float getX() {

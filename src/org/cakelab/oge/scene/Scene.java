@@ -24,7 +24,7 @@ public class Scene {
 		}
 	}
 	
-	public ArrayList<VisualEntity> getVisualObjects() {
+	public ArrayList<VisualEntity> getVisualEntities() {
 		return objects;
 	}
 

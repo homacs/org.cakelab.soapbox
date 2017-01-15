@@ -76,7 +76,7 @@ public class SoapBox extends ApplicationBase {
 		context.setActiveCamera(player.getCamera());
 		context.setProjectionTransform(projection);
 
-		for (VisualEntity vobj : scene.getVisualObjects()) {
+		for (VisualEntity vobj : scene.getVisualEntities()) {
 			SingleProgramRendererBase renderer = Registry.getRenderer(vobj.getClass());
 			if (renderer == null) {
 				throw new Error("no renderer registered for " + vobj.getClass().getCanonicalName());

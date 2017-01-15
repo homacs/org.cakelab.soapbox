@@ -14,11 +14,11 @@ public class Cursor {
 	private double lastUpdate = 0;
 	
 	void update(long window) {
-		if (lastUpdate < GlobalClock.currentTime) {
+		if (lastUpdate < GlobalClock.frameTime) {
 			glfwGetCursorPos(window, xBuf, yBuf);
 			x = xBuf.get();
 			y = yBuf.get();
-			lastUpdate = GlobalClock.currentTime;
+			lastUpdate = GlobalClock.frameTime;
 		}
 	}
 	

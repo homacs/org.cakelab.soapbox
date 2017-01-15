@@ -8,7 +8,7 @@ import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 
 public class CameraMatrices {
-	protected double lastUpdate = 0;
+	protected double lastUpdate = GlobalClock.TIME_INVALID;
 	
 	protected Matrix4f viewTransform = new Matrix4f();
 	protected Quaternionf rotation = new Quaternionf();
@@ -33,7 +33,7 @@ public class CameraMatrices {
 	public void update() {
 		if (pose.isWorldPoseModified(lastUpdate)) {
 			applyModifications();
-			lastUpdate = GlobalClock.getCurrentTime();
+			lastUpdate = GlobalClock.getFrameTime();
 		}			
 	}
 	

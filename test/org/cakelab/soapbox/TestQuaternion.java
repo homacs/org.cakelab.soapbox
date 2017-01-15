@@ -13,15 +13,21 @@ public class TestQuaternion extends RotTestBase {
 	}
 
 	private static void testWeirdBug() {
+		long something = 0;
 		Vector3f v = new Vector3f(0,0,1);
 		Quaternionf rot = new Quaternionf().rotate((float) Math.PI, 0, 0).conjugate();
 		rot.conjugate();
 		Vector3f direction;
 		do {
-			Quaternionf copy = new Quaternionf().set(rot).conjugate();
 			direction = new Vector3f().set(v);
+			Quaternionf copy = new Quaternionf().set(rot).conjugate();
 			copy.transform(direction);
-		} while (direction.length() > 0.0000001);
+			assert (direction.z == -1.0);
+			something++;
+		} while (something != 0);
+		
+		System.out.println(something);
+		
 	}
 
 	private static void testAxisRotation(Vector3f forward, Vector3f up) {

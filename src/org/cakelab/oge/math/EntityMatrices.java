@@ -15,7 +15,7 @@ public class EntityMatrices {
 	private Matrix4f modelTransform = new Matrix4f();
 	private Quaternionf tempQuat = new Quaternionf();
 
-	private double lastUpdate = 0;
+	private double lastUpdate = GlobalClock.TIME_INVALID;
 	private Vector3f tempVect = new Vector3f();
 	
 	public EntityMatrices(VisualEntity entity) {
@@ -32,6 +32,7 @@ public class EntityMatrices {
 
 			Pose reference = entity.getReferenceSystem(); 
 			if (reference == null) {
+				
 				Quaternionf qRotate = entity.getOrientation().getRotation(tempQuat);
 				worldTransform
 					.identity()
@@ -73,17 +74,14 @@ public class EntityMatrices {
 				worldTransform.invert();
 
 			}
-			// TODO [1] reconsider scale
 			if (modelTransform != null) {
 				worldTransform.mul(modelTransform);
 			}
-			lastUpdate = GlobalClock.getCurrentTime();
+			lastUpdate = GlobalClock.getFrameTime();
 		}
 	}
 
 	/**
-	 * 
-	 * TODO add relationship to parent objects
 	 * 
 	 * This allows a transformation of a common model before application 
 	 * of a model world transformation. This is for example useful if the

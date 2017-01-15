@@ -51,16 +51,13 @@ public class Player extends Entity implements MovementAdapter {
 		moveAlong(+amount, 0, 0);
 	}
 
-	private void moveAlong(float x, float y, float z) {
+	public void moveAlong(float x, float y, float z) {
 		// TODO: join movement code from headcam and player somewhere?
 		
 		if (isSignificant(x) || isSignificant(y) || isSignificant(z) ) {
 			Vector3f direction = tmpVect.set(x, y, z);
-			
-			// FIXME Bug player stops moving because Quaternionf.set() returns q=(0,0,0,0)
-			// Probably caused by an off-by-one error in native code.
+
 			Quaternionf orientation = getOrientation().getRotation(tmpQuat);
-			
 			orientation.transform(direction);
 			Vector3f pos = direction.add(getPosition());
 			setPosition(pos);
