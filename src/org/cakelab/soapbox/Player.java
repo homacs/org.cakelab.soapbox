@@ -1,6 +1,7 @@
 package org.cakelab.soapbox;
 
 import org.cakelab.oge.Camera;
+import org.cakelab.oge.math.Orientation;
 import org.cakelab.oge.math.OrientationC;
 import org.cakelab.oge.scene.Entity;
 import org.cakelab.oge.scene.Pose;
@@ -135,15 +136,11 @@ public class Player extends Entity implements MovementAdapter {
 		return camera;
 	}
 
-	
-	public void init(Camera camera) {
-		set(this.camera);
-		init((Pose)camera);
-	}
-
 	@Override
 	public void init(Pose that) {
-
+		if (that instanceof Camera) {
+			camera.set((Camera)that);
+		}
 		// We want the player body to be upright
 		Vector3f up = new Vector3f(0,1,0);
 		
@@ -215,8 +212,8 @@ public class Player extends Entity implements MovementAdapter {
 		Quaternionf camRotation = that.getOrientation().getRotation(new Quaternionf());
 		Quaternionf diff = thisRotation.difference(camRotation, new Quaternionf());
 
-		forward = camera.getForwardDirection(forward);
-		up = camera.getUpDirection(up);
+		forward.set(Orientation.DEFAULT_FORWARD);
+		up.set(Orientation.DEFAULT_UP);
 		
 		diff.transform(forward);
 		diff.transform(up);
