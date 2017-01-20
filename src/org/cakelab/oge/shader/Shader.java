@@ -20,6 +20,8 @@ import java.nio.charset.Charset;
 import java.util.StringTokenizer;
 
 import org.cakelab.appbase.fs.FileSystem;
+import org.cakelab.oge.shader.glsl.GLSLSourceSet;
+import org.cakelab.oge.shader.glsl.GLSLSourceString;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 
@@ -31,6 +33,7 @@ public class Shader {
 	protected int shaderId;
 	protected int shaderType;
 	protected String shaderName;
+	
 
 	/**
 	 * @param type GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER, 
@@ -45,21 +48,25 @@ public class Shader {
 	
 	protected Shader(int shaderType, String name, String glslSource) throws GLCompilerException {
 		this(shaderType, name);
-		compile(glslSource);
+		compile(new GLSLSourceString(name, glslSource));
 	}
 	
 	protected Shader(int shaderType, String name, File glslSource) throws GLCompilerException, IOException {
 		this(shaderType, name);
-		compile(glslSource);
+		compile(new GLSLSourceString(glslSource));
 	}
 	
 	protected Shader(int shaderType, File glslSource) throws GLCompilerException, IOException {
-		this(shaderType, glslSource.getName(), glslSource);
+		this(shaderType, glslSource.getName(), new GLSLSourceString(glslSource));
 	}
 	
 	public Shader(int type, String name, InputStream glslSource) throws GLCompilerException, IOException {
 		this(type, name);
-		compile(glslSource);
+		compile(new GLSLSourceString(name, glslSource));
+	}
+
+	public Shader(int type, String name, GLSLSourceSet source) {
+		this(type, name);
 	}
 
 	public void delete() {
@@ -76,15 +83,19 @@ public class Shader {
 	
 	private void compile(InputStream glslSource) throws IOException, GLCompilerException {
 		  String code = FileSystem.readText(glslSource, Charset.forName("UTF-8"));
-		  compile(code);
+		  compile(new GLSLSourceString(shaderName, code));
 	}
 	
-	public void compile(String sourceCode) throws GLCompilerException {
-		checkASCII(sourceCode);
+	public void compile(GLSLSourceSet sourceCode) throws GLCompilerException {
+		
+		String[] sources = sourceCode.getSourceStrings();
+		for (int i = 0; i < sources.length; i++) {
+			checkASCII(sourceCode.getName(i), sources[i]);
+		}
 		
 		// Create and compile vertex shader
 		shaderId = glCreateShader(shaderType);
-		glShaderSource(shaderId, sourceCode);
+		glShaderSource(shaderId, sources);
 		glCompileShader(shaderId);
 		
 		// check result
@@ -92,16 +103,16 @@ public class Shader {
 		glGetShaderiv(shaderId, GL_COMPILE_STATUS, status);
 
 		if (status.get(0) != GL_TRUE) {
-			throwCompilerErrors();
+			throwCompilerErrors(sourceCode);
 		}
 	}
 
-	private void checkASCII(String sourceCode) throws GLCompilerException {
+	private void checkASCII(String name, String sourceCode) throws GLCompilerException {
 		int line = 0;
 		int column = 0;
 		for(char c : sourceCode.toCharArray()) {
 			if (c < 0 || c > 128) {
-				throw new GLCompilerException(compilerErrorLine(line, column, "non-ascii character '" + c + "'."));
+				throw new GLCompilerException(compilerErrorLine(name, line, column, "non-ascii character '" + c + "'."));
 			}
 			column++;
 			if (c == '\n') {
@@ -112,7 +123,7 @@ public class Shader {
 	}
 
 
-	void throwCompilerErrors() throws GLCompilerException {
+	void throwCompilerErrors(GLSLSourceSet sourceMap) throws GLCompilerException {
 		IntBuffer bufSize = BufferUtils.createIntBuffer(1);
 		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, bufSize);
 		ByteBuffer infoLog = BufferUtils.createByteBuffer(Character.SIZE/8 * bufSize.get(0));
@@ -123,10 +134,12 @@ public class Shader {
 		StringBuffer errorMessage = new StringBuffer();
 		while (tokenizer.hasMoreTokens()) {
 			String line = tokenizer.nextToken();
-			int messageStart = line.indexOf(')');
-			int lineNo = Integer.parseInt(line.substring(line.indexOf('(')+1, messageStart));		
+			int sourceNum = Integer.parseUnsignedInt(line.substring(0, line.indexOf('('))); // TODO later
+			int lineNo = Integer.parseInt(line.substring(line.indexOf('(')+1, line.indexOf(')')));		
 			int columnNo = 0; // currently unknown
-			errorMessage.append(compilerErrorLine(lineNo, columnNo, line.substring(messageStart+1)));
+			String error = line.substring(line.indexOf(':')+1).trim();
+			String source = sourceMap.getName(sourceNum);
+			errorMessage.append(compilerErrorLine(source, lineNo, columnNo, error));
 			errorMessage.append('\n');
 		}
 		
@@ -134,8 +147,8 @@ public class Shader {
 
 	}
 
-	private String compilerErrorLine(int line, int column, String error) {
-		return '\t' + shaderName + ':' + line + ':' + column + ':' + error;
+	private String compilerErrorLine(String source, int line, int column, String error) {
+		return '\t' + source + ':' + line + ':' + column + ": " + error;
 	}
 	
 

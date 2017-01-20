@@ -39,19 +39,25 @@ public class Program {
 	
 	public void link() throws GLLinkerException {
 		
-		glLinkProgram(getProgramId());
-		glValidateProgram(getProgramId());
+		glLinkProgram(programId);
 		
-		int status = glGetProgrami(getProgramId(), GL_LINK_STATUS);
+		int status = glGetProgrami(programId, GL_LINK_STATUS);
 		if (status != GL_TRUE) {
+			String message = glGetProgramInfoLog(programId);
+			System.err.println(message);
 
 			IntBuffer bufSize = BufferUtils.createIntBuffer(1);
-			glGetProgramiv(getProgramId(), GL_INFO_LOG_LENGTH, bufSize);
-			ByteBuffer infoLog = BufferUtils.createByteBuffer(Character.SIZE/8 * (bufSize.get(0) + 1));
-			glGetProgramInfoLog(getProgramId(), bufSize, infoLog);
+			glGetProgramiv(programId, GL_INFO_LOG_LENGTH, bufSize);
+			int len = bufSize.get(0);
+			
+			ByteBuffer infoLog = BufferUtils.createByteBuffer(Character.SIZE/8 * (len + 1));
+			glGetProgramInfoLog(programId, bufSize, infoLog);
+			
 			String error = new String("Linker error in program " + programName + ":\n" + MemoryUtil.memUTF8(infoLog, bufSize.get(0)));
 			throw new GLLinkerException(error);
 		}
+		
+		glValidateProgram(programId);
 
 	}
 	
