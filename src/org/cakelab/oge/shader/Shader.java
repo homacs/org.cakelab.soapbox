@@ -20,7 +20,6 @@ import java.nio.charset.Charset;
 import java.util.StringTokenizer;
 
 import org.cakelab.appbase.fs.FileSystem;
-import org.cakelab.oge.shader.glsl.GLSLSourceSet;
 import org.cakelab.oge.shader.glsl.GLSLSourceString;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
@@ -57,7 +56,7 @@ public class Shader {
 	}
 	
 	protected Shader(int shaderType, File glslSource) throws GLCompilerException, IOException {
-		this(shaderType, glslSource.getName(), new GLSLSourceString(glslSource));
+		this(shaderType, new GLSLSourceString(glslSource));
 	}
 	
 	public Shader(int type, String name, InputStream glslSource) throws GLCompilerException, IOException {
@@ -65,8 +64,15 @@ public class Shader {
 		compile(new GLSLSourceString(name, glslSource));
 	}
 
-	public Shader(int type, String name, GLSLSourceSet source) {
+
+	public Shader(int type, GLSLSourceString source) throws GLCompilerException {
+		this(type, source.getName());
+		compile(source);
+	}
+	
+	public Shader(int type, String name, GLSLSourceString ... source) throws GLCompilerException {
 		this(type, name);
+		compile(source);
 	}
 
 	public void delete() {
@@ -86,16 +92,19 @@ public class Shader {
 		  compile(new GLSLSourceString(shaderName, code));
 	}
 	
-	public void compile(GLSLSourceSet sourceCode) throws GLCompilerException {
-		
-		String[] sources = sourceCode.getSourceStrings();
-		for (int i = 0; i < sources.length; i++) {
-			checkASCII(sourceCode.getName(i), sources[i]);
+	public void compile(GLSLSourceString ... sourceCode) throws GLCompilerException {
+
+		int size = sourceCode.length;
+		String[] sourceStrings = new String[sourceCode.length];
+		for (int i = 0; i < size; i++) {
+			GLSLSourceString source = sourceCode[i];
+			checkASCII(source.getName(), source.getCode());
+			sourceStrings[i] = source.getCode();
 		}
 		
 		// Create and compile vertex shader
 		shaderId = glCreateShader(shaderType);
-		glShaderSource(shaderId, sources);
+		glShaderSource(shaderId, sourceStrings);
 		glCompileShader(shaderId);
 		
 		// check result
@@ -123,7 +132,7 @@ public class Shader {
 	}
 
 
-	void throwCompilerErrors(GLSLSourceSet sourceMap) throws GLCompilerException {
+	void throwCompilerErrors(GLSLSourceString[] sourceMap) throws GLCompilerException {
 		IntBuffer bufSize = BufferUtils.createIntBuffer(1);
 		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, bufSize);
 		ByteBuffer infoLog = BufferUtils.createByteBuffer(Character.SIZE/8 * bufSize.get(0));
@@ -138,7 +147,7 @@ public class Shader {
 			int lineNo = Integer.parseInt(line.substring(line.indexOf('(')+1, line.indexOf(')')));		
 			int columnNo = 0; // currently unknown
 			String error = line.substring(line.indexOf(':')+1).trim();
-			String source = sourceMap.getName(sourceNum);
+			String source = sourceMap[sourceNum].getName();
 			errorMessage.append(compilerErrorLine(source, lineNo, columnNo, error));
 			errorMessage.append('\n');
 		}

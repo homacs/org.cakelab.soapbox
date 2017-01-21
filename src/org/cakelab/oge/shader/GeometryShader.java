@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.cakelab.oge.shader.glsl.GLSLSourceSet;
+import org.cakelab.oge.shader.glsl.GLSLSourceString;
 
 public class GeometryShader extends Shader {
 	public static final int TYPE = GL_GEOMETRY_SHADER;
@@ -19,7 +19,7 @@ public class GeometryShader extends Shader {
 		super(TYPE, name, glslSource);
 	}
 
-	public GeometryShader(String name, GLSLSourceSet glslSource) {
+	public GeometryShader(String name, GLSLSourceString ... glslSource) throws GLCompilerException {
 		super(TYPE, name, glslSource);
 	}
 

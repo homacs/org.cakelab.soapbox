@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.cakelab.oge.shader.glsl.GLSLSourceSet;
+import org.cakelab.oge.shader.glsl.GLSLSourceString;
 
 public class VertexShader extends Shader {
 	public static final int TYPE = GL_VERTEX_SHADER;
@@ -19,7 +19,7 @@ public class VertexShader extends Shader {
 		super(TYPE, name, glslSource);
 	}
 
-	public VertexShader(String name, GLSLSourceSet source) {
+	public VertexShader(String name, GLSLSourceString ... source) throws GLCompilerException {
 		super(TYPE, name, source);
 	}
 
