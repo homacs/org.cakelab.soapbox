@@ -21,7 +21,6 @@ public abstract class ApplicationBase extends AbstractAplicationBase {
 			throw new GLException("Failed to initialize GLFW\n");
 		}
 
-
 		info.title = windowTitle;
 		info.setWindowWidth(800);
 		info.setWindowHeight(600);
@@ -32,13 +31,13 @@ public abstract class ApplicationBase extends AbstractAplicationBase {
 			info.majorVersion = 4;
 			info.minorVersion = 3;
 		}
-		info.samples = 0;
-		info.flags.cursor = true;
-		info.flags.fullscreen = false;
-		info.flags.stereo = false;
-		info.flags.vsync = false;
+		info.settings.samples = 0;
+		info.settings.cursor = true;
+		info.settings.fullscreen = false;
+		info.settings.stereo = false;
+		info.settings.vsync = false;
 		if (DEBUG) {
-			info.flags.debug = true;
+			info.settings.debug = true;
 		}
 
 	}
@@ -57,14 +56,14 @@ public abstract class ApplicationBase extends AbstractAplicationBase {
 		
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_SAMPLES, info.samples);
-		glfwWindowHint(GLFW_STEREO, info.flags.stereo ? GL_TRUE : GL_FALSE);
+		glfwWindowHint(GLFW_SAMPLES, info.settings.samples);
+		glfwWindowHint(GLFW_STEREO, info.settings.stereo ? GL_TRUE : GL_FALSE);
 
 		glfwWindowHint(GLFW_ALPHA_BITS, 0);
 		glfwWindowHint(GLFW_DEPTH_BITS, 32);
 		glfwWindowHint(GLFW_STENCIL_BITS, 0);
 		long monitor = 0;
-		if (info.flags.fullscreen) {
+		if (info.settings.fullscreen) {
 			monitor = glfwGetPrimaryMonitor();
 			GLFWVidMode mode = glfwGetVideoMode(monitor);
 
@@ -78,12 +77,12 @@ public abstract class ApplicationBase extends AbstractAplicationBase {
 			glfwWindowHint(GLFW_GREEN_BITS, 8);
 			glfwWindowHint(GLFW_BLUE_BITS, 8);
 		}
+		
+		glfwWindowHint(GLFW_STEREO, info.settings.stereo?1:0);
 
 		window = glfwCreateWindow(info.getWindowWidth(), info.getWindowHeight(),
 				info.title, monitor, 0);
 
-		if (info.flags.fullscreen) setVSync(info.flags.vsync);
-		
 		if (window == NULL) {
 			glfwTerminate();
 			throw new RuntimeException("Failed to open window\n");

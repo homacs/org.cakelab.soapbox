@@ -8,7 +8,6 @@ public class Info {
 	public int windowHeight;
 	public int majorVersion;
 	public int minorVersion;
-	public int samples;
 
 	public static class Flags {
 		public boolean fullscreen;
@@ -16,9 +15,12 @@ public class Info {
 		public boolean cursor;
 		public boolean stereo;
 		public boolean debug;
+		public int fps;
+		public boolean softwareThrottle;
+		public int samples;
 	}
 
-	public Flags flags = new Flags();
+	public Flags settings = new Flags();
 	private Vector2f center = new Vector2f();
 
 	public int getWindowWidth() {

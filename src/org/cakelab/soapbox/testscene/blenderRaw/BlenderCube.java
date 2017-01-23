@@ -1,5 +1,6 @@
 package org.cakelab.soapbox.testscene.blenderRaw;
 
+import org.cakelab.oge.module.Module;
 import org.cakelab.oge.scene.DynamicEntity;
 import org.cakelab.oge.shader.GLException;
 import org.cakelab.soapbox.model.Mesh;
@@ -10,12 +11,12 @@ public class BlenderCube extends BlenderObject implements DynamicEntity {
 	private float yOff;
 	private float zOff;
 
-	public BlenderCube(Mesh mesh) throws GLException {
-		this(0,0,0, mesh);
+	public BlenderCube(Module module, Mesh mesh) throws GLException {
+		this(module, 0,0,0, mesh);
 	}
 
-	public BlenderCube(float x, float y, float z, Mesh mesh) throws GLException {
-		super(mesh);
+	public BlenderCube(Module module, float x, float y, float z, Mesh mesh) throws GLException {
+		super(module, mesh);
 		xOff = x;
 		yOff = y;
 		zOff = z;

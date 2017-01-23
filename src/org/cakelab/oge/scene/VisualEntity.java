@@ -3,7 +3,6 @@ package org.cakelab.oge.scene;
 import org.cakelab.oge.math.EntityMatrices;
 
 public abstract class VisualEntity extends Entity {
-	private ModuleData renderData;
 
 	private EntityMatrices matrices;
 
@@ -21,20 +20,6 @@ public abstract class VisualEntity extends Entity {
 
 	public Material getMaterial() {
 		return material;
-	}
-
-	/**
-	 * Retrieve render engine specific data.
-	 */
-	public ModuleData getRenderData() {
-		return renderData;
-	}
-
-	/**
-	 * Set render engine specific data.
-	 */
-	public void setRenderData(ModuleData renderData) {
-		this.renderData = renderData ;
 	}
 
 	public EntityMatrices getMatrices() {

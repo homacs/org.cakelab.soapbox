@@ -1,5 +1,8 @@
 package org.cakelab.oge.scene;
 
+import org.cakelab.oge.module.ModuleData;
+import org.cakelab.oge.module.ModuleDataContainer;
+import org.cakelab.oge.module.ModuleDataContainerImpl;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -9,12 +12,14 @@ import org.joml.Vector3fc;
  * @author homac
  *
  */
-public class Entity extends Pose {
+public class Entity extends Pose implements ModuleDataContainer {
 	/** 
 	 * Scaling in x, y and z direction.
 	 */
 	private Vector3f scale = new Vector3f(1,1,1);
 	
+	private ModuleDataContainer moduleData = new ModuleDataContainerImpl();
+
 	public Entity() {
 		super();
 	}
@@ -43,6 +48,16 @@ public class Entity extends Pose {
 	}
 	public Vector3fc getScale() {
 		return scale;
+	}
+
+	@Override
+	public ModuleData getModuleData(int moduleId) {
+		return moduleData.getModuleData(moduleId);
+	}
+
+	@Override
+	public void setModuleData(int moduleId, ModuleData data) {
+		moduleData.setModuleData(moduleId,data);
 	}
 
 	

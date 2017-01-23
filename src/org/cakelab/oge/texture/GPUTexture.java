@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL42.glTexStorage2D;
 
 import java.nio.ByteBuffer;
 
-import org.cakelab.oge.scene.ModuleData;
+import org.cakelab.oge.module.ModuleData;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;

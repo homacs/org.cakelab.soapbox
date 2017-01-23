@@ -4,9 +4,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
-import static org.lwjgl.glfw.GLFW.GLFW_STEREO;
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -17,8 +14,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.AMDDebugOutput.GL_DEBUG_CATEGORY_API_ERROR_AMD;
@@ -38,20 +33,22 @@ import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_ERROR;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_PORTABILITY;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR;
 
-
 import org.cakelab.appbase.log.Log;
+import org.cakelab.lwjgl.GLFWException;
 import org.cakelab.oge.shader.GLException;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWErrorCallbackI;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.system.MemoryUtil;
 
 public abstract class AbstractAplicationBase {
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	protected Info info = new Info();
 	protected DebugMessageHandler debugMessageHandler;
@@ -65,6 +62,8 @@ public abstract class AbstractAplicationBase {
 	protected ApplicationContext context;
 
 	private boolean running;
+
+	private SwapControl swapControl;
 	protected static long window;
 
 	/** Cached mouse pointer position */
@@ -73,10 +72,23 @@ public abstract class AbstractAplicationBase {
 	
 	
 	protected void init() throws GLException {
+		GLFW.glfwSetErrorCallback(new GLFWErrorCallbackI(){
+			@Override
+			public void invoke(int error, long description) {
+				String text = "GLFW error " + error;
+				try {
+					// try to get a description
+					String s = MemoryUtil.memUTF8(description);
+					if (s != null && s.length() != 0) text += ": " + s;
+				} catch (Throwable t) {}
+				throw new GLFWException(text);
+			}
+		});
+
 		if (!glfwInit()) {
 			throw new GLException("Failed to initialize GLFW\n");
 		}
-		
+
 		createWindow();
 
 		windowSizeCB = new GLFWWindowSizeCallback() {
@@ -141,14 +153,14 @@ public abstract class AbstractAplicationBase {
 
 		};
 		glfwSetScrollCallback(window, scrollCB);
-		if (info.flags.cursor)
+		if (info.settings.cursor)
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		else
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-		info.flags.stereo = (glfwGetWindowAttrib(window, GLFW_STEREO) == 1);
 
 		glfwMakeContextCurrent(window);
+
 
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
@@ -157,8 +169,11 @@ public abstract class AbstractAplicationBase {
         // bindings available for use.
 		
         GLCapabilities capabilities = GL.createCapabilities();
-        context = new ApplicationContext(capabilities, info);
+        context = new ApplicationContext(window, capabilities, info);
 		
+        swapControl = SwapControl.select(context, info.settings.vsync, info.settings.fps, info.settings.softwareThrottle);
+        // swapControl.setDiagnostics(new LogForwardReceiverImpl());
+        
 		// loading of extensions is done automatically by the lwjgl library,
 		// thus, we dont need w3g.
 
@@ -171,6 +186,8 @@ public abstract class AbstractAplicationBase {
 		// which supports OpenGL43, GL_KHR_debug, GL_ARB_debug_output
 		// and GL_AMD_debug_output if supported by the drivers.
 		debugMessageHandler = new DebugMessageHandler(GL.getCapabilities(), this);
+		
+
 	}
 	
 
@@ -219,7 +236,7 @@ public abstract class AbstractAplicationBase {
 	
 	/** Immediate program exit */
 	protected void exit (int status) {
-		debugMessageHandler.release();
+		if (debugMessageHandler != null) debugMessageHandler.release();
 		glfwTerminate();
 		System.exit(status);
 	}
@@ -276,11 +293,6 @@ public abstract class AbstractAplicationBase {
 		return cursor;
 	}
 
-	void setVsync(boolean enable) {
-		info.flags.vsync = enable;
-		glfwSwapInterval(info.flags.vsync ? 1 : 0);
-	}
-
 	/**
 	 * Print error message and exit abnormal
 	 * @param errmsg
@@ -314,43 +326,38 @@ public abstract class AbstractAplicationBase {
 		Log.info(infomsg);
 	}
 	
-
-
-
-	public void setVSync(boolean enable) {
-        info.flags.vsync = enable;
-        glfwSwapInterval(info.flags.vsync?1:0);
+	public void setVerticalSync(boolean enable) {
+        info.settings.vsync = enable;
+        if (swapControl != null) swapControl.stop();
+        swapControl = SwapControl.select(context, info.settings.vsync, info.settings.fps, info.settings.softwareThrottle);
 	}
-	
+
 	public final void run() throws GLException {
 
 		exitStatus = 0;
 		try {
-		
 
 			init();
 			
 			startup();
 	
 			
-			
 			running = true;
-			while (running) {
-				GlobalClock.frameTime = glfwGetTime();
+			
 
-				process(GlobalClock.frameTime, context);
+			while (running) {
+				// we swap buffers first to be in sync
+				GlobalClock.frameTime = swapControl.syncAndSwapBuffers();
+				
+	        	process(GlobalClock.frameTime, context);
 
 		        /* Poll for and process events */
 		        glfwPollEvents();
 
-				// Both buffers are full, one is displayed and the other waits to be swapped in after sync
-				// TODO: triple buffering, would allow rendering ahead of static and predictable objects
-				glfwSwapBuffers(window);
-
 				if (glfwWindowShouldClose(window)) {
 					running = false;
 				}
-
+				
 			}
 	
 			shutdown();
@@ -362,8 +369,6 @@ public abstract class AbstractAplicationBase {
 
 		exit(exitStatus);
 	}
-
-
 
 	public abstract void createWindow();
 	protected abstract void startup() throws Throwable;

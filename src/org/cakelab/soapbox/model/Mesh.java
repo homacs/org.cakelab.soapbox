@@ -3,7 +3,7 @@ package org.cakelab.soapbox.model;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
-import org.cakelab.oge.scene.ModuleData;
+import org.cakelab.oge.module.ModuleData;
 import org.cakelab.oge.utils.BufferUtilsHelper;
 import org.lwjgl.opengl.GL11;
 

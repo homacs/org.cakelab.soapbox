@@ -2,6 +2,8 @@ package org.cakelab.oge.scene;
 
 import java.awt.image.BufferedImage;
 
+import org.cakelab.oge.module.ModuleData;
+
 
 
 public class TextureImage {

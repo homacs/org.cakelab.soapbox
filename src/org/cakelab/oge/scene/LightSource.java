@@ -1,5 +1,6 @@
 package org.cakelab.oge.scene;
 
+import org.cakelab.oge.module.ModuleData;
 import org.joml.Vector3f;
 
 // TODO lights may be dynamic objects too

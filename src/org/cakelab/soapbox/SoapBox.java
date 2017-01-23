@@ -34,8 +34,8 @@ public class SoapBox extends ApplicationBase {
 
 	public SoapBox() throws GLException {
 		super("Soapbox");
-		info.flags.fullscreen = true;
-		info.flags.vsync = false;
+		info.settings.fullscreen = true;
+		info.settings.vsync = false;
 		player = new Player();
 	}
 	

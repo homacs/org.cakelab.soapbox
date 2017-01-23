@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 /** 
- * This is an interface for 'immutable' {@link Orientation}s (e.g. to define constants).
+ * This is an interface for <em>immutable</em> {@link Orientation}s (e.g. to define constants).
  * 
  * @author homac
  *

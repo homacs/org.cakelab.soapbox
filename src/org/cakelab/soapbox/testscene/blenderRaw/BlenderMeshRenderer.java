@@ -2,6 +2,8 @@ package org.cakelab.soapbox.testscene.blenderRaw;
 
 
 import org.cakelab.oge.app.ApplicationContext;
+import org.cakelab.oge.module.Module;
+import org.cakelab.oge.module.ModuleRegistry;
 import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
@@ -10,17 +12,21 @@ import org.cakelab.oge.shader.VertexShader;
 import org.cakelab.oge.utils.OGEMeshRenderData;
 import org.cakelab.oge.utils.SingleProgramRendererBase;
 
-public class BlenderMeshRenderer extends SingleProgramRendererBase {
+public class BlenderMeshRenderer extends SingleProgramRendererBase implements Module {
 	private static BlenderMeshRenderer SINGLETON;
 
 	public static BlenderMeshRenderer getInstance() {
 		return SINGLETON ;
 	}
 
+
+
+	private final int moduleId;
 	
 	
 	public BlenderMeshRenderer() throws GLException {
-		String vs_source = "#version 410 core                                                  \n"
+		moduleId = ModuleRegistry.registerModule(this);
+		String vs_source = "#version 410 core                                         \n"
 				+ "                                                                   \n"
 				+ "in vec4 position;                                                  \n"
 				+ "                                                                   \n"
@@ -68,7 +74,7 @@ public class BlenderMeshRenderer extends SingleProgramRendererBase {
 
 	public void draw(double currentTime, VisualEntity vobj) {
 		BlenderObject bobj = (BlenderObject) vobj;
-		OGEMeshRenderData assets = (OGEMeshRenderData) bobj.getRenderData();
+		OGEMeshRenderData assets = (OGEMeshRenderData) bobj.getModuleData(moduleId);
 		assets.draw();
 	}
 
@@ -78,6 +84,14 @@ public class BlenderMeshRenderer extends SingleProgramRendererBase {
 	public boolean needsNormals() {
 		return false;
 	}
+
+	@Override
+	public int getModuleId() {
+		return moduleId;
+	}
+
+
+
 	
 
 

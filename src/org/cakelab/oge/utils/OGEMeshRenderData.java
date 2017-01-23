@@ -2,8 +2,8 @@ package org.cakelab.oge.utils;
 
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 
+import org.cakelab.oge.module.ModuleData;
 import org.cakelab.oge.opengl.MeshVertexArray;
-import org.cakelab.oge.scene.ModuleData;
 
 public class OGEMeshRenderData implements ModuleData {
 

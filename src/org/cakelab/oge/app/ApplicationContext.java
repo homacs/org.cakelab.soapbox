@@ -13,9 +13,13 @@ public class ApplicationContext {
 	private BufferedMatrix4f projection;
 	private ArrayList<LightSource> lamps;
 	private Info info;
+	private GLCapabilities capabilities;
+	private long window;
 
 	
-	public ApplicationContext(GLCapabilities capabilities, Info info) {
+	public ApplicationContext(long window, GLCapabilities capabilities, Info info) {
+		this.window = window;
+		this.capabilities = capabilities;
 		this.info = info;
 	}
 	
@@ -49,6 +53,18 @@ public class ApplicationContext {
 
 	public int getWindowHeight() {
 		return info.getWindowHeight();
+	}
+
+	public GLCapabilities getCapabilities() {
+		return capabilities;
+	}
+
+	public Info getApplicationInfo() {
+		return info;
+	}
+
+	public long getWindow() {
+		return window;
 	}
 
 }

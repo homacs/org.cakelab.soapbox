@@ -1,7 +1,7 @@
-package org.cakelab.oge.scene;
+package org.cakelab.oge.module;
 
 /** An empty interface to store module (e.g. render engine) specific 
- * data at visual objects and their assets. */
+ * data at entities and their assets. */
 public interface ModuleData {
 	void delete();
 }

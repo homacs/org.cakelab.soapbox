@@ -1,5 +1,7 @@
 package org.cakelab.oge.app;
 
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+
 /** 
  * 
  * GlobalClock maintains time stamps of important process states.
@@ -31,7 +33,7 @@ public class GlobalClock {
 	public static final double TIME_INVALID = -1;
 	
 	/** Time stamp of the current frame */
-	static double frameTime = TIME_ZERO;
+	static volatile double frameTime = TIME_ZERO;
 
 	/**
 	 * This is a time stamp indicating the time since program start [sec.msec], 
@@ -51,6 +53,15 @@ public class GlobalClock {
 	 */
 	public static double getFrameTime() {
 		return frameTime;
+	}
+
+	/**
+	 * Returns the current state of the local clock.
+	 * @return
+	 */
+	public static double getLocalTime() {
+		return glfwGetTime();
+//		return ((double)System.nanoTime()-startTime)/1000000000.0;
 	}
 	
 	
