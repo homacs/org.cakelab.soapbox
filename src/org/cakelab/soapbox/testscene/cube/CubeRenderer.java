@@ -132,4 +132,9 @@ public class CubeRenderer extends SingleProgramRendererBase {
 	public boolean needsNormals() {
 		return false;
 	}
+
+	@Override
+	public boolean needsUv() {
+		return false;
+	}
 }

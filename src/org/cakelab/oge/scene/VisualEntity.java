@@ -4,9 +4,9 @@ import org.cakelab.oge.math.EntityMatrices;
 
 public abstract class VisualEntity extends Entity {
 
-	private EntityMatrices matrices;
+	protected EntityMatrices matrices;
 
-	private Material material;
+	protected Material material;
 
 	public VisualEntity(Material material) {
 		this(material,0,0,0);
@@ -16,6 +16,10 @@ public abstract class VisualEntity extends Entity {
 		super(x,y,z);
 		this.material = material;
 		matrices = new EntityMatrices(this);
+	}
+
+	protected VisualEntity() {
+		this(null);
 	}
 
 	public Material getMaterial() {

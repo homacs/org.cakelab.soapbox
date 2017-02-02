@@ -86,6 +86,11 @@ public class TorusRenderer extends SingleProgramRendererBase {
 		return false;
 	}
 
+	@Override
+	public boolean needsUv() {
+		return true;
+	}
+
 	
 
 }

@@ -95,6 +95,9 @@ public abstract class AbstractAplicationBase {
 			@Override
 			public void invoke(long window, int width, int height) {
 				try {
+					if (window != AbstractAplicationBase.window) {
+						Log.error("duplicate window");
+					}
 					onResize(width, height);
 				} catch (Throwable e) {
 					e.printStackTrace();
@@ -348,11 +351,11 @@ public abstract class AbstractAplicationBase {
 			while (running) {
 				// we swap buffers first to be in sync
 				GlobalClock.frameTime = swapControl.syncAndSwapBuffers();
-				
-	        	process(GlobalClock.frameTime, context);
-
 		        /* Poll for and process events */
 		        glfwPollEvents();
+
+				
+	        	process(GlobalClock.frameTime, context);
 
 				if (glfwWindowShouldClose(window)) {
 					running = false;

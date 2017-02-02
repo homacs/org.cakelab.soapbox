@@ -176,7 +176,7 @@ public class Pose {
 		return pos;
 	}
 
-	public void setPosition(int x, int y, int z) {
+	public void setPosition(float x, float y, float z) {
 		pos.x = x;
 		pos.y = y;
 		pos.z = z;

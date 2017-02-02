@@ -94,4 +94,10 @@ public class HudRenderer extends SingleProgramRendererBase {
 		return false;
 	}
 
+
+	@Override
+	public boolean needsUv() {
+		return true;
+	}
+
 }

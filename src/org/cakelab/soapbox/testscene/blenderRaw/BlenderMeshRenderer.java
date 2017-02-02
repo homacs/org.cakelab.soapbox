@@ -90,6 +90,11 @@ public class BlenderMeshRenderer extends SingleProgramRendererBase implements Mo
 		return moduleId;
 	}
 
+	@Override
+	public boolean needsUv() {
+		return false;
+	}
+
 
 
 	

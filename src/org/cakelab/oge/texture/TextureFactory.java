@@ -31,9 +31,9 @@ import org.lwjgl.opengl.GL13;
 //      turn this class in a tool and don't derive from GPUTexture
 //      allow setting of all the different texture parameters
 //      maybe have a common oge specific internal format, which allows conversion into other formats
-public class TextureImageIO extends GPUTexture {
+public class TextureFactory extends GPUTexture {
 	/** The colour model including alpha for the GL image */
-    public static final ColorModel glAlphaColorModel = 
+    private static final ColorModel glAlphaColorModel = 
     		new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
 	            new int[] {8,8,8,8},
 	            true,
@@ -71,7 +71,7 @@ public class TextureImageIO extends GPUTexture {
      * @param minFilter
      * @param magFilter
      */
-	public TextureImageIO(BufferedImage image, int requiredPixelFormat, boolean flip, boolean forceAlpha, int minFilter, int magFilter) {
+	public TextureFactory(BufferedImage image, int requiredPixelFormat, boolean flip, boolean forceAlpha, int minFilter, int magFilter) {
         // TODO: textures: Not every texture needs to be converted
 		//       This constructor considers a lot of cases where the image is
 		//       not suitable for a OpenGL compatible texture. There should

@@ -16,6 +16,8 @@ public class VisualMeshEntity extends VisualEntity {
 	protected VisualMeshEntity(Material material, float x, float y, float z) {
 		super(material, x, y, z);
 	}
+	protected VisualMeshEntity() {
+	}
 	public Mesh getMesh() {
 		return mesh;
 	}

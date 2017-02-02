@@ -64,5 +64,10 @@ public class CoordPlaneRenderer extends SingleProgramRendererBase {
 		return false;
 	}
 
+	@Override
+	public boolean needsUv() {
+		return false;
+	}
+
 	
 }

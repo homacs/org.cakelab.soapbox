@@ -3,6 +3,7 @@ package org.cakelab.oge.scene;
 import java.util.ArrayList;
 
 
+
 public class Scene {
 
 	/**
@@ -15,9 +16,8 @@ public class Scene {
 	ArrayList<DynamicEntity> dynamicObjects = new ArrayList<DynamicEntity>();
 	ArrayList<LightSource> lightSources = new ArrayList<LightSource>();
 	
-	
-	
 	public void add(VisualEntity vobj) {
+		
 		objects.add(vobj);
 		if (vobj instanceof DynamicEntity) {
 			dynamicObjects.add((DynamicEntity) vobj);
@@ -38,6 +38,13 @@ public class Scene {
 
 	public ArrayList<LightSource> getLightSources() {
 		return lightSources;
+	}
+
+	public void remove(VisualEntity entity) {
+		objects.remove(entity);
+		if (entity instanceof DynamicEntity) {
+			dynamicObjects.remove(entity);
+		}
 	}
 	
 

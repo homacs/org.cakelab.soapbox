@@ -46,6 +46,7 @@ public abstract class SingleProgramRendererBase implements Renderer {
 	 * 
 	 * This method calls prepareRenderPass exactly once for each render pass.
 	 */
+	@Override
 	public void prepare(ApplicationContext context, double currentTime) {
 		if (preparedLast != currentTime) {
 			glUseProgram(shaderProgram.getProgramId());
@@ -58,6 +59,7 @@ public abstract class SingleProgramRendererBase implements Renderer {
 	
 	public abstract void prepareRenderPass(ApplicationContext context, double currentTime);
 
+	@Override
 	public void render(ApplicationContext context, double currentTime, VisualEntity vobj) {
 		Camera camera = context.getActiveCamera();
 		mv_matrix.identity()

@@ -17,7 +17,8 @@ import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 public class BufferObject<T extends Buffer> {
 
 	public enum Usage {
-		STATIC_DRAW(GL15.GL_STATIC_DRAW);
+		STATIC_DRAW(GL15.GL_STATIC_DRAW), 
+		DYNAMIC_DRAW(GL15.GL_DYNAMIC_DRAW);
 		
 		public final int v;
 		

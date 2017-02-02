@@ -46,9 +46,13 @@ public class MeshVertexArray extends SingleVertexArrayObject {
 		case STATIC_DRAW:
 			buffer = new BufferObjectStatic<FloatBuffer>(Target.ARRAY_BUFFER, mesh);
 			break;
+		default:
+			throw new GLException("unsupported buffer type " + usage.toString());
 		}
 		super.set(buffer);
-		declareVertexAttribute(attributeIndex, 0, 3);
+		// TODO consider storing length of the vertex vector
+		int len = mesh.hasUVCoordinates()?mesh.getUVOffset():mesh.hasNormals()?mesh.getNormalsOffset():mesh.getStrideSize();
+		declareVertexAttribute(attributeIndex, 0, len);
 	}
 
 }

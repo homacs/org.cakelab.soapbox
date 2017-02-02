@@ -18,7 +18,7 @@ public class TextureImage {
 		this.pixelFormat = pixelFormat;
 		this.flipped = flipped;
 	}
-
+	
 	public BufferedImage getImage() {
 		return image;
 	}

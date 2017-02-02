@@ -59,7 +59,7 @@ public abstract class ApplicationBase extends AbstractAplicationBase {
 		glfwWindowHint(GLFW_SAMPLES, info.settings.samples);
 		glfwWindowHint(GLFW_STEREO, info.settings.stereo ? GL_TRUE : GL_FALSE);
 
-		glfwWindowHint(GLFW_ALPHA_BITS, 0);
+		glfwWindowHint(GLFW_ALPHA_BITS, 16);
 		glfwWindowHint(GLFW_DEPTH_BITS, 32);
 		glfwWindowHint(GLFW_STENCIL_BITS, 0);
 		long monitor = 0;

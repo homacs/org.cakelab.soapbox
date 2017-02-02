@@ -15,7 +15,7 @@ public class Mesh {
 	protected int normalsOffset;
 	protected int verticesPerPolygon;
 	protected int glDrawingMethod;
-	private ModuleData renderData;
+	private ModuleData moduleData;
 
 	
 	/**
@@ -26,11 +26,14 @@ public class Mesh {
 	 */
 	public static enum FrontFaceVertexOrder {
 		CounterClockwise,
-		Clockwise
+		Clockwise;
+		
+		public static final FrontFaceVertexOrder STANDARD = CounterClockwise;
 	}
-	
+
 	public Mesh(int glDrawingMethod, FrontFaceVertexOrder frontFace, int vectorSize,
 			float[] dataIn, int uvOffset, int normalsOffset, int arrayLen) {
+		// TODO array length as parameter??
 		this.setGlDrawingMethod(glDrawingMethod);
 		this.verticesPerPolygon = calcVerticesPerPolygone(glDrawingMethod);
 		assert(vectorSize >= 3);
@@ -38,13 +41,10 @@ public class Mesh {
 		this.uvOffset = uvOffset <= 0 ? -1 : uvOffset;
 		this.normalsOffset = normalsOffset <= 0 ? -1 : normalsOffset;
 		
-		switch(frontFace) {
-		case CounterClockwise:
+		if (frontFace == FrontFaceVertexOrder.STANDARD) {
 			data = Arrays.copyOf(dataIn, arrayLen);
-			break;
-		case Clockwise:
+		} else {
 			data = swapVertexOrder(Arrays.copyOf(dataIn, arrayLen));
-			break;
 		}
 	}
 
@@ -163,11 +163,11 @@ public class Mesh {
 	}
 
 	public void setRenderData(ModuleData renderData) {
-		this.renderData = renderData;
+		this.moduleData = renderData;
 	}
 
 	public ModuleData getRenderData() {
-		return renderData;
+		return moduleData;
 	}
 
 

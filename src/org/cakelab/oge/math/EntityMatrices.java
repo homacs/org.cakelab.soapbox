@@ -12,7 +12,7 @@ public class EntityMatrices {
 
 	private VisualEntity entity;
 	private Matrix4f worldTransform = new Matrix4f();
-	private Matrix4f modelTransform = new Matrix4f();
+	private Matrix4f modelTransform = null;
 	private Quaternionf tempQuat = new Quaternionf();
 
 	private double lastUpdate = GlobalClock.TIME_INVALID;

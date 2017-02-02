@@ -15,6 +15,7 @@ public class ApplicationContext {
 	private Info info;
 	private GLCapabilities capabilities;
 	private long window;
+	private BufferedMatrix4f projection2d;
 
 	
 	public ApplicationContext(long window, GLCapabilities capabilities, Info info) {
@@ -65,6 +66,15 @@ public class ApplicationContext {
 
 	public long getWindow() {
 		return window;
+	}
+
+	public BufferedMatrix4f getProjectionTransform2D() {
+		return projection2d;
+	}
+
+	public void setProjectionTransform2d(BufferedMatrix4f projection2d) {
+		this.projection2d = projection2d;
+		
 	}
 
 }
