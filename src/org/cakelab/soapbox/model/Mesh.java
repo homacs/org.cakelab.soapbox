@@ -8,6 +8,7 @@ import org.cakelab.oge.utils.BufferUtilsHelper;
 import org.lwjgl.opengl.GL11;
 
 public class Mesh {
+
 	
 	protected float[] data;
 	protected int vectorSize;
@@ -31,6 +32,7 @@ public class Mesh {
 		public static final FrontFaceVertexOrder STANDARD = CounterClockwise;
 	}
 
+	
 	public Mesh(int glDrawingMethod, FrontFaceVertexOrder frontFace, int vectorSize,
 			float[] dataIn, int uvOffset, int normalsOffset, int arrayLen) {
 		// TODO array length as parameter??
@@ -47,6 +49,7 @@ public class Mesh {
 			data = swapVertexOrder(Arrays.copyOf(dataIn, arrayLen));
 		}
 	}
+	
 
 	/** whether the mesh contains normal vectors */
 	public boolean hasNormals() {

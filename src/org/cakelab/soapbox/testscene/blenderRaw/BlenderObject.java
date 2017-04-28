@@ -2,8 +2,8 @@ package org.cakelab.soapbox.testscene.blenderRaw;
 
 
 import org.cakelab.oge.module.Module;
-import org.cakelab.oge.opengl.BufferObject.Usage;
 import org.cakelab.oge.opengl.MeshVertexArray;
+import org.cakelab.oge.opengl.BufferObject.Usage;
 import org.cakelab.oge.scene.Material;
 import org.cakelab.oge.scene.VisualMeshEntity;
 import org.cakelab.oge.shader.GLException;

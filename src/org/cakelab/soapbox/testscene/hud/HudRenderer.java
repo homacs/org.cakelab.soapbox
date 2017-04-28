@@ -5,8 +5,8 @@ import static org.lwjgl.opengl.GL11.glDrawArrays;
 import java.io.IOException;
 
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.opengl.BufferObject.Usage;
 import org.cakelab.oge.opengl.MeshVertexArray;
+import org.cakelab.oge.opengl.BufferObject.Usage;
 import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
@@ -56,7 +56,7 @@ public class HudRenderer extends SingleProgramRendererBase {
 		int elemsPerVector = 4;
 		int startIndex = 2;
 		assets = new OGEMeshRenderData(new MeshVertexArray(mesh, 0, Usage.STATIC_DRAW), mesh.getGlDrawingMethod(), mesh.getNumVertices());
-		assets.getVertexArrayObject().declareVertexAttribute(attrIdxTexCoord, elemsPerVector, startIndex);
+		assets.getVertexArrayObject().declareAttribute(attrIdxTexCoord, elemsPerVector, startIndex);
 	}
 
 

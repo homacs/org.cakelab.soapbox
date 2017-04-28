@@ -3,8 +3,8 @@ package org.cakelab.soapbox.testscene.cube;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 
 import org.cakelab.oge.app.ApplicationContext;
-import org.cakelab.oge.opengl.BufferObject.Usage;
 import org.cakelab.oge.opengl.MeshVertexArray;
+import org.cakelab.oge.opengl.BufferObject.Usage;
 import org.cakelab.oge.scene.VisualEntity;
 import org.cakelab.oge.shader.FragmentShader;
 import org.cakelab.oge.shader.GLException;
