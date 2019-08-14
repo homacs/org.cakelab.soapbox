@@ -143,7 +143,7 @@ public class Shader {
 		StringBuffer errorMessage = new StringBuffer();
 		while (tokenizer.hasMoreTokens()) {
 			String line = tokenizer.nextToken();
-			int sourceNum = Integer.parseUnsignedInt(line.substring(0, line.indexOf('('))); // TODO later
+			int sourceNum = Integer.parseInt(line.substring(0, line.indexOf('('))); // TODO later
 			int lineNo = Integer.parseInt(line.substring(line.indexOf('(')+1, line.indexOf(')')));		
 			int columnNo = 0; // currently unknown
 			String error = line.substring(line.indexOf(':')+1).trim();

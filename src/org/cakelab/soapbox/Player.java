@@ -171,13 +171,13 @@ public class Player extends Entity implements MovementAdapter {
 		Vector3f forward;
 		// try with (x,0,1)
 		float x = (v.x - (v.y*u.x)/u.y) / (v.z - (v.y * u.z)/u.y);
-		if (Float.isFinite(x)) {
+		if (!(Float.isInfinite(x)||Float.isNaN(x))) {
 			forward = new Vector3f(x,0,1).normalize();
 		} else {
 			// no intersection with (x,0,1)
 			// try (1,0,z)
 			float z = (v.z - (v.y*u.z)/u.y) / (v.x - (v.y * u.x)/u.y);
-			if (Float.isFinite(z)) {
+			if (!(Float.isInfinite(z)||Float.isNaN(z))) {
 				forward = new Vector3f(1,0,z).normalize();
 			} else {
 				// no intersection with (1,0,z) either, which means

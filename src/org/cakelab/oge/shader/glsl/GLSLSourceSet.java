@@ -132,6 +132,11 @@ public abstract class GLSLSourceSet implements Iterable<GLSLSourceString>{
 			public GLSLSourceString next() {
 				return sources[i];
 			}
+
+			@Override
+			public void remove() {
+		        throw new UnsupportedOperationException("remove");
+			}
 		};
 	}
 

@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 
 // TODO lights may be dynamic objects too
 // TODO consider associating light source and light object
-public class LightSource extends Pose {
+public class LightSource extends Entity {
 
 	private Vector3f color;
 	private ModuleData renderData;
