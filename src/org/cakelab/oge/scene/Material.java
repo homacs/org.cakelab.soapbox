@@ -5,6 +5,14 @@ import org.joml.Vector4f;
 public class Material {
 
 	private Vector4f color;
+	public void setColor(Vector4f color) {
+		this.color = color;
+	}
+
+	public void setColorTexture(TextureImage colorTexture) {
+		this.colorTexture = colorTexture;
+	}
+
 	private TextureImage colorTexture;
 	private float lightIntensity;
 
@@ -32,6 +40,10 @@ public class Material {
 
 	public float getEmitterIntensity() {
 		return lightIntensity;
+	}
+	
+	public void setEmitterIntensity(float intensity) {
+		lightIntensity = intensity;
 	}
 	
 	public Vector4f getColor() {
