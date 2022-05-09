@@ -33,9 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.cakelab.appbase.buffer.ByteArrayList;
 import org.cakelab.oge.texture.GPUTexture;
 import org.cakelab.oge.utils.BufferUtilsHelper;
+import org.cakelab.util.types.ArrayListByte;
 
 
 public class KTX {
@@ -239,7 +239,7 @@ public class KTX {
 		//
 		// read all data in one buffer
 		//
-		ByteArrayList buffer = new ByteArrayList(1024);
+		ArrayListByte buffer = new ArrayListByte(1024);
 
 		buffer.copy(fp);
 		fp.close();

@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.cakelab.appbase.buffer.ByteArrayList;
 import org.cakelab.oge.utils.BufferUtilsHelper;
+import org.cakelab.util.types.ArrayListByte;
 
 import static org.cakelab.oge.utils.GLAPIHelper.*;
 import static org.cakelab.oge.utils.BufferUtilsHelper.*;
@@ -115,7 +115,7 @@ public class SBMObject {
 
 	public void load(InputStream in) throws IOException {
 
-		ByteArrayList buffer = new ByteArrayList(4096);
+		ArrayListByte buffer = new ArrayListByte(4096);
 		buffer.copy(in);
 		in.close();
 		
